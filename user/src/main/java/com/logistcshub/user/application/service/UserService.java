@@ -55,4 +55,11 @@ public class UserService {
 
         return user.getUsername() + " 회원님 탈퇴 완로 되었습니다.";
     }
+
+    public UserDto get(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
+
+        return UserDto.of(user);
+    }
 }

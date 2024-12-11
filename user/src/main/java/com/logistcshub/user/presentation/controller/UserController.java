@@ -27,6 +27,7 @@ public class UserController {
 
     private final UserService userService;
 
+    // 내 정보 조회
     @GetMapping("/user/{id}")
     public ApiResponse<MyInfoDto> getMyInfo(@PathVariable Long id) {
         return ApiResponse.<MyInfoDto>builder()
@@ -35,7 +36,8 @@ public class UserController {
                 .build();
     }
 
-    @GetMapping("/users")
+    // 유저 전체 조회 (MASTER)
+    @GetMapping("/admin/users")
     public ApiResponse<Page<SearchResponse>> getUserList(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PageableDefault Pageable pageable,
@@ -51,7 +53,17 @@ public class UserController {
                 .build();
     }
 
-    @PatchMapping("/user/{id}")
+    // 유저 상세 조회 (MASTER)
+    @GetMapping("/admin/user/{id}")
+    public ApiResponse<UserDto> get(@PathVariable Long id) {
+        return ApiResponse.<UserDto>builder()
+                .messageType(MessageType.RETRIEVE)
+                .data(userService.get(id))
+                .build();
+    }
+
+    // 유저 권한 수정 (MASTER)
+    @PatchMapping("/admin/user/{id}")
     public ApiResponse<UserDto> update(@PathVariable Long id, @RequestBody UserUpdateRequest userUpdateRequest) {
         return ApiResponse.<UserDto>builder()
                 .messageType(MessageType.UPDATE)
@@ -59,12 +71,12 @@ public class UserController {
                 .build();
     }
 
-    @DeleteMapping("/user/{id}")
+    // 유저 탈퇴 (MASTER)
+    @DeleteMapping("/admin/user/{id}")
     public ApiResponse<String> delete(@PathVariable Long id) {
         return ApiResponse.<String>builder()
                 .messageType(MessageType.DELETE)
                 .data(userService.delete(id))
                 .build();
     }
-
 }
