@@ -1,10 +1,7 @@
 package com.logistcshub.company.domain.model;
 
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -18,6 +15,7 @@ import java.util.UUID;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor
+@Builder
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "p_companies")
 public class Company {
@@ -32,11 +30,13 @@ public class Company {
 
     private String contact;
 
+    @Enumerated(EnumType.STRING)
     private CompanyType companyType;
 
     private UUID hubId;
 
-    private Boolean isDelete = false;
+    @Builder.Default
+    private boolean isDelete = false;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -53,6 +53,12 @@ public class Company {
     private LocalDateTime deletedAt;
 
     private String deletedBy;
+
+    public void create(Long id){
+        createdBy = id.toString();
+        createdAt = LocalDateTime.now();
+
+    }
 
     public void delete(String id) {
         deletedAt = LocalDateTime.now();

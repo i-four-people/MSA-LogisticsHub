@@ -23,7 +23,7 @@ public record CompanyResponseDto (
                 company.getContact(),
                 company.getCompanyType(),
                 company.getHubId(),
-                company.getIsDelete()
+                company.isDelete()
         );
     }
 }
