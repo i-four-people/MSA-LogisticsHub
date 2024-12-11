@@ -1,0 +1,23 @@
+### 회원 가입
+POST http://localhost:19093/api/auth/signup
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "user123",
+  "password": "Qwer1234@",
+  "email": "user123@email.com",
+  "tel": "010-1234-5678",
+  "slackId": "slack-id",
+  "role": "HUB_MANAGER",
+  "adminToken": null
+}
+
+### 로그인
+POST http://localhost:19093/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user123@email.com",
+  "password": "Qwer1234@"
+}
