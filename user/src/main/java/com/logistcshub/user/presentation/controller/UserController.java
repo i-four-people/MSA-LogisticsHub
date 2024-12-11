@@ -1,15 +1,23 @@
 package com.logistcshub.user.presentation.controller;
 
 import com.logistcshub.user.application.dtos.MyInfoDto;
+import com.logistcshub.user.application.dtos.SearchResponse;
+import com.logistcshub.user.application.dtos.UserDto;
+import com.logistcshub.user.application.security.UserDetailsImpl;
 import com.logistcshub.user.application.service.UserService;
+import com.logistcshub.user.domain.model.UserRoleEnum;
 import com.logistcshub.user.infrastructure.common.ApiResponse;
 import com.logistcshub.user.infrastructure.common.MessageType;
+import com.logistcshub.user.infrastructure.common.PageResponse;
+import com.logistcshub.user.infrastructure.common.SearchParameter;
+import com.logistcshub.user.presentation.request.SearchRequest;
+import io.micrometer.core.instrument.search.Search;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
@@ -25,5 +33,25 @@ public class UserController {
                 .data(userService.getMyInfo(id))
                 .build();
     }
+
+    @GetMapping("/users")
+    public ApiResponse<Page<SearchResponse>> getUserList(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PageableDefault Pageable pageable,
+            SearchRequest searchRequest
+    ) {
+        UserRoleEnum loggedUserRole = userDetails.user().getRole();
+
+        Page<SearchResponse> searchedUserList = userService.getUserList(loggedUserRole, pageable, searchRequest);
+
+        return ApiResponse.<Page<SearchResponse>>builder()
+                .messageType(MessageType.RETRIEVE)
+                .data(searchedUserList)
+                .build();
+    }
+
+//    @PatchMapping("/user/{id}")
+//
+//    @DeleteMapping("/user/{id}")
 
 }

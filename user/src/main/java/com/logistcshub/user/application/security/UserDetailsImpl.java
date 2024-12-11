@@ -12,6 +12,10 @@ import java.util.Collection;
 
 public record UserDetailsImpl(User user) implements UserDetails, Serializable {
 
+    public UserDetailsImpl(User user) {
+        this.user = user;
+    }
+
     @Override
     public String getPassword() {
         return user.getPassword();
