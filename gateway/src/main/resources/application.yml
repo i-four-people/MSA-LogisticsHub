@@ -16,9 +16,7 @@ spring:
         - id: hub-service
           uri: lb://hub-service
           predicates:
-            - Path=/api/areas/**
-            - Path=/api/hubs/**
-            - Path=/api/hub-transfers/**
+            - Path=/api/areas/**, /api/hubs/**, /api/hub-transfers/**
 
       discovery:
         locator:
