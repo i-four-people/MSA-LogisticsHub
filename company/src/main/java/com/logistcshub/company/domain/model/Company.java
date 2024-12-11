@@ -1,5 +1,6 @@
 package com.logistcshub.company.domain.model;
 
+import com.logistcshub.company.presentation.request.CompanyRequestDto;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedBy;
@@ -64,6 +65,17 @@ public class Company {
         deletedAt = LocalDateTime.now();
         deletedBy = id;
         isDelete = true;
+    }
+
+    public void update(String id, CompanyRequestDto companyRequestDto) {
+        updatedBy = id;
+        updatedAt = LocalDateTime.now();
+        this.name= companyRequestDto.name();
+        this.address = companyRequestDto.address();
+        this.contact = companyRequestDto.contact();
+        this.companyType = companyRequestDto.companyType();
+        this.hubId = companyRequestDto.hubId();
+        this.isDelete = false;
     }
 
 }

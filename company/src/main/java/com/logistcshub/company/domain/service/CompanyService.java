@@ -7,6 +7,9 @@ import com.logistcshub.company.presentation.response.CompanyResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.NoSuchElementException;
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class CompanyService {
@@ -15,6 +18,14 @@ public class CompanyService {
     public CompanyResponseDto createCompany(CompanyRequestDto companyRequestDto,Long id) {
         Company company = companyRequestDto.toEntity();
         company.create(id);
+        companyRepository.save(company);
+
+        return CompanyResponseDto.toDto(company);
+    }
+
+    public CompanyResponseDto updateCompany(CompanyRequestDto companyRequestDto, UUID id, Long userId) {
+        Company company = companyRepository.findById(id).orElseThrow( () -> new NoSuchElementException("해당 Id값을 갖는 업체가 존재하지 않습니다."));
+        company.update(userId.toString(), companyRequestDto);
         companyRepository.save(company);
 
         return CompanyResponseDto.toDto(company);
