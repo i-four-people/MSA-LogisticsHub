@@ -30,4 +30,12 @@ public class CompanyService {
 
         return CompanyResponseDto.toDto(company);
     }
+
+    public CompanyResponseDto deleteCompany(UUID id, Long userId) {
+        Company company = companyRepository.findById(id).orElseThrow(() -> new NoSuchElementException("해당 Id값을 갖는 업체가 존재하지 않습니다."));
+        company.delete(userId.toString());
+        companyRepository.save(company);
+
+        return CompanyResponseDto.toDto(company);
+    }
 }

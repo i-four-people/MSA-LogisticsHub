@@ -39,4 +39,12 @@ public class CompanyController {
                 .body(ApiResponse.success(MessageType.UPDATE, companyService.updateCompany(companyRequestDto, id, userId)));
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ApiResponse<CompanyResponseDto>> deleteCompany(@PathVariable UUID id) {
+        Long userId = 333L;
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success(MessageType.DELETE, companyService.deleteCompany(id, userId)));
+    }
+
 }
