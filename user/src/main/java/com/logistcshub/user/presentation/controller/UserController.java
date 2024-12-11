@@ -11,6 +11,7 @@ import com.logistcshub.user.infrastructure.common.MessageType;
 import com.logistcshub.user.infrastructure.common.PageResponse;
 import com.logistcshub.user.infrastructure.common.SearchParameter;
 import com.logistcshub.user.presentation.request.SearchRequest;
+import com.logistcshub.user.presentation.request.UserUpdateRequest;
 import io.micrometer.core.instrument.search.Search;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -50,8 +51,20 @@ public class UserController {
                 .build();
     }
 
-//    @PatchMapping("/user/{id}")
-//
-//    @DeleteMapping("/user/{id}")
+    @PatchMapping("/user/{id}")
+    public ApiResponse<UserDto> update(@PathVariable Long id, @RequestBody UserUpdateRequest userUpdateRequest) {
+        return ApiResponse.<UserDto>builder()
+                .messageType(MessageType.UPDATE)
+                .data(userService.update(id, userUpdateRequest))
+                .build();
+    }
+
+    @DeleteMapping("/user/{id}")
+    public ApiResponse<String> delete(@PathVariable Long id) {
+        return ApiResponse.<String>builder()
+                .messageType(MessageType.DELETE)
+                .data(userService.delete(id))
+                .build();
+    }
 
 }

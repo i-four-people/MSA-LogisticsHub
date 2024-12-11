@@ -9,6 +9,7 @@ import com.logistcshub.user.domain.repository.UserRepository;
 import com.logistcshub.user.infrastructure.common.PageResponse;
 import com.logistcshub.user.infrastructure.common.SearchParameter;
 import com.logistcshub.user.presentation.request.SearchRequest;
+import com.logistcshub.user.presentation.request.UserUpdateRequest;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -33,5 +34,25 @@ public class UserService {
     public Page<SearchResponse> getUserList(UserRoleEnum role, Pageable pageable, SearchRequest searchRequest) {
 
         return userRepository.findAllUser(pageable, searchRequest);
+    }
+
+    @Transactional
+    public UserDto update(Long id, UserUpdateRequest userUpdateRequest) {
+        User user =  userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
+
+        user.updateUserRole(UserRoleEnum.valueOf(userUpdateRequest.role()));
+        return UserDto.of(user);
+    }
+
+    @Transactional
+    public String delete(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
+
+        // 논리적 삭제
+        user.delete(id);
+
+        return user.getUsername() + " 회원님 탈퇴 완로 되었습니다.";
     }
 }
