@@ -51,7 +51,7 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
 
         // 논리적 삭제
-        user.delete(id);
+        user.delete(user.getEmail());
 
         return user.getUsername() + " 회원님 탈퇴 완로 되었습니다.";
     }
