@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +30,7 @@ public class UserController {
 
     // 내 정보 조회
     @GetMapping("/user/{id}")
+    @PreAuthorize("isAuthenticated() and hasRole('MASTER') or hasRole('COMPANY_MANAGER') or hasRole('DELIVERY_MANAGER') or hasRole('HUB_MANAGER')")
     public ApiResponse<MyInfoDto> getMyInfo(@PathVariable Long id) {
         return ApiResponse.<MyInfoDto>builder()
                 .messageType(MessageType.RETRIEVE)
@@ -38,6 +40,7 @@ public class UserController {
 
     // 유저 전체 조회 (MASTER)
     @GetMapping("/admin/users")
+    @PreAuthorize("isAuthenticated() and hasRole('MASTER')")
     public ApiResponse<Page<SearchResponse>> getUserList(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PageableDefault Pageable pageable,
@@ -55,6 +58,7 @@ public class UserController {
 
     // 유저 상세 조회 (MASTER)
     @GetMapping("/admin/user/{id}")
+    @PreAuthorize("isAuthenticated() and hasRole('MASTER')")
     public ApiResponse<UserDto> get(@PathVariable Long id) {
         return ApiResponse.<UserDto>builder()
                 .messageType(MessageType.RETRIEVE)
@@ -64,6 +68,7 @@ public class UserController {
 
     // 유저 권한 수정 (MASTER)
     @PatchMapping("/admin/user/{id}")
+    @PreAuthorize("isAuthenticated() and hasRole('MASTER')")
     public ApiResponse<UserDto> update(@PathVariable Long id, @RequestBody UserUpdateRequest userUpdateRequest) {
         return ApiResponse.<UserDto>builder()
                 .messageType(MessageType.UPDATE)
@@ -73,6 +78,7 @@ public class UserController {
 
     // 유저 탈퇴 (MASTER)
     @DeleteMapping("/admin/user/{id}")
+    @PreAuthorize("isAuthenticated() and hasRole('MASTER')")
     public ApiResponse<String> delete(@PathVariable Long id) {
         return ApiResponse.<String>builder()
                 .messageType(MessageType.DELETE)
