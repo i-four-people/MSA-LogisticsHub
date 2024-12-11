@@ -41,7 +41,7 @@ public class AuditEntity {
     @Column(name = "is_delete")
     private Boolean isDelete = false;
 
-    // 논리적 삭제 메서드
+    // Soft Delete
     public void delete(String email) {
         deletedAt = LocalDateTime.now();
         deletedBy = email;
