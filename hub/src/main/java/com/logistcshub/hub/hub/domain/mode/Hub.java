@@ -31,7 +31,7 @@ public class Hub extends BaseEntity {
     @Comment("허브 아이디")
     private UUID id;
 
-    @Column
+    @Column(unique = true, nullable = false)
     private String name;
 
     @Column(nullable = false)
@@ -44,8 +44,7 @@ public class Hub extends BaseEntity {
     private double lng;
 
     @JoinColumn
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Area area;
-
 
 }
