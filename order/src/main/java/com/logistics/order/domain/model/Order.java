@@ -1,11 +1,10 @@
 package com.logistics.order.domain.model;
 
+import com.logistics.order.application.dto.OrderCreateRequest;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -46,5 +45,37 @@ public class Order extends AuditingFields {
 
     @Comment("비활성화 여부")
     private boolean isDelete;
+
+    @Builder
+    private Order(UUID requesterCompanyId, UUID recipientCompanyId, UUID deliveryId, UUID productId, BigDecimal price, int quantity, String requestNotes) {
+        this.requesterCompanyId = requesterCompanyId;
+        this.recipientCompanyId = recipientCompanyId;
+        this.deliveryId = deliveryId;
+        this.productId = productId;
+        this.price = price;
+        this.quantity = quantity;
+        this.requestNotes = requestNotes;
+    }
+
+    /**
+     * 주문 생성하는 정적 팩토리 메서드
+     *
+     * @param request 주문 생성 request
+     * @return Order
+     */
+    public static Order create(OrderCreateRequest request) {
+        return Order.builder()
+                .recipientCompanyId(request.recipientCompanyId())
+                .productId(request.productId())
+                .quantity(request.quantity())
+                .price(BigDecimal.valueOf(request.price()))
+                .requestNotes(request.requestNote())
+                .build();
+    }
+
+    // 총 가격 계산 메서드
+    public int calculateTotalPrice() {
+        return price.multiply(BigDecimal.valueOf(quantity)).intValue();
+    }
 
 }
