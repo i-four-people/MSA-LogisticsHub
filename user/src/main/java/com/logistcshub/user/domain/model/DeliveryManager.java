@@ -16,7 +16,10 @@ public class DeliveryManager extends AuditEntity {
 
     @Id
     @Column(nullable = false)
-    private Long id;
+    private Long id; // 사용자 관리 엔티티의 사용자 Id
+
+    @Column(nullable = false, unique = true)
+    private String ksuid; // Ksuid를 별도로 저장
 
     @Column(nullable = false)
     private Long userId;
@@ -28,17 +31,18 @@ public class DeliveryManager extends AuditEntity {
     @Enumerated(EnumType.STRING)
     private DeliveryManagerType deliveryPersonType;
 
-    @Column(nullable = false, unique = true)
-    private Long deliverySequence;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private DeliveryStatus status = DeliveryStatus.COMPLETED;
 
     // 배송 담당자 등록
-    public static DeliveryManager create(Long userId, UUID hubId, DeliveryManagerType deliveryPersonType, Long deliverySequence) {
+    public static DeliveryManager from(String ksuid, Long userId, UUID hubId, DeliveryManagerType deliveryPersonType) {
         return DeliveryManager.builder()
                 .id(userId)
+                .ksuid(ksuid)
                 .userId(userId)
                 .hubId(hubId)
                 .deliveryPersonType(deliveryPersonType)
-                .deliverySequence(userId)
                 .build();
     }
 }
