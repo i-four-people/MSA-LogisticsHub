@@ -2,6 +2,7 @@ package com.logistcshub.hub.area.presentation;
 
 import static com.logistcshub.hub.common.domain.model.type.ResponseMessage.SUCCESS_CREATE_AREA;
 import static com.logistcshub.hub.common.domain.model.type.ResponseMessage.SUCCESS_DELETE_AREA;
+import static com.logistcshub.hub.common.domain.model.type.ResponseMessage.SUCCESS_GET_AREA;
 import static com.logistcshub.hub.common.domain.model.type.ResponseMessage.SUCCESS_SEARCH_AREA;
 import static com.logistcshub.hub.common.domain.model.type.ResponseMessage.SUCCESS_UPDATE_AREA;
 
@@ -43,9 +44,9 @@ public class AreaController {
 
     @PostMapping
     public ResponseEntity<SuccessResponse<AddAreaResponseDto>> addArea(@RequestBody AddAreaRequestDto request,
-                                                                       @RequestHeader(value = "X-USER-ID")UUID userId,
+                                                                       @RequestHeader(value = "X-USER-ID") Long userId,
                                                                        @RequestHeader(value = "X-USER-ROLE") String role) {
-        userId = UUID.fromString("1f40b195-4bcd-408c-8589-ed4567c5294e");
+        userId = 1L;
         role = "MASTER";
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_CREATE_AREA, areaService.addArea(request, userId, role)));
@@ -53,35 +54,45 @@ public class AreaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<SuccessResponse<UpdateAreaResponseDto>> updateArea(@RequestBody UpdateAreaRequestDto request,
-                                                                             @RequestHeader(value = "X-USER-ID")UUID userId,
+                                                                             @RequestHeader(value = "X-USER-ID") Long userId,
                                                                              @RequestHeader(value = "X-USER-ROLE") String role,
                                                                              @PathVariable UUID id) {
-        userId = UUID.fromString("1f40b195-4bcd-408c-8589-ed4567c5294e");
+        userId = 1L;
         role = "MASTER";
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_UPDATE_AREA, areaService.updateArea(id, request, userId, role)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<SuccessResponse<DeleteAreaResponseDto>> deleteArea(@RequestHeader(value = "X-USER-ID")UUID userId,
+    public ResponseEntity<SuccessResponse<DeleteAreaResponseDto>> deleteArea(@RequestHeader(value = "X-USER-ID") Long userId,
                                                                              @RequestHeader(value = "X-USER-ROLE") String role,
                                                                              @PathVariable UUID id) {
-        userId = UUID.fromString("1f40b195-4bcd-408c-8589-ed4567c5294e");
+        userId = 1L;
         role = "MASTER";
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_DELETE_AREA, areaService.deleteArea(id, userId, role)));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<SuccessResponse<AreaResponseDto>> getArea(@RequestHeader(value = "X-USER-ID") Long userId,
+                                                                             @RequestHeader(value = "X-USER-ROLE") String role,
+                                                                             @PathVariable UUID id) {
+        userId = 1L;
+        role = "MASTER";
+        return ResponseEntity.ok().body(
+                SuccessResponse.of(SUCCESS_GET_AREA, areaService.getArea(id, userId, role)));
+    }
+
     @GetMapping
     public ResponseEntity<SuccessResponse<PagedModel<AreaResponseDto>>> searchAreas(
-            @RequestHeader(value = "X-USER-ID") UUID userId,
+            @RequestHeader(value = "X-USER-ID") Long userId,
             @RequestHeader(value = "X-USER-ROLE") String role,
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "type", defaultValue = "ALL") AreaSearchType type,
             @PageableDefault Pageable pageable,
             @RequestParam(name = "sortBy", defaultValue = "CREATEDAT") SortType sortBy,
             @RequestParam(name = "isAsc", defaultValue = "true") boolean isAsc) {
-        userId = UUID.fromString("1f40b195-4bcd-408c-8589-ed4567c5294e");
+        userId = 1L;
         role = "MASTER";
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_SEARCH_AREA, areaService.searchAreas(userId, role, keyword, type, pageable, sortBy, isAsc))
