@@ -20,6 +20,8 @@ public enum ErrorCode {
     KAKAO_MAP_SERVER_ERROR(HttpStatus.BAD_GATEWAY, "카카오 맵 API 서버 에러입니다."),
     KAKAO_MAP_TIME_OUT(HttpStatus.GATEWAY_TIMEOUT, "카카오 맵 API TIME OUT"),
 
+    HUB_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 허브를 찾을 수 없습니다."),
+
 
     ;
 
