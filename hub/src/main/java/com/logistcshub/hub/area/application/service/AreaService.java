@@ -31,7 +31,7 @@ public class AreaService {
     private final AreaFindRepository areaFindRepository;
 
     @Transactional(readOnly = true)
-    public PagedModel<AreaResponseDto> searchAreas(UUID userId, String role, String keyword, AreaSearchType type, Pageable pageable, SortType sortBy, boolean isAsc) {
+    public PagedModel<AreaResponseDto> searchAreas(Long userId, String role, String keyword, AreaSearchType type, Pageable pageable, SortType sortBy, boolean isAsc) {
         if(role == null || role.isEmpty()) {
             throw new RestApiException(FORBIDDEN);
         }
@@ -39,7 +39,7 @@ public class AreaService {
         return new PagedModel<>(areaFindRepository.findAll(keyword, type, pageable, sortBy, isAsc).map(AreaResponseDto::of));
     }
 
-    public AddAreaResponseDto addArea(AddAreaRequestDto request, UUID userId, String role) {
+    public AddAreaResponseDto addArea(AddAreaRequestDto request, Long userId, String role) {
         validateArea(role);
 
         Area area = request.toEntity();
@@ -48,7 +48,7 @@ public class AreaService {
         return new AddAreaResponseDto(areaRepository.save(area));
     }
 
-    public UpdateAreaResponseDto updateArea(UUID id, UpdateAreaRequestDto request, UUID userId, String role) {
+    public UpdateAreaResponseDto updateArea(UUID id, UpdateAreaRequestDto request, Long userId, String role) {
         validateArea(role);
 
         Area area = findById(id);
@@ -57,7 +57,7 @@ public class AreaService {
         return new UpdateAreaResponseDto(areaRepository.save(area));
     }
 
-    public DeleteAreaResponseDto deleteArea(UUID id, UUID userId, String role) {
+    public DeleteAreaResponseDto deleteArea(UUID id, Long userId, String role) {
         validateArea(role);
 
         Area area = findById(id);
@@ -74,5 +74,9 @@ public class AreaService {
 
     private Area findById(UUID id) {
         return areaRepository.findById(id).orElseThrow(() -> new RestApiException(AREA_NOT_FOUND));
+    }
+
+    public AreaResponseDto getArea(UUID id, Long userId, String role) {
+        return AreaResponseDto.of(findById(id));
     }
 }

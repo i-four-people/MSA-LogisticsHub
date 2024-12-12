@@ -11,9 +11,14 @@ public enum ResponseMessage {
     SUCCESS_CREATE_AREA(HttpStatus.OK, "지역 생성에 성공했습니다."),
     SUCCESS_UPDATE_AREA(HttpStatus.OK, "지역 수정에 성공했습니다."),
     SUCCESS_DELETE_AREA(HttpStatus.OK, "지역 삭제에 성공했습니다."),
-    SUCCESS_SEARCH_AREA(HttpStatus.OK, "지역 조회에 성공했습니다"),
+    SUCCESS_SEARCH_AREA(HttpStatus.OK, "지역 조회에 성공했습니다."),
+    SUCCESS_GET_AREA(HttpStatus.OK, "지역 상세 조회에 성공했습니다."),
 
     SUCCESS_CREATE_HUB(HttpStatus.OK, "허브 생성에 성공했습니다."),
+    SUCCESS_UPDATE_HUB(HttpStatus.OK, "허브 수정에 성공했습니다."),
+    SUCCESS_DELETE_HUB(HttpStatus.OK, "허브 삭제에 성공했습니다."),
+    SUCCESS_GET_HUB(HttpStatus.OK, "허브 상세 조회에 성공했습니다."),
+
     ;
     private final HttpStatus status;
     private final String message;

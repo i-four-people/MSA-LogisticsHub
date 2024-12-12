@@ -47,4 +47,17 @@ public class Hub extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Area area;
 
+    public void update(Long userId, Hub hub) {
+        this.name = hub.getName();
+        this.address = hub.getAddress();
+        this.lat = hub.getLat();
+        this.lng = hub.getLng();
+        this.area = hub.getArea();
+        update(userId);
+    }
+
+    public void updateName(Long userId, String name) {
+        this.name = name;
+        update(userId);
+    }
 }

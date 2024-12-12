@@ -38,7 +38,7 @@ public class Area extends BaseEntity {
     @Comment("시/군/구")
     private City city;
 
-    public void updateArea(UUID userId, UpdateAreaRequestDto request) {
+    public void updateArea(Long userId, UpdateAreaRequestDto request) {
         this.state = State.findState(request.state());
         this.city = City.findCity(request.city(), this.state);
         update(userId);

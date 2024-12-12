@@ -47,20 +47,20 @@ public abstract class BaseEntity {
     @Comment("삭제자")
     private String deletedBy;
 
-    public void update(UUID userId) {
+    public void update(Long userId) {
         updatedAt = LocalDateTime.now();
-        updatedBy = userId.toString();
+        updatedBy = Long.toString(userId);
     }
 
-    public void delete(UUID userId) {
+    public void delete(Long userId) {
         deletedAt = LocalDateTime.now();
-        deletedBy = userId.toString();
+        deletedBy = Long.toString(userId);
         isDeleted = true;
     }
 
-    public void create(UUID userId) {
+    public void create(Long userId) {
         createdAt = LocalDateTime.now();
-        createdBy = userId.toString();
+        createdBy = Long.toString(userId);
         update(userId);
     }
 }
