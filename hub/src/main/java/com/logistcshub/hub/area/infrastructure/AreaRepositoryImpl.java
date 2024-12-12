@@ -2,6 +2,7 @@ package com.logistcshub.hub.area.infrastructure;
 
 import com.logistcshub.hub.area.domain.model.Area;
 import com.logistcshub.hub.area.domain.model.type.City;
+import com.logistcshub.hub.area.domain.model.type.State;
 import com.logistcshub.hub.area.domain.repository.AreaRepository;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +28,11 @@ public class AreaRepositoryImpl implements AreaRepository {
     @Override
     public Optional<Area> findById(UUID id) {
         return jpaAreaRepository.findById(id);
+    }
+
+    @Override
+    public Optional<Area> findByStateAndCity(State state, City city) {
+        return jpaAreaRepository.findByStateAndCity(state, city);
     }
 
     @Override

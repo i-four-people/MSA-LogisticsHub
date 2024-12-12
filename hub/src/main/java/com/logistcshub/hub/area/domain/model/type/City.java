@@ -13,11 +13,11 @@ public enum City {
     SONGPA("송파구", State.SEOUL),
 
     // 경기도
-    DEOKYANG("덕양구", State.GYEONGGI),
     ICHON("이천시", State.GYEONGGI),
+    GOYANG("고양시", State.GYEONGGI),
 
     // 부산광역시
-    JUNG_BU("중구", State.BUSAN),
+    DONGGU_BUSAN("동구", State.BUSAN),
 
     // 대구광역시
     BUKGU_DAEGU("북구", State.DAEGU),
@@ -41,22 +41,22 @@ public enum City {
     CHUNCHEON("춘천시", State.GANGWON),
 
     // 충청북도
-    SANGDANG("상당구", State.CHUNGBUK),
+    CHUNGJU("청주시", State.CHUNGBUK),
 
     // 충청남도
-    HONGBUK("홍북읍", State.CHUNGNAM),
+    HONGSUNG_CHUNGNAM("홍성군", State.CHUNGNAM),
 
-    // 전북특별자치도
-    WANSAN("완산구", State.JEONBUK),
+    // 전라북도
+    JEONJU("전주시", State.JEONBUK),
 
     // 전라남도
-    SAMHYANG("삼향읍", State.JEONNAM),
+    MUAN("무안군", State.JEONNAM),
 
     // 경상북도
-    PUNGCHEON("풍천면", State.GYEONGBUK),
+    ANDONG("안동시", State.GYEONGBUK),
 
     // 경상남도
-    UICHANG("의창구", State.GYEONGNAM);
+    CHANGWON("창원시", State.GYEONGNAM);
 
     private final String koreanName;
     private final State state;
