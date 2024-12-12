@@ -19,7 +19,7 @@ public class AddAreaListInserter {
     @PostConstruct
     public void init() {
         List<City> list = Arrays.stream(City.values()).toList();
-        UUID userid = UUID.fromString("1f40b195-4bcd-408c-8589-ed4567c5294e");
+        Long userid = 1L;
         List<Area> saveList = new ArrayList<>();
         for(City city : list) {
             if(!areaRepository.existsByCity(city)) {
