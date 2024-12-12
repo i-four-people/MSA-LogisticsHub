@@ -2,7 +2,6 @@ package com.logistcshub.user.application.security;
 
 import com.logistcshub.user.domain.model.User;
 import com.logistcshub.user.domain.model.UserRoleEnum;
-import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +11,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public record UserDetailsImpl(User user) implements UserDetails, Serializable {
+
+    public UserDetailsImpl(User user) {
+        this.user = user;
+    }
 
     @Override
     public String getPassword() {
