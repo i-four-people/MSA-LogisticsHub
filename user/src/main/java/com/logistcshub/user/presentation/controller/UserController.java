@@ -19,7 +19,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -36,7 +36,7 @@ public class UserController {
     }
 
     // 유저 전체 조회 (MASTER)
-    @GetMapping("/admin/users")
+    @GetMapping
     @PreAuthorize("hasAuthority('MASTER')")
     public ApiResponse<Page<SearchResponse>> getUserList(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -54,7 +54,7 @@ public class UserController {
     }
 
     // 유저 상세 조회 (MASTER)
-    @GetMapping("/admin/user/{id}")
+    @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('MASTER')")
     public ApiResponse<UserDto> get(@PathVariable Long id) {
         return ApiResponse.<UserDto>builder()
@@ -64,7 +64,7 @@ public class UserController {
     }
 
     // 유저 권한 수정 (MASTER)
-    @PatchMapping("/admin/user/{id}")
+    @PatchMapping("/{id}")
     @PreAuthorize("hasAuthority('MASTER')")
     public ApiResponse<UserDto> update(@PathVariable Long id, @RequestBody UserUpdateRequest userUpdateRequest) {
         return ApiResponse.<UserDto>builder()
@@ -74,7 +74,7 @@ public class UserController {
     }
 
     // 유저 탈퇴 (MASTER)
-    @DeleteMapping("/admin/user/{id}")
+    @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('MASTER')")
     public ApiResponse<String> delete(@PathVariable Long id) {
         return ApiResponse.<String>builder()
