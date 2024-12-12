@@ -5,11 +5,12 @@ import com.logistcshub.company.presentation.request.CompanyRequestDto;
 import com.logistcshub.company.presentation.response.ApiResponse;
 import com.logistcshub.company.presentation.response.CompanyResponseDto;
 import com.logistcshub.company.presentation.response.MessageType;
+import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.UUID;
 
@@ -45,6 +46,21 @@ public class CompanyController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(MessageType.DELETE, companyService.deleteCompany(id, userId)));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<Page<CompanyResponseDto>>> getCompanies(@RequestParam(required = false) UUID id,
+                                                                              @RequestParam(required = false) String name,
+                                                                              @RequestParam(required = false) String companyType,
+                                                                              @RequestParam(required = false) String address,
+                                                                              @RequestParam(required = false) String contact,
+                                                                              @RequestParam(defaultValue = "createdDate") String sortBy,
+                                                                              @RequestParam(defaultValue = "true") boolean isAsc,
+                                                                              Pageable pageable) {
+        Page<CompanyResponseDto> result = companyService.getCompanies(id, name, companyType, address, contact, sortBy, isAsc, pageable);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success(MessageType.RETRIEVE, result));
     }
 
 }
