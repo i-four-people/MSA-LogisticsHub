@@ -1,6 +1,6 @@
 package com.logistics.order.application.service;
 
-import com.logistics.order.application.dto.OrderCreateRequest;
+import com.logistics.order.application.dto.order.OrderCreateRequest;
 import com.logistics.order.application.dto.event.OrderCreateEvent;
 import com.logistics.order.domain.model.Order;
 import com.logistics.order.domain.repository.OrderRepository;
@@ -74,7 +74,7 @@ class OrderServiceImplTest {
         ArgumentCaptor<OrderCreateEvent> eventCaptor = ArgumentCaptor.forClass(OrderCreateEvent.class);
         verify(rabbitTemplate).convertAndSend(
                 eq(RabbitMQConfig.ORDER_EXCHANGE),
-                eq(RabbitMQConfig.ORDER_ROUTING_KEY),
+                eq(RabbitMQConfig.ORDER_CREATED_ROUTING_KEY),
                 eventCaptor.capture()
         );
 

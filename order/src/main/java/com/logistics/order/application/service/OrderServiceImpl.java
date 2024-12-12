@@ -1,7 +1,10 @@
 package com.logistics.order.application.service;
 
 import com.logistics.order.application.dto.*;
+import com.logistics.order.application.dto.company.CompanyResponse;
 import com.logistics.order.application.dto.event.OrderCreateEvent;
+import com.logistics.order.application.dto.order.*;
+import com.logistics.order.application.dto.product.ProductResponse;
 import com.logistics.order.domain.model.Order;
 import com.logistics.order.domain.repository.OrderRepository;
 import com.logistics.order.domain.service.OrderService;
@@ -9,6 +12,8 @@ import com.logistics.order.infrastructure.client.CompanyClient;
 import com.logistics.order.infrastructure.client.ProductClient;
 import com.logistics.order.infrastructure.config.RabbitMQConfig;
 import com.logistics.order.application.dto.SearchParameter;
+import com.logistics.order.presentation.exception.BusinessException;
+import com.logistics.order.presentation.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
@@ -46,7 +51,7 @@ public class OrderServiceImpl implements OrderService {
         // 이벤트 발행
         rabbitTemplate.convertAndSend(
                 RabbitMQConfig.ORDER_EXCHANGE,
-                RabbitMQConfig.ORDER_ROUTING_KEY,
+                RabbitMQConfig.ORDER_CREATED_ROUTING_KEY,
                 event);
     }
 
@@ -57,13 +62,13 @@ public class OrderServiceImpl implements OrderService {
 
         // 업체 정보 및 상품 정보 조회
         List<UUID> recipientCompanyIds = orders.map(Order::getRecipientCompanyId).stream().distinct().toList();
-        List<CompanyResponse> recipientCompanies = companyClient.getCompaniesByIds(recipientCompanyIds);
+        List<CompanyResponse> recipientCompanies = companyClient.findCompaniesByIds(recipientCompanyIds);
 
         List<UUID> requestCompanyIds = orders.map(Order::getRequesterCompanyId).stream().distinct().toList();
-        List<CompanyResponse> requestCompanies = companyClient.getCompaniesByIds(requestCompanyIds);
+        List<CompanyResponse> requestCompanies = companyClient.findCompaniesByIds(requestCompanyIds);
 
         List<UUID> productIds = orders.map(Order::getProductId).stream().distinct().toList();
-        List<ProductResponse> products = productClient.getProductsByIds(productIds);
+        List<ProductResponse> products = productClient.findProductsByIds(productIds);
 
         // 응답값 반환
         Map<UUID, CompanyResponse> recipientCompanyMap = recipientCompanies.stream().collect(Collectors.toMap(CompanyResponse::companyId, c -> c));
@@ -90,6 +95,65 @@ public class OrderServiceImpl implements OrderService {
             return orderRepository.searchOrdersByCompanyIds(searchParameter, companyIds);
         }
         return orderRepository.searchOrders(searchParameter);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public OrderDetailResponse getOrderById(UUID orderId) {
+
+        Order findOrder = orderRepository.findById(orderId).orElseThrow(
+                () -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND)
+        );
+
+        // 업체 정보 및 상품 정보 조회
+        CompanyResponse recipientCompany = companyClient.findCompanyById(findOrder.getRecipientCompanyId());
+        CompanyResponse requestCompany = companyClient.findCompanyById(findOrder.getRequesterCompanyId());
+        ProductResponse product = productClient.findProductById(findOrder.getProductId());
+
+        return OrderDetailResponse.from(findOrder, recipientCompany, requestCompany, product);
+    }
+
+    @Override
+    public OrderDetailResponse updateOrderById(UUID orderId, OrderUpdateRequest request) {
+
+        Order findOrder = orderRepository.findById(orderId).orElseThrow(
+                () -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND)
+        );
+
+        // 상품 수량 확인 및 감소
+        productClient.decreaseStock(findOrder.getProductId(), request.quantity());
+
+        findOrder.update(request);
+
+        // 업체 정보 및 상품 정보 조회
+        CompanyResponse recipientCompany = companyClient.findCompanyById(findOrder.getRecipientCompanyId());
+        CompanyResponse requestCompany = companyClient.findCompanyById(findOrder.getRequesterCompanyId());
+        ProductResponse product = productClient.findProductById(findOrder.getProductId());
+
+        return OrderDetailResponse.from(findOrder, recipientCompany, requestCompany, product);
+    }
+
+    @Override
+    public OrderDeleteResponse deleteOrderById(UUID orderId) {
+
+        Order findOrder = orderRepository.findById(orderId).orElseThrow(
+                () -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND)
+        );
+
+        if (findOrder.isDelete()) {
+            throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
+        }
+
+        // 이벤트 생성
+        OrderCreateEvent event = OrderCreateEvent.of(findOrder);
+
+        // 이벤트 발행
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.ORDER_EXCHANGE,
+                RabbitMQConfig.ORDER_DELETED_ROUTING_KEY,
+                event);
+
+        return OrderDeleteResponse.from(findOrder);
     }
 
 }

@@ -1,11 +1,8 @@
 package com.logistics.order.infrastructure.client;
 
-import com.logistics.order.application.dto.CompanyResponse;
+import com.logistics.order.application.dto.company.CompanyResponse;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,7 +13,10 @@ public interface CompanyClient {
     @GetMapping("/api/companies/search-by-name")
     List<CompanyResponse> findCompaniesByName(@RequestParam("name") String name);
 
+    @GetMapping("/api/companies/{companyId}")
+    CompanyResponse findCompanyById(@PathVariable("companyId") UUID companyId);
+
     @PostMapping("/companies/batch")
-    List<CompanyResponse> getCompaniesByIds(@RequestBody List<UUID> ids);
+    List<CompanyResponse> findCompaniesByIds(@RequestBody List<UUID> ids);
 
 }
