@@ -1,4 +1,4 @@
-package com.logistics.order.domain.model;
+package com.logistics.delivery.domain.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -28,6 +28,7 @@ public abstract class AuditingFields {
     @Column(nullable = false, updatable = false)
     @Comment("생성자")
     private String createdBy;
+
 
     @LastModifiedDate
     @Column
