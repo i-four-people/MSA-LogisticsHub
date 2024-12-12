@@ -1,13 +1,11 @@
 package com.logistcshub.user.application.service;
 
 import com.logistcshub.user.application.dtos.MyInfoDto;
-import com.logistcshub.user.application.dtos.SearchResponse;
+import com.logistcshub.user.infrastructure.common.SearchResponse;
 import com.logistcshub.user.application.dtos.UserDto;
 import com.logistcshub.user.domain.model.User;
 import com.logistcshub.user.domain.model.UserRoleEnum;
 import com.logistcshub.user.domain.repository.UserRepository;
-import com.logistcshub.user.infrastructure.common.PageResponse;
-import com.logistcshub.user.infrastructure.common.SearchParameter;
 import com.logistcshub.user.presentation.request.SearchRequest;
 import com.logistcshub.user.presentation.request.UserUpdateRequest;
 import jakarta.persistence.EntityNotFoundException;

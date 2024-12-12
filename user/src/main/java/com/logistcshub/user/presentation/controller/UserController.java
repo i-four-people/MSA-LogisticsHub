@@ -1,18 +1,15 @@
 package com.logistcshub.user.presentation.controller;
 
 import com.logistcshub.user.application.dtos.MyInfoDto;
-import com.logistcshub.user.application.dtos.SearchResponse;
+import com.logistcshub.user.infrastructure.common.SearchResponse;
 import com.logistcshub.user.application.dtos.UserDto;
 import com.logistcshub.user.application.security.UserDetailsImpl;
 import com.logistcshub.user.application.service.UserService;
 import com.logistcshub.user.domain.model.UserRoleEnum;
 import com.logistcshub.user.infrastructure.common.ApiResponse;
 import com.logistcshub.user.infrastructure.common.MessageType;
-import com.logistcshub.user.infrastructure.common.PageResponse;
-import com.logistcshub.user.infrastructure.common.SearchParameter;
 import com.logistcshub.user.presentation.request.SearchRequest;
 import com.logistcshub.user.presentation.request.UserUpdateRequest;
-import io.micrometer.core.instrument.search.Search;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
