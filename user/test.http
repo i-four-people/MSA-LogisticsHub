@@ -18,6 +18,35 @@ POST http://localhost:19093/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "user123@email.com",
+  "email": "master123@email.com",
   "password": "Qwer1234@"
 }
+
+### 내 정보 조회
+GET http://localhost:19093/api/user/2
+Content-Type: application/json
+
+### 유저 전체 조회 (MASTER)
+GET http://localhost:19093/api/users
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczMzkxOTkzMiwiZXhwIjoxNzMzOTIwMjkyfQ.5_47UQCW9rhLFu_AsTMdSs4NN9Stz7gn829AmJMvxjVzTwNDtYwSzMmHr5VTa5Y_TFkMkNWrkh3xqzvQjHHzsg
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: MASTER
+
+### 유저 권한 수정 (MASTER)
+PATCH http://localhost:19093/api/user/2
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczMzkxOTkzMiwiZXhwIjoxNzMzOTIwMjkyfQ.5_47UQCW9rhLFu_AsTMdSs4NN9Stz7gn829AmJMvxjVzTwNDtYwSzMmHr5VTa5Y_TFkMkNWrkh3xqzvQjHHzsg
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: MASTER
+
+{
+  "role": "COMPANY_MANAGER"
+}
+
+### 유저 탈퇴
+DELETE http://localhost:19093/api/user/2
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczMzkxOTkzMiwiZXhwIjoxNzMzOTIwMjkyfQ.5_47UQCW9rhLFu_AsTMdSs4NN9Stz7gn829AmJMvxjVzTwNDtYwSzMmHr5VTa5Y_TFkMkNWrkh3xqzvQjHHzsg
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: MASTER

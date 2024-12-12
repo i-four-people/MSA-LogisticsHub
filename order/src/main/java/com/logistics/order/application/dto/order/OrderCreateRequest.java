@@ -1,4 +1,4 @@
-package com.logistics.order.application.dto;
+package com.logistics.order.application.dto.order;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;

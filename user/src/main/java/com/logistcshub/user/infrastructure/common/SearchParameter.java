@@ -1,4 +1,4 @@
-package com.logistics.order.presentation.request;
+package com.logistcshub.user.infrastructure.common;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
