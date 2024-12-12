@@ -1,8 +1,11 @@
 package com.logistics.order.infrastructure.repository;
 
+import com.logistics.order.application.dto.SearchParameter;
 import com.logistics.order.domain.model.Order;
 import com.logistics.order.domain.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -34,4 +37,15 @@ public class OrderRepositoryImpl implements OrderRepository {
     public void deleteById(UUID id) {
         jpaOrderRepository.deleteById(id);
     }
+
+    @Override
+    public Page<Order> searchOrders(SearchParameter searchParameter) {
+        return jpaOrderRepository.searchOrders(searchParameter);
+    }
+
+    @Override
+    public Page<Order> searchOrdersByCompanyIds(SearchParameter searchParameter, List<UUID> companyIds) {
+        return jpaOrderRepository.searchOrdersByCompanyIds(searchParameter, companyIds);
+    }
+
 }
