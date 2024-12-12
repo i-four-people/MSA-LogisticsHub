@@ -1,4 +1,4 @@
-package com.logistics.order.presentation.response;
+package com.logistics.order.application.dto;
 
 import org.springframework.data.domain.Page;
 import java.util.List;
