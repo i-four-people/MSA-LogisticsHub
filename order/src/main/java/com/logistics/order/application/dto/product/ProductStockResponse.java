@@ -1,4 +1,4 @@
-package com.logistics.order.application.dto;
+package com.logistics.order.application.dto.product;
 
 import java.util.UUID;
 

@@ -86,9 +86,9 @@ public class User {
         this.role = role;
     }
 
-    public void delete(String id) {
+    public void delete(Long id) {
         deletedAt = LocalDateTime.now();
-        deletedBy = id;
+        deletedBy = "MASTER";
         isDelete = true;
     }
 }
