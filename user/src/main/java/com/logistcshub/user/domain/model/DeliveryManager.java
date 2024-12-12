@@ -3,7 +3,6 @@ package com.logistcshub.user.domain.model;
 import com.logistcshub.user.infrastructure.common.AuditEntity;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
 
@@ -29,13 +28,17 @@ public class DeliveryManager extends AuditEntity {
     @Enumerated(EnumType.STRING)
     private DeliveryManagerType deliveryPersonType;
 
+    @Column(nullable = false, unique = true)
+    private Long deliverySequence;
+
     // 배송 담당자 등록
-    public static DeliveryManager create(Long userId, UUID hubId, DeliveryManagerType deliveryPersonType) {
+    public static DeliveryManager create(Long userId, UUID hubId, DeliveryManagerType deliveryPersonType, Long deliverySequence) {
         return DeliveryManager.builder()
                 .id(userId)
                 .userId(userId)
                 .hubId(hubId)
                 .deliveryPersonType(deliveryPersonType)
+                .deliverySequence(userId)
                 .build();
     }
 }
