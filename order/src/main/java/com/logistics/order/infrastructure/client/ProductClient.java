@@ -13,9 +13,9 @@ public interface ProductClient {
     @PatchMapping("/api/products/{productId}/stock")
     void decreaseStock(@PathVariable("productId") UUID productId, int quantity);
 
-    @PostMapping("/products/batch")
+    @PostMapping("/api/products/batch")
     List<ProductResponse> findProductsByIds(@RequestBody List<UUID> ids);
 
-    @GetMapping("/products/{productId}")
+    @GetMapping("/api/products/{productId}")
     ProductResponse findProductById(@PathVariable("productId") UUID productId);
 }
