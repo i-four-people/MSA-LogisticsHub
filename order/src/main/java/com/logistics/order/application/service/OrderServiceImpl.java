@@ -43,7 +43,8 @@ public class OrderServiceImpl implements OrderService {
         productClient.decreaseStock(request.productId(), request.quantity());
 
         // 주문 정보 저장
-        Order savedOrder = orderRepository.save(Order.create(request));
+        ProductResponse product = productClient.findProductById(request.productId());
+        Order savedOrder = orderRepository.save(Order.create(request, product.companyId()));
 
         // 이벤트 생성
         OrderCreateEvent event = OrderCreateEvent.of(savedOrder);
@@ -64,7 +65,7 @@ public class OrderServiceImpl implements OrderService {
         List<UUID> recipientCompanyIds = orders.map(Order::getRecipientCompanyId).stream().distinct().toList();
         List<CompanyResponse> recipientCompanies = companyClient.findCompaniesByIds(recipientCompanyIds);
 
-        List<UUID> requestCompanyIds = orders.map(Order::getRequesterCompanyId).stream().distinct().toList();
+        List<UUID> requestCompanyIds = orders.map(Order::getSupplyCompanyId).stream().distinct().toList();
         List<CompanyResponse> requestCompanies = companyClient.findCompaniesByIds(requestCompanyIds);
 
         List<UUID> productIds = orders.map(Order::getProductId).stream().distinct().toList();
@@ -77,7 +78,7 @@ public class OrderServiceImpl implements OrderService {
 
         Page<OrderResponse> results = orders.map(order -> {
             CompanyResponse recipientCompany = recipientCompanyMap.get(order.getRecipientCompanyId());
-            CompanyResponse requestCompany = requestCompanyMap.get(order.getRequesterCompanyId());
+            CompanyResponse requestCompany = requestCompanyMap.get(order.getSupplyCompanyId());
             ProductResponse product = productMap.get(order.getProductId());
             return OrderResponse.from(order, recipientCompany, requestCompany, product);
         });
@@ -107,7 +108,7 @@ public class OrderServiceImpl implements OrderService {
 
         // 업체 정보 및 상품 정보 조회
         CompanyResponse recipientCompany = companyClient.findCompanyById(findOrder.getRecipientCompanyId());
-        CompanyResponse requestCompany = companyClient.findCompanyById(findOrder.getRequesterCompanyId());
+        CompanyResponse requestCompany = companyClient.findCompanyById(findOrder.getSupplyCompanyId());
         ProductResponse product = productClient.findProductById(findOrder.getProductId());
 
         return OrderDetailResponse.from(findOrder, recipientCompany, requestCompany, product);
@@ -127,7 +128,7 @@ public class OrderServiceImpl implements OrderService {
 
         // 업체 정보 및 상품 정보 조회
         CompanyResponse recipientCompany = companyClient.findCompanyById(findOrder.getRecipientCompanyId());
-        CompanyResponse requestCompany = companyClient.findCompanyById(findOrder.getRequesterCompanyId());
+        CompanyResponse requestCompany = companyClient.findCompanyById(findOrder.getSupplyCompanyId());
         ProductResponse product = productClient.findProductById(findOrder.getProductId());
 
         return OrderDetailResponse.from(findOrder, recipientCompany, requestCompany, product);

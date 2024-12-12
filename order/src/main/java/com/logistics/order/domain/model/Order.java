@@ -23,11 +23,11 @@ public class Order extends AuditingFields {
     @Comment("주문 고유 ID")
     private UUID id;
 
-    @Comment("요청 업체(공급 업체) ID")
-    private UUID requesterCompanyId;
-
     @Comment("수령 업체 ID")
     private UUID recipientCompanyId;
+
+    @Comment("공급 업체 ID")
+    private UUID supplyCompanyId;
 
     @Comment("배송 ID")
     private UUID deliveryId;
@@ -44,12 +44,12 @@ public class Order extends AuditingFields {
     @Comment("요청 사항")
     private String requestNotes;
 
-    @Comment("비활성화 여부")
+    @Comment("삭제 여부")
     private boolean isDelete;
 
     @Builder
-    private Order(UUID requesterCompanyId, UUID recipientCompanyId, UUID deliveryId, UUID productId, BigDecimal price, int quantity, String requestNotes) {
-        this.requesterCompanyId = requesterCompanyId;
+    private Order(UUID supplyCompanyId, UUID recipientCompanyId, UUID deliveryId, UUID productId, BigDecimal price, int quantity, String requestNotes) {
+        this.supplyCompanyId = supplyCompanyId;
         this.recipientCompanyId = recipientCompanyId;
         this.deliveryId = deliveryId;
         this.productId = productId;
@@ -64,9 +64,10 @@ public class Order extends AuditingFields {
      * @param request 주문 생성 request
      * @return Order
      */
-    public static Order create(OrderCreateRequest request) {
+    public static Order create(OrderCreateRequest request, UUID supplyCompanyId) {
         return Order.builder()
                 .recipientCompanyId(request.recipientCompanyId())
+                .supplyCompanyId(supplyCompanyId)
                 .productId(request.productId())
                 .quantity(request.quantity())
                 .price(BigDecimal.valueOf(request.price()))

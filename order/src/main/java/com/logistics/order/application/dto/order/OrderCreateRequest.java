@@ -15,7 +15,7 @@ public record OrderCreateRequest(
         @Positive(message = "Quantity must be greater than 0.")
         int quantity,
 
-        @Positive(message = "Quantity must be greater than 0.")
+        @Positive(message = "Price must be greater than 0.")
         int price,
 
         String requestNote

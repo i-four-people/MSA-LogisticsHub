@@ -7,7 +7,7 @@ import java.util.UUID;
 public record OrderCreateEvent(
         UUID orderId,
         UUID productId,
-        UUID requesterCompanyId,
+        UUID supplyCompanyId,
         UUID recipientCompanyId,
         int quantity
 ) {
@@ -15,7 +15,7 @@ public record OrderCreateEvent(
         return new OrderCreateEvent(
                 order.getId(),
                 order.getProductId(),
-                order.getRequesterCompanyId(),
+                order.getSupplyCompanyId(),
                 order.getRecipientCompanyId(),
                 order.getQuantity()
         );
