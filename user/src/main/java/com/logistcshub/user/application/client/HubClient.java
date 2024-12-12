@@ -12,5 +12,5 @@ import java.util.UUID;
 public interface HubClient {
 
     @GetMapping("/api/hubs/{id}")
-    ApiResponse<HubRequest> getHub(@PathVariable("id") UUID id);
+    ApiResponse<HubRequest> findHub(@PathVariable("id") UUID id);
 }
