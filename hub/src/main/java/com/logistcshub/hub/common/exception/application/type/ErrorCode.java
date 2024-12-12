@@ -16,6 +16,11 @@ public enum ErrorCode {
     CITY_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 시/군/구를 찾을 수 없습니다"),
     AREA_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 지역을 찾을 수 없습니다"),
 
+    KAKAO_MAP_CLIENT_ERROR(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    KAKAO_MAP_SERVER_ERROR(HttpStatus.BAD_GATEWAY, "카카오 맵 API 서버 에러입니다."),
+    KAKAO_MAP_TIME_OUT(HttpStatus.GATEWAY_TIMEOUT, "카카오 맵 API TIME OUT"),
+
+
     ;
 
     private final HttpStatus httpStatus;

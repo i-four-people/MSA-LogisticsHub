@@ -16,18 +16,7 @@ spring:
         - id: hub-service
           uri: lb://hub-service
           predicates:
-            - Path=/api/areas/**
-            - Path=/api/hubs/**
-            - Path=/api/hub-transfers/**
-        - id: order-service
-          uri: lb://order-service
-          predicates:
-            - Path=/api/orders/**
-        - id: delivery-service
-          uri: lb://delivery-service
-          predicates:
-            - Path=/api/deliveries/**
-            - Path=/api/delivery-routes/**
+            - Path=/api/areas/**, /api/hubs/**, /api/hub-transfers/**
 
       discovery:
         locator:
