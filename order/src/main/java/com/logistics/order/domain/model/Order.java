@@ -1,6 +1,7 @@
 package com.logistics.order.domain.model;
 
-import com.logistics.order.application.dto.OrderCreateRequest;
+import com.logistics.order.application.dto.order.OrderCreateRequest;
+import com.logistics.order.application.dto.order.OrderUpdateRequest;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -73,9 +74,22 @@ public class Order extends AuditingFields {
                 .build();
     }
 
-    // 총 가격 계산 메서드
+    /**
+     * 주문 총 가격 계산하는 메서드
+     *
+     * @return 주문 총 가격
+     */
     public int calculateTotalPrice() {
         return price.multiply(BigDecimal.valueOf(quantity)).intValue();
     }
 
+    /**
+     * 주문 정보 수정하는 메서드
+     *
+     * @param request 주문 수정 정보
+     */
+    public void update(OrderUpdateRequest request) {
+        this.quantity = request.quantity();
+        this.requestNotes = request.requestNote();
+    }
 }
