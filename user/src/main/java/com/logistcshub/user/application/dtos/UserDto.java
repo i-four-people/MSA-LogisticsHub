@@ -2,6 +2,7 @@ package com.logistcshub.user.application.dtos;
 
 import com.logistcshub.user.domain.model.User;
 import com.logistcshub.user.domain.model.UserRoleEnum;
+import com.querydsl.core.annotations.QueryProjection;
 
 import java.time.LocalDateTime;
 import java.io.Serializable;
@@ -32,5 +33,20 @@ public record UserDto(
                 user.getUpdatedAt(),
                 user.getUpdatedBy()
         );
+    }
+
+    @QueryProjection
+    public UserDto(Long userId, String username, String email, String tel, String slackId, UserRoleEnum role,
+                   LocalDateTime createdAt, String createdBy, LocalDateTime updatedAt, String updatedBy) {
+        this.userId = userId;
+        this.username = username;
+        this.email = email;
+        this.tel = tel;
+        this.slackId = slackId;
+        this.role = role;
+        this.createdAt = createdAt;
+        this.createdBy = createdBy;
+        this.updatedAt = updatedAt;
+        this.updatedBy = updatedBy;
     }
 }
