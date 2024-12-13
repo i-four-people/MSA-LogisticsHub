@@ -13,10 +13,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @EnableJpaAuditing
 @Configuration
-public class JpaAuditingConfig implements AuditorAware<Long> {
+public class JpaAuditingConfig implements AuditorAware<String> {
 
     @Override
-    public Optional<Long> getCurrentAuditor() {
+    public Optional<String> getCurrentAuditor() {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
@@ -24,7 +24,7 @@ public class JpaAuditingConfig implements AuditorAware<Long> {
                 .equals("anonymousUser")) {
             return Optional.empty();
         }
-        String userId = ((UserDetailsImpl) authentication.getPrincipal()).getUsername();
-        return Optional.of(Long.parseLong(userId));
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        return Optional.of(userDetails.getUsername());
     }
 }

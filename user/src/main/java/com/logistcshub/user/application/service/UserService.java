@@ -1,7 +1,7 @@
 package com.logistcshub.user.application.service;
 
 import com.logistcshub.user.application.dtos.MyInfoDto;
-import com.logistcshub.user.infrastructure.common.SearchResponse;
+import com.logistcshub.user.presentation.response.SearchResponse;
 import com.logistcshub.user.application.dtos.UserDto;
 import com.logistcshub.user.domain.model.User;
 import com.logistcshub.user.domain.model.UserRoleEnum;
@@ -34,6 +34,13 @@ public class UserService {
         return userRepository.findAllUser(pageable, searchRequest);
     }
 
+    public UserDto get(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
+
+        return UserDto.of(user);
+    }
+
     @Transactional
     public UserDto update(Long id, UserUpdateRequest userUpdateRequest) {
         User user =  userRepository.findById(id)
@@ -49,16 +56,8 @@ public class UserService {
                 .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
 
         // 논리적 삭제
-        user.delete(user.getEmail());
+        user.delete(user.getUsername());
 
         return user.getUsername() + " 회원님 탈퇴 완로 되었습니다.";
     }
-
-    public UserDto get(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
-
-        return UserDto.of(user);
-    }
-
 }

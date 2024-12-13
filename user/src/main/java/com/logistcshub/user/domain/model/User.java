@@ -59,7 +59,4 @@ public class User extends AuditEntity {
     public void updateUserRole(UserRoleEnum role) {
         this.role = role;
     }
-
-    public void setId(long l) {
-    }
 }

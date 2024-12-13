@@ -2,7 +2,7 @@ package com.logistcshub.user.infrastructure.repository;
 
 import com.logistcshub.user.application.dtos.QUserDto;
 import com.logistcshub.user.domain.repository.UserRepositoryCustom;
-import com.logistcshub.user.infrastructure.common.SearchResponse;
+import com.logistcshub.user.presentation.response.SearchResponse;
 import com.logistcshub.user.application.dtos.UserDto;
 import com.logistcshub.user.domain.model.UserRoleEnum;
 import com.logistcshub.user.presentation.request.SearchRequest;
