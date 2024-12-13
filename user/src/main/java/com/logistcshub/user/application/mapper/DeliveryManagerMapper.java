@@ -1,4 +1,4 @@
-package com.logistcshub.user.application;
+package com.logistcshub.user.application.mapper;
 
 import com.logistcshub.user.domain.model.DeliveryManager;
 import com.logistcshub.user.presentation.request.DeliveryManagerCreate;

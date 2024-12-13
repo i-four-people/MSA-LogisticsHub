@@ -7,8 +7,9 @@ import com.logistcshub.user.application.dtos.HubDto;
 import com.logistcshub.user.application.security.UserDetailsImpl;
 import com.logistcshub.user.domain.model.HubManager;
 import com.logistcshub.user.domain.model.User;
-import com.logistcshub.user.domain.repository.HubManagerRepository;
-import com.logistcshub.user.domain.repository.UserRepository;
+import com.logistcshub.user.domain.model.UserRoleEnum;
+import com.logistcshub.user.infrastructure.repository.HubManagerRepository;
+import com.logistcshub.user.infrastructure.repository.UserRepository;
 import com.logistcshub.user.presentation.request.HubManagerRequest;
 import com.logistcshub.user.presentation.response.HubManagerResponse;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
+import org.springframework.security.access.AccessDeniedException;
 import java.util.Map;
 
 @Service
@@ -27,10 +29,14 @@ public class HubManagerService {
     private final HubManagerRepository hubManagerRepository;
     private final HubClient hubClient;
 
-    public HubManagerResponse createHubManager(UserDetailsImpl userDetails, HubManagerRequest hubManagerRequest) {
+    public HubManagerResponse createHubManager(UserDetailsImpl userDetails, HubManagerRequest hubManagerRequest) throws AccessDeniedException {
 
         User user = userRepository.findById(hubManagerRequest.userId())
                 .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
+
+        if (!user.getRole().equals(UserRoleEnum.HUB_MANAGER)) {
+            throw new AccessDeniedException("해당 유저의 권한이 허브 매니저가 아닙니다.");
+        }
 
         Long userId = userDetails.getUserId();
         String role = String.valueOf(userDetails.user().getRole());
