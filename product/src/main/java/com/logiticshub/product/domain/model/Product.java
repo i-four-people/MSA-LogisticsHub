@@ -29,6 +29,8 @@ public class Product {
 
     private String description;
 
+    private Integer price;
+
     private Integer stock;
 
     private UUID companyId;
@@ -54,14 +56,27 @@ public class Product {
 
     private String deletedBy;
 
+
     public void create(Long id) {
         createdAt = LocalDateTime.now();
         createdBy = id.toString();
     }
 
     public void update(Long id, ProductRequestDto productRequestDto) {
-
-
+        this.updatedAt = LocalDateTime.now();
+        this.updatedBy = id.toString();
+        this.name= productRequestDto.name();
+        this.description = productRequestDto.description();
+        this.price = productRequestDto.price();
+        this.stock = productRequestDto.stock();
+        this.companyId = productRequestDto.companyId();
+        this.hubId = productRequestDto.hubId();
+        this.isDelete = false;
     }
 
+    public void delete(Long userId) {
+        this.deletedAt = LocalDateTime.now();
+        this.deletedBy = userId.toString();
+        this.isDelete = true;
+    }
 }
