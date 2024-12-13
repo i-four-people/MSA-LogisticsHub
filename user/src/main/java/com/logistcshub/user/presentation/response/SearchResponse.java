@@ -1,4 +1,4 @@
-package com.logistcshub.user.infrastructure.common;
+package com.logistcshub.user.presentation.response;
 
 import com.logistcshub.user.application.dtos.UserDto;
 

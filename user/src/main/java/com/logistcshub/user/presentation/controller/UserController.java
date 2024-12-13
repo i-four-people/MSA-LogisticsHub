@@ -1,22 +1,19 @@
 package com.logistcshub.user.presentation.controller;
 
 import com.logistcshub.user.application.dtos.MyInfoDto;
-import com.logistcshub.user.infrastructure.common.SearchResponse;
+import com.logistcshub.user.presentation.response.SearchResponse;
 import com.logistcshub.user.application.dtos.UserDto;
 import com.logistcshub.user.application.security.UserDetailsImpl;
 import com.logistcshub.user.application.service.UserService;
 import com.logistcshub.user.domain.model.UserRoleEnum;
 import com.logistcshub.user.infrastructure.common.ApiResponse;
 import com.logistcshub.user.infrastructure.common.MessageType;
-import com.logistcshub.user.presentation.request.HubManagerRequest;
 import com.logistcshub.user.presentation.request.SearchRequest;
 import com.logistcshub.user.presentation.request.UserUpdateRequest;
-import com.logistcshub.user.presentation.response.HubManagerResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -38,7 +35,7 @@ public class UserController {
                 .build();
     }
 
-    // 유저 전체 조회 (MASTER)
+    // 유저 전체 조회
     @GetMapping
     @PreAuthorize("hasAuthority('MASTER')")
     public ApiResponse<Page<SearchResponse>> getUserList(
@@ -56,7 +53,7 @@ public class UserController {
                 .build();
     }
 
-    // 유저 상세 조회 (MASTER)
+    // 유저 상세 조회
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('MASTER')")
     public ApiResponse<UserDto> get(@PathVariable Long id) {
@@ -66,7 +63,7 @@ public class UserController {
                 .build();
     }
 
-    // 유저 권한 수정 (MASTER)
+    // 유저 권한 수정
     @PatchMapping("/{id}")
     @PreAuthorize("hasAuthority('MASTER')")
     public ApiResponse<UserDto> update(@PathVariable Long id, @RequestBody UserUpdateRequest userUpdateRequest) {
@@ -76,7 +73,7 @@ public class UserController {
                 .build();
     }
 
-    // 유저 탈퇴 (MASTER)
+    // 유저 탈퇴
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAuthority('MASTER')")
     public ApiResponse<String> delete(@PathVariable Long id) {
@@ -85,5 +82,4 @@ public class UserController {
                 .data(userService.delete(id))
                 .build();
     }
-
 }

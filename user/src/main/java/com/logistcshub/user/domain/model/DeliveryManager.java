@@ -29,21 +29,27 @@ public class DeliveryManager extends AuditEntity {
 
     @Column(nullable = false, length = 50)
     @Enumerated(EnumType.STRING)
-    private DeliveryManagerType deliveryPersonType;
+    private DeliveryManagerType deliveryManagerType;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private DeliveryStatus status;
 
     // 배송 담당자 등록
-    public static DeliveryManager from(String ksuid, Long userId, UUID hubId, DeliveryManagerType deliveryPersonType) {
+    public static DeliveryManager from(String ksuid, Long userId, UUID hubId, DeliveryManagerType deliveryManagerType) {
         return DeliveryManager.builder()
                 .id(userId)
                 .ksuid(ksuid)
                 .userId(userId)
                 .hubId(hubId)
-                .deliveryPersonType(deliveryPersonType)
+                .deliveryManagerType(deliveryManagerType)
                 .status(DeliveryStatus.COMPLETED)
                 .build();
+    }
+
+    // 배송 담당자 수정
+    public void update(DeliveryManagerType deliveryManagerType, UUID hubId) {
+        this.deliveryManagerType = deliveryManagerType;
+        this.hubId = hubId;
     }
 }
