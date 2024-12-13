@@ -17,12 +17,13 @@ public record ApiResponse<T>(
                 LocalDateTime.now()
         );
     }
-    public static <T> ApiResponse<T> error(String message, T data) {
+    public static <T> ApiResponse<T> error(MessageType messageType, T errorData) {
         return new ApiResponse<>(
-                "error", // 상태 메시지
-                message,
-                data,
-                LocalDateTime.now() // 현재 시간
+                "error",
+                messageType.getMessage(),
+                errorData,
+                LocalDateTime.now()
         );
     }
+
 }
