@@ -20,8 +20,14 @@ public enum ErrorCode {
     KAKAO_MAP_SERVER_ERROR(HttpStatus.BAD_GATEWAY, "카카오 맵 API 서버 에러입니다."),
     KAKAO_MAP_TIME_OUT(HttpStatus.GATEWAY_TIMEOUT, "카카오 맵 API TIME OUT"),
 
+    KAKAO_ROAD_CLIENT_ERROR(HttpStatus.BAD_REQUEST, "잘못된 요청입니다."),
+    KAKAO_ROAD_SERVER_ERROR(HttpStatus.BAD_GATEWAY, "카카오 길찾기 API 서버 에러입니다."),
+    KAKAO_ROAD_TIME_OUT(HttpStatus.GATEWAY_TIMEOUT, "카카오 길찾기 API TIME OUT"),
+    KAKAO_ROAD_NOT_FOUND(HttpStatus.NOT_FOUND, "카카오 길찾기에 실패했습니다."),
+
     HUB_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 허브를 찾을 수 없습니다."),
     ALREADY_EXISTS_HUB(HttpStatus.BAD_REQUEST, "이미 존재하는 허브입니다."),
+    ALREADY_EXISTS_HUB_TRANSFER(HttpStatus.BAD_REQUEST, "이미 존재하는 경로입니다. 시간 혹은 거리를 업데이트 하시고 싶으시면 PUT 요청해주세요."),
 
 
     ;
