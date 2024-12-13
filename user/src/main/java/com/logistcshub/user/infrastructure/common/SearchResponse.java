@@ -1,4 +1,6 @@
-package com.logistcshub.user.application.dtos;
+package com.logistcshub.user.infrastructure.common;
+
+import com.logistcshub.user.application.dtos.UserDto;
 
 import java.io.Serializable;
 import java.util.List;

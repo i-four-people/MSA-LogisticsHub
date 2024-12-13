@@ -1,5 +1,6 @@
 package com.logistcshub.hub.hub.application.service;
 
+import static com.logistcshub.hub.common.exception.application.type.ErrorCode.ALREADY_EXISTS_HUB;
 import static com.logistcshub.hub.common.exception.application.type.ErrorCode.AREA_NOT_FOUND;
 import static com.logistcshub.hub.common.exception.application.type.ErrorCode.HUB_NOT_FOUND;
 import static com.logistcshub.hub.common.exception.application.type.ErrorCode.INTERNAL_SERVER_ERROR;
@@ -20,8 +21,11 @@ import com.logistcshub.hub.hub.application.dtos.HubResponseDto;
 import com.logistcshub.hub.hub.application.dtos.UpdateHubResponseDto;
 import com.logistcshub.hub.hub.domain.mode.Hub;
 import com.logistcshub.hub.hub.domain.repository.HubRepository;
+import com.logistcshub.hub.hub.domain.repository.HubSearchRepository;
 import com.logistcshub.hub.hub.presentation.request.AddHubRequestDto;
 import com.logistcshub.hub.hub.presentation.request.UpdateHubRequestDto;
+import com.logistcshub.hub.hub.presentation.request.type.HubSearchType;
+import com.logistcshub.hub.hub.presentation.request.type.SortType;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -29,6 +33,8 @@ import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -50,12 +56,17 @@ public class HubService {
     private final AreaRepository areaRepository;
     private final RestTemplate restTemplate;
     private final KakaoMapConfig kakaoMapConfig;
+    private final HubSearchRepository hubSearchRepository;
 
     public AddHubResponseDto addHub(Long userId, String role, AddHubRequestDto request) {
         String[] addresses = request.address().split(" ");
 
         Area area = findAreaToAddress(addresses);
         String detailAddress = getDetailAddress(addresses);
+
+        if(hubRepository.existsByAreaAndAddress(area, detailAddress)) {
+            throw new RestApiException(ALREADY_EXISTS_HUB);
+        }
 
         Hub hub = extracted(request.name(), request.address(), detailAddress, area);
 
@@ -171,5 +182,7 @@ public class HubService {
     }
 
 
-
+    public PagedModel<HubResponseDto> searchHubs(Long userId, String role, String keyword, HubSearchType type, Pageable pageable, SortType sortBy, boolean isAsc) {
+        return new PagedModel<>(hubSearchRepository.findAllHubResponseDto(keyword, type, pageable, sortBy, isAsc));
+    }
 }
