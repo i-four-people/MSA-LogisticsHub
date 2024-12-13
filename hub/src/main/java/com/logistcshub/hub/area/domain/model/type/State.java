@@ -35,6 +35,10 @@ public enum State {
         return koreanName;
     }
 
+    public static String getKoreanName(State state) {
+        return state.getKoreanName();
+    }
+
     public static State findState(String koreanName) {
         return Arrays.stream(State.values())
                 .filter(state -> state.getKoreanName().equals(koreanName))

@@ -13,8 +13,13 @@ import com.logistcshub.hub.hub.application.dtos.UpdateHubResponseDto;
 import com.logistcshub.hub.hub.application.service.HubService;
 import com.logistcshub.hub.hub.presentation.request.AddHubRequestDto;
 import com.logistcshub.hub.hub.presentation.request.UpdateHubRequestDto;
+import com.logistcshub.hub.hub.presentation.request.type.HubSearchType;
+import com.logistcshub.hub.hub.presentation.request.type.SortType;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,6 +29,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -80,6 +86,23 @@ public class HubController {
 
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_GET_HUB, hubService.getHub(id, userId, role))
+        );
+    }
+
+    @GetMapping
+    public ResponseEntity<SuccessResponse<PagedModel<HubResponseDto>>> searchHubs(
+                                                                             @RequestHeader(value = "X-USER-ID") Long userId,
+                                                                             @RequestHeader(value = "X-USER-ROLE") String role,
+                                                                             @RequestParam(name = "keyword", required = false) String keyword,
+                                                                             @RequestParam(name = "type", defaultValue = "ALL") HubSearchType type,
+                                                                             @PageableDefault Pageable pageable,
+                                                                             @RequestParam(name = "sortBy", defaultValue = "CREATEDAT") SortType sortBy,
+                                                                             @RequestParam(name = "isAsc", defaultValue = "true") boolean isAsc) {
+        userId = 1L;
+        role = "MASTER";
+
+        return ResponseEntity.ok().body(
+                SuccessResponse.of(SUCCESS_GET_HUB, hubService.searchHubs(userId, role, keyword, type, pageable, sortBy, isAsc))
         );
     }
 
