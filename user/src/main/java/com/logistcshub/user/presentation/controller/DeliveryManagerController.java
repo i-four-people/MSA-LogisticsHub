@@ -1,6 +1,6 @@
 package com.logistcshub.user.presentation.controller;
 
-import com.logistcshub.user.application.dtos.DeliveryManagerDto;
+import com.logistcshub.user.presentation.response.DeliveryManagerDto;
 import com.logistcshub.user.application.security.UserDetailsImpl;
 import com.logistcshub.user.application.service.DeliveryManagerService;
 import com.logistcshub.user.infrastructure.common.ApiResponse;
@@ -16,8 +16,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/delivery-managers")

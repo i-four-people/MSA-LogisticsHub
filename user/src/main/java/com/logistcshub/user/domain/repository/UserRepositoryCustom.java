@@ -1,10 +1,10 @@
 package com.logistcshub.user.domain.repository;
 
-import com.logistcshub.user.presentation.response.SearchResponse;
-import com.logistcshub.user.presentation.request.SearchRequest;
+import com.logistcshub.user.presentation.response.UserSearchResponse;
+import com.logistcshub.user.presentation.request.UserSearchRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface UserRepositoryCustom {
-    Page<SearchResponse> findAllUser(Pageable pageable, SearchRequest searchRequest);
+    Page<UserSearchResponse> findAllUser(Pageable pageable, UserSearchRequest userSearchRequest);
 }
