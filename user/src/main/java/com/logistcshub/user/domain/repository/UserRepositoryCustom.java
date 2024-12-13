@@ -1,4 +1,4 @@
-package com.logistcshub.user.infrastructure.repository;
+package com.logistcshub.user.domain.repository;
 
 import com.logistcshub.user.infrastructure.common.SearchResponse;
 import com.logistcshub.user.presentation.request.SearchRequest;
