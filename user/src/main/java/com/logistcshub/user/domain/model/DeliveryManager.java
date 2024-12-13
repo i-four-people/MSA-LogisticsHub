@@ -33,7 +33,7 @@ public class DeliveryManager extends AuditEntity {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private DeliveryStatus status = DeliveryStatus.COMPLETED;
+    private DeliveryStatus status;
 
     // 배송 담당자 등록
     public static DeliveryManager from(String ksuid, Long userId, UUID hubId, DeliveryManagerType deliveryPersonType) {
@@ -43,6 +43,7 @@ public class DeliveryManager extends AuditEntity {
                 .userId(userId)
                 .hubId(hubId)
                 .deliveryPersonType(deliveryPersonType)
+                .status(DeliveryStatus.COMPLETED)
                 .build();
     }
 }

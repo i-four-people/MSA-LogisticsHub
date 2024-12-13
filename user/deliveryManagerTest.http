@@ -1,0 +1,24 @@
+### 허브 매니저 생성
+POST http://localhost:19093/api/hub-managers
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDA2MTcxNiwiZXhwIjoxNzM0MDYyMDc2fQ.IBZeNohwW1XD8WkeSiTntzmdy5fGYsSz8biR7ZHnTAbzyx99o_Fh6g5Jxj9mmRG99BkDEMx5DT0aQ0Uor5u9Tg
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: MASTER
+
+{
+  "userId": 2,
+  "hubId": "5864303b-849c-499a-82ec-f4151551bb7f"
+}
+
+### 배송 담당자 생성
+POST http://localhost:19093/api/delivery-managers
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwicm9sZSI6IkhVQl9NQU5BR0VSIiwiaXNzIjoidXNlci1zZXJ2aWNlIiwiaWF0IjoxNzM0MDcyMDkyLCJleHAiOjE3MzQwNzI0NTJ9.vSwiMMRdClAYaN1K0OyhYUzt4ihPsgiIZlgP20r56qhBwmk4kk8eJ4c1nc-EPMPrYIZAb0qV4hOK_f0CAQcrQw
+Content-Type: application/json
+X-User-Id: 2
+X-User-Role: HUB_MANAGER
+
+{
+  "userId": 3,
+  "hubId": "5864303b-849c-499a-82ec-f4151551bb7f",
+  "deliveryManagerType": "COMPANY_PIC"
+}
