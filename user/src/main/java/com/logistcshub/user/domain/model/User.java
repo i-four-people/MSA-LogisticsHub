@@ -1,5 +1,6 @@
 package com.logistcshub.user.domain.model;
 
+import com.logistcshub.user.infrastructure.common.AuditEntity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -18,7 +19,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Builder(access = AccessLevel.PRIVATE)
-public class User {
+public class User extends AuditEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,31 +44,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRoleEnum role;
 
-    @Column(nullable = false)
-    private boolean isDelete = false;
-
-    @CreatedDate
-    @Column(updatable = false)
-    private LocalDateTime createdAt;
-
-    @CreatedBy
-    @Column(updatable = false)
-    private String createdBy;
-
-    @LastModifiedDate
-    @Column
-    private LocalDateTime updatedAt;
-
-    @LastModifiedBy
-    @Column
-    private String updatedBy;
-
-    @Column
-    private LocalDateTime deletedAt;
-
-    @Column
-    private String deletedBy;
-
     // 유저 생성
     public static User create(String username, String password, String email, String tel, String slackId, UserRoleEnum role) {
         return User.builder()
@@ -77,18 +53,10 @@ public class User {
                 .tel(tel)
                 .slackId(slackId)
                 .role(role)
-                .createdAt(LocalDateTime.now())
-                .createdBy(username)
                 .build();
     }
 
     public void updateUserRole(UserRoleEnum role) {
         this.role = role;
-    }
-
-    public void delete(Long id) {
-        deletedAt = LocalDateTime.now();
-        deletedBy = "MASTER";
-        isDelete = true;
     }
 }
