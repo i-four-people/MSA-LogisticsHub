@@ -21,6 +21,7 @@ public enum ErrorCode {
     KAKAO_MAP_TIME_OUT(HttpStatus.GATEWAY_TIMEOUT, "카카오 맵 API TIME OUT"),
 
     HUB_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 허브를 찾을 수 없습니다."),
+    ALREADY_EXISTS_HUB(HttpStatus.BAD_REQUEST, "이미 존재하는 허브입니다."),
 
 
     ;
