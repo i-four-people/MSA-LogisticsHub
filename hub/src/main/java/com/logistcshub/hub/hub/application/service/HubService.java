@@ -1,5 +1,6 @@
 package com.logistcshub.hub.hub.application.service;
 
+import static com.logistcshub.hub.common.exception.application.type.ErrorCode.ALREADY_EXISTS_HUB;
 import static com.logistcshub.hub.common.exception.application.type.ErrorCode.AREA_NOT_FOUND;
 import static com.logistcshub.hub.common.exception.application.type.ErrorCode.HUB_NOT_FOUND;
 import static com.logistcshub.hub.common.exception.application.type.ErrorCode.INTERNAL_SERVER_ERROR;
@@ -56,6 +57,10 @@ public class HubService {
 
         Area area = findAreaToAddress(addresses);
         String detailAddress = getDetailAddress(addresses);
+
+        if(hubRepository.existsByAreaAndAddress(area, detailAddress)) {
+            throw new RestApiException(ALREADY_EXISTS_HUB);
+        }
 
         Hub hub = extracted(request.name(), request.address(), detailAddress, area);
 
