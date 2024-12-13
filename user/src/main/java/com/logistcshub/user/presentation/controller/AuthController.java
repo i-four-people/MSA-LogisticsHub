@@ -1,7 +1,7 @@
 package com.logistcshub.user.presentation.controller;
 
-import com.logistcshub.user.application.dtos.TokenDto;
-import com.logistcshub.user.application.dtos.UserDto;
+import com.logistcshub.user.presentation.response.TokenDto;
+import com.logistcshub.user.presentation.response.UserDto;
 import com.logistcshub.user.application.service.AuthService;
 import com.logistcshub.user.infrastructure.common.ApiResponse;
 import com.logistcshub.user.infrastructure.common.MessageType;

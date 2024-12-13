@@ -1,14 +1,14 @@
 package com.logistcshub.user.presentation.controller;
 
-import com.logistcshub.user.application.dtos.MyInfoDto;
-import com.logistcshub.user.presentation.response.SearchResponse;
-import com.logistcshub.user.application.dtos.UserDto;
+import com.logistcshub.user.presentation.response.MyInfoDto;
+import com.logistcshub.user.presentation.response.UserSearchResponse;
+import com.logistcshub.user.presentation.response.UserDto;
 import com.logistcshub.user.application.security.UserDetailsImpl;
 import com.logistcshub.user.application.service.UserService;
 import com.logistcshub.user.domain.model.UserRoleEnum;
 import com.logistcshub.user.infrastructure.common.ApiResponse;
 import com.logistcshub.user.infrastructure.common.MessageType;
-import com.logistcshub.user.presentation.request.SearchRequest;
+import com.logistcshub.user.presentation.request.UserSearchRequest;
 import com.logistcshub.user.presentation.request.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,16 +38,16 @@ public class UserController {
     // 유저 전체 조회
     @GetMapping
     @PreAuthorize("hasAuthority('MASTER')")
-    public ApiResponse<Page<SearchResponse>> getUserList(
+    public ApiResponse<Page<UserSearchResponse>> getUserList(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @PageableDefault Pageable pageable,
-            SearchRequest searchRequest
+            UserSearchRequest userSearchRequest
     ) {
         UserRoleEnum loggedUserRole = userDetails.user().getRole();
 
-        Page<SearchResponse> searchedUserList = userService.getUserList(loggedUserRole, pageable, searchRequest);
+        Page<UserSearchResponse> searchedUserList = userService.getUserList(loggedUserRole, pageable, userSearchRequest);
 
-        return ApiResponse.<Page<SearchResponse>>builder()
+        return ApiResponse.<Page<UserSearchResponse>>builder()
                 .messageType(MessageType.RETRIEVE)
                 .data(searchedUserList)
                 .build();

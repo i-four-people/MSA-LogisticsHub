@@ -1,7 +1,7 @@
 package com.logistcshub.user.application.service;
 
-import com.logistcshub.user.application.dtos.TokenDto;
-import com.logistcshub.user.application.dtos.UserDto;
+import com.logistcshub.user.presentation.response.TokenDto;
+import com.logistcshub.user.presentation.response.UserDto;
 import com.logistcshub.user.application.jwt.JwtUtil;
 import com.logistcshub.user.domain.model.User;
 import com.logistcshub.user.domain.model.UserRoleEnum;
