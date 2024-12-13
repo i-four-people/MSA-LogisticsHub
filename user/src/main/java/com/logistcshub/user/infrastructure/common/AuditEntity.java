@@ -42,9 +42,9 @@ public class AuditEntity {
     private Boolean isDelete = false;
 
     // Soft Delete
-    public void delete(String email) {
+    public void delete(String username) {
         deletedAt = LocalDateTime.now();
-        deletedBy = email;
+        deletedBy = username;
         isDelete = true;
     }
 
