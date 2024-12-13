@@ -4,16 +4,19 @@ import com.logistcshub.company.domain.model.Company;
 import com.logistcshub.company.domain.repository.CompanyRepository;
 import com.logistcshub.company.presentation.request.CompanyRequestDto;
 import com.logistcshub.company.presentation.response.CompanyResponseDto;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
+import org.springframework.data.web.PagedModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
+import static com.logistcshub.company.domain.model.QCompany.company;
 
 @Service
 @RequiredArgsConstructor
@@ -46,15 +49,14 @@ public class CompanyService {
     }
 
     @Transactional
-    public Page<CompanyResponseDto> getCompanies(UUID id,
-                                                 String name,
-                                                 String companyType,
-                                                 String address,
-                                                 String contact,
-                                                 String sortBy,
-                                                 boolean isAsc,
-                                                 Pageable pageable) {
-        return companyRepository.getCompanies(id, name, companyType, address, contact, sortBy, isAsc, pageable)
-                .map(CompanyResponseDto::toDto);
+    public PagedModel<CompanyResponseDto> getCompanies(Predicate predicate, Pageable pageable) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder(predicate);
+
+        booleanBuilder.and(company.isDelete.isFalse());
+
+        Page<Company> companies = companyRepository.findAll(booleanBuilder, pageable);
+
+        return new PagedModel<>(companies.map(CompanyResponseDto::toDto));
     }
+
 }
