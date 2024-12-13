@@ -4,12 +4,12 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "username": "user123",
+  "username": "user3",
   "password": "Qwer1234@",
-  "email": "user123@email.com",
+  "email": "user3@email.com",
   "tel": "010-1234-5678",
   "slackId": "slack-id",
-  "role": "HUB_MANAGER",
+  "role": "COMPANY_MANAGER",
   "adminToken": null
 }
 
@@ -18,7 +18,7 @@ POST http://localhost:19093/api/auth/login
 Content-Type: application/json
 
 {
-  "email": "master123@email.com",
+  "email": "user123@email.com",
   "password": "Qwer1234@"
 }
 
@@ -50,15 +50,3 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsI
 Content-Type: application/json
 X-User-Id: 1
 X-User-Role: MASTER
-
-### 허브 매니저 생성
-POST http://localhost:19093/api/hub-managers
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDA2MTcxNiwiZXhwIjoxNzM0MDYyMDc2fQ.IBZeNohwW1XD8WkeSiTntzmdy5fGYsSz8biR7ZHnTAbzyx99o_Fh6g5Jxj9mmRG99BkDEMx5DT0aQ0Uor5u9Tg
-Content-Type: application/json
-X-User-Id: 1
-X-User-Role: MASTER
-
-{
-  "userId": 2,
-  "hubId": "5864303b-849c-499a-82ec-f4151551bb7f"
-}
