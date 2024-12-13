@@ -5,7 +5,7 @@ import com.logistcshub.user.application.dtos.UserDto;
 import com.logistcshub.user.application.jwt.JwtUtil;
 import com.logistcshub.user.domain.model.User;
 import com.logistcshub.user.domain.model.UserRoleEnum;
-import com.logistcshub.user.domain.repository.UserRepository;
+import com.logistcshub.user.infrastructure.repository.UserRepository;
 import com.logistcshub.user.presentation.request.LoginRequest;
 import com.logistcshub.user.presentation.request.SignupRequest;
 import jakarta.persistence.EntityNotFoundException;

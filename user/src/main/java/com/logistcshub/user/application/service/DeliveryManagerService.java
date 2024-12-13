@@ -9,8 +9,8 @@
 //import com.logistcshub.user.domain.model.DeliveryManager;
 //import com.logistcshub.user.domain.model.User;
 //import com.logistcshub.user.domain.model.UserRoleEnum;
-//import com.logistcshub.user.domain.repository.DeliveryManagerRepository;
-//import com.logistcshub.user.domain.repository.UserRepository;
+//import com.logistcshub.user.infrastructure.repository.DeliveryManagerRepository;
+//import com.logistcshub.user.infrastructure.repository.UserRepository;
 //import com.logistcshub.user.presentation.request.DeliveryManagerCreate;
 //import jakarta.persistence.EntityNotFoundException;
 //import lombok.RequiredArgsConstructor;

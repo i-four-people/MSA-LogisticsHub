@@ -13,4 +13,8 @@ public record HubManagerResponse(Long userId, UUID hubId) implements Serializabl
                 hubManager.getHubId()
         );
     }
+
+    public UUID getHubId() {
+        return hubId;
+    }
 }
