@@ -50,3 +50,10 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsI
 Content-Type: application/json
 X-User-Id: 1
 X-User-Role: MASTER
+
+### 허브 매니저 생성
+POST http://localhost:19093/api/hub-manager
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDAxOTAzOSwiZXhwIjoxNzM0MDE5Mzk5fQ.0S2Zk1Z9qwcOFrIZnnZ_V5nL1FhYu-5P7vCHSUhlnRNeFb2_qCzVq_qcWmMuIzzC34Mz7PxOaF-ggMp_2Nzqng
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: MASTER

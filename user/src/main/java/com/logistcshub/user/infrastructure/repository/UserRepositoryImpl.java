@@ -1,7 +1,7 @@
 package com.logistcshub.user.infrastructure.repository;
 
 import com.logistcshub.user.application.dtos.QUserDto;
-import com.logistcshub.user.application.dtos.SearchResponse;
+import com.logistcshub.user.infrastructure.common.SearchResponse;
 import com.logistcshub.user.application.dtos.UserDto;
 import com.logistcshub.user.domain.model.UserRoleEnum;
 import com.logistcshub.user.presentation.request.SearchRequest;
@@ -15,7 +15,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
