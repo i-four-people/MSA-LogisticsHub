@@ -4,12 +4,14 @@ import com.logistcshub.hub.common.domain.model.BaseEntity;
 import com.logistcshub.hub.hub.domain.mode.Hub;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +20,10 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 
 @Entity
-@Table(name = "p_hub_transfers")
+@Table(
+        name = "p_hub_transfers",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"start_hub_id", "end_hub_id"})
+)
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -28,11 +33,11 @@ public class HubTransfer extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "start_hub_id")
     private Hub startHub;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "end_hub_id")
     private Hub endHub;
 

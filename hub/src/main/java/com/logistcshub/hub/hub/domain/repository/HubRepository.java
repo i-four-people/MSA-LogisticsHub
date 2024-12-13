@@ -9,9 +9,9 @@ public interface HubRepository {
 
     Hub save(Hub hub);
 
-    Optional<Hub> findById(UUID id);
+    Optional<Hub> findByIdAndDeletedFalse(UUID id);
 
-    Optional<Hub> findByIdWithArea(UUID id);
+    Optional<Hub> findByIdWithAreaAndDeletedFalse(UUID id);
 
-    boolean existsByAreaAndAddress(Area area, String address);
+    boolean existsByAreaAndAddressAndDeletedFalse(Area area, String address);
 }

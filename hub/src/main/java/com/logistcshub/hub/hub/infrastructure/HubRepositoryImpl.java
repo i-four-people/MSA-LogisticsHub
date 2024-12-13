@@ -20,17 +20,17 @@ public class HubRepositoryImpl implements HubRepository {
     }
 
     @Override
-    public Optional<Hub> findById(UUID id) {
-        return jpaHubRepository.findById(id);
+    public Optional<Hub> findByIdAndDeletedFalse(UUID id) {
+        return jpaHubRepository.findByIdAndDeletedFalse(id);
     }
 
     @Override
-    public Optional<Hub> findByIdWithArea(UUID id) {
-        return jpaHubRepository.findByIdWithArea(id);
+    public Optional<Hub> findByIdWithAreaAndDeletedFalse(UUID id) {
+        return jpaHubRepository.findByIdWithAreaAndDeletedFalse(id);
     }
 
     @Override
-    public boolean existsByAreaAndAddress(Area area, String address) {
-        return jpaHubRepository.existsByAreaAndAddress(area, address);
+    public boolean existsByAreaAndAddressAndDeletedFalse(Area area, String address) {
+        return jpaHubRepository.existsByAreaAndAddressAndDeletedFalse(area, address);
     }
 }
