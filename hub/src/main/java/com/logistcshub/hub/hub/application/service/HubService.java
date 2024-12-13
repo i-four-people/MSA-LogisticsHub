@@ -64,7 +64,7 @@ public class HubService {
         Area area = findAreaToAddress(addresses);
         String detailAddress = getDetailAddress(addresses);
 
-        if(hubRepository.existsByAreaAndAddress(area, detailAddress)) {
+        if(hubRepository.existsByAreaAndAddressAndDeletedFalse(area, detailAddress)) {
             throw new RestApiException(ALREADY_EXISTS_HUB);
         }
 
@@ -77,7 +77,7 @@ public class HubService {
 
     @Transactional
     public UpdateHubResponseDto updateHub(UUID id, Long userId, String role, UpdateHubRequestDto request) {
-        Hub hub = hubRepository.findByIdWithArea(id).orElseThrow(() ->
+        Hub hub = hubRepository.findByIdWithAreaAndDeletedFalse(id).orElseThrow(() ->
                 new RestApiException(HUB_NOT_FOUND));
         String[] addresses = request.address().split(" ");
 
@@ -96,7 +96,7 @@ public class HubService {
 
     @Transactional
     public DeleteHubResponseDto deleteHub(UUID id, Long userId, String role) {
-        Hub hub = hubRepository.findById(id).orElseThrow(() ->
+        Hub hub = hubRepository.findByIdAndDeletedFalse(id).orElseThrow(() ->
                 new RestApiException(HUB_NOT_FOUND));
 
         hub.delete(userId);
@@ -105,7 +105,7 @@ public class HubService {
     }
 
     public HubResponseDto getHub(UUID id, Long userId, String role) {
-        return HubResponseDto.of(hubRepository.findByIdWithArea(id).orElseThrow(() ->
+        return HubResponseDto.of(hubRepository.findByIdWithAreaAndDeletedFalse(id).orElseThrow(() ->
                 new RestApiException(HUB_NOT_FOUND)));
 
     }
