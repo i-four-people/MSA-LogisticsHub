@@ -86,4 +86,10 @@ public enum City {
                 .filter(city -> city.getKoreanName().contains(keyword))
                 .toList();
     }
+
+    public static List<City> findAllCityAndState(String keyword) {
+        return Arrays.stream(City.values())
+                .filter(city -> city.getKoreanName().contains(keyword) || city.getState().getKoreanName().contains(keyword))
+                .toList();
+    }
 }

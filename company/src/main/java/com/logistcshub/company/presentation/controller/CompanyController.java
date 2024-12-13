@@ -1,13 +1,17 @@
 package com.logistcshub.company.presentation.controller;
 
+import com.logistcshub.company.domain.model.Company;
 import com.logistcshub.company.domain.service.CompanyService;
 import com.logistcshub.company.presentation.request.CompanyRequestDto;
 import com.logistcshub.company.presentation.response.ApiResponse;
 import com.logistcshub.company.presentation.response.CompanyResponseDto;
 import com.logistcshub.company.presentation.response.MessageType;
+import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,18 +53,12 @@ public class CompanyController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<Page<CompanyResponseDto>>> getCompanies(@RequestParam(required = false) UUID id,
-                                                                              @RequestParam(required = false) String name,
-                                                                              @RequestParam(required = false) String companyType,
-                                                                              @RequestParam(required = false) String address,
-                                                                              @RequestParam(required = false) String contact,
-                                                                              @RequestParam(defaultValue = "createdDate") String sortBy,
-                                                                              @RequestParam(defaultValue = "true") boolean isAsc,
-                                                                              Pageable pageable) {
-        Page<CompanyResponseDto> result = companyService.getCompanies(id, name, companyType, address, contact, sortBy, isAsc, pageable);
+    public ResponseEntity<ApiResponse<PagedModel<CompanyResponseDto>>> getCompanies(@QuerydslPredicate(root = Company.class) Predicate predicate,
+                                                                                    @PageableDefault Pageable pageable) {
+        PagedModel<CompanyResponseDto> Companies = companyService.getCompanies(predicate, pageable);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(MessageType.RETRIEVE, result));
+                .body(ApiResponse.success(MessageType.RETRIEVE, Companies));
     }
 
 }
