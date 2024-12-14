@@ -6,6 +6,7 @@ import static com.logistcshub.hub.common.exception.application.type.ErrorCode.IN
 import static com.logistcshub.hub.common.exception.application.type.ErrorCode.KAKAO_ROAD_CLIENT_ERROR;
 import static com.logistcshub.hub.common.exception.application.type.ErrorCode.KAKAO_ROAD_SERVER_ERROR;
 import static com.logistcshub.hub.common.exception.application.type.ErrorCode.KAKAO_ROAD_TIME_OUT;
+import static com.logistcshub.hub.hub_transfer.domain.model.QHubTransfer.hubTransfer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.logistcshub.hub.common.config.KakaoRoadApiConfig;
@@ -16,6 +17,7 @@ import com.logistcshub.hub.common.exception.RestApiException;
 import com.logistcshub.hub.hub.domain.mode.Hub;
 import com.logistcshub.hub.hub.domain.repository.HubRepository;
 import com.logistcshub.hub.hub_transfer.application.dtos.AddHubTransferResponseDto;
+import com.logistcshub.hub.hub_transfer.application.dtos.HubTransferPageDto;
 import com.logistcshub.hub.hub_transfer.domain.model.HubTransfer;
 import com.logistcshub.hub.hub_transfer.domain.repository.HubTransferRepository;
 import com.logistcshub.hub.hub_transfer.presentation.request.AddHubTransferRequestDto;
@@ -24,8 +26,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -77,7 +85,7 @@ public class HubTransferService {
         return responseDtos;
     }
 
-    private HubTransfer extracted(Hub startHub, Hub endHub) {
+    public HubTransfer extracted(Hub startHub, Hub endHub) {
         try {
             HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(this.getHeader());
 
@@ -96,8 +104,6 @@ public class HubTransferService {
             KakaoResponse kakaoResponse = mapper.convertValue(responseEntity.getBody(), KakaoResponse.class);
 
             Summary summary = kakaoResponse.routes().get(0).summary();
-            System.out.println(summary.distance());
-            System.out.println(summary.duration());
             KakaoRoadResponseDto kakaoMapResponse = KakaoRoadResponseDto.of(summary);
 
             return HubTransfer.builder()
@@ -128,5 +134,12 @@ public class HubTransferService {
         httpHeaders.set("Authorization", auth);
 
         return httpHeaders;
+    }
+
+    @Transactional(readOnly = true)
+    public HubTransferPageDto searchHubTransfer(List<UUID> idList, Predicate predicate, Pageable pageable, String role, Long userId) {
+
+        return hubTransferRepository.findAll(idList, predicate, pageable);
+
     }
 }

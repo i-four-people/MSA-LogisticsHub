@@ -7,5 +7,5 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface JpaHubTransferRepository extends JpaRepository<HubTransfer, UUID> {
-    boolean existsByStartHubAndEndHubAndDeletedFalse(Hub startHub, Hub endHub);
+    boolean existsByStartHubAndEndHubAndIsDeletedFalse(Hub startHub, Hub endHub);
 }

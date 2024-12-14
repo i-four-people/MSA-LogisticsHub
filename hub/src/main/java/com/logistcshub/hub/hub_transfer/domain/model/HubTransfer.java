@@ -12,6 +12,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+
+import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,8 +23,7 @@ import org.hibernate.annotations.Comment;
 
 @Entity
 @Table(
-        name = "p_hub_transfers",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"start_hub_id", "end_hub_id"})
+        name = "p_hub_transfers"
 )
 @AllArgsConstructor
 @NoArgsConstructor

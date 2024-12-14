@@ -21,6 +21,10 @@ public enum ResponseMessage {
 
     SUCCESS_CREATE_HUB_TRANSFER(HttpStatus.OK, "허브 to 허브 생성에 성공했습니다."),
 
+
+
+    SUCCESS_SEARCH_HUB_TRANSFERS(HttpStatus.OK, "Hub-Transfer 검색에 성공했습니다.")
+
     ;
     private final HttpStatus status;
     private final String message;
