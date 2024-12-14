@@ -12,6 +12,8 @@ public record CompanyResponseDto (
         String contact,
         CompanyType companyType,
         UUID hubId,
+        Double lat,
+        Double lng,
         boolean isDelete
 
 ) {
@@ -23,6 +25,8 @@ public record CompanyResponseDto (
                 company.getContact(),
                 company.getCompanyType(),
                 company.getHubId(),
+                company.getLat(),
+                company.getLng(),
                 company.isDelete()
         );
     }
