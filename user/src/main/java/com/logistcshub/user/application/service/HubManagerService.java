@@ -15,10 +15,10 @@ import com.logistcshub.user.presentation.response.HubManagerResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Type;
-import org.springframework.security.access.AccessDeniedException;
 import java.util.Map;
 
 @Service

@@ -1,6 +1,6 @@
 package com.logistcshub.user.application.jwt;
 
-import com.logistcshub.user.application.dtos.TokenDto;
+import com.logistcshub.user.presentation.response.TokenDto;
 import com.logistcshub.user.application.security.UserDetailsServiceImpl;
 import com.logistcshub.user.domain.model.UserRoleEnum;
 
@@ -9,7 +9,6 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;

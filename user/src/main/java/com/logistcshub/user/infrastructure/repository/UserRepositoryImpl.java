@@ -1,11 +1,11 @@
 package com.logistcshub.user.infrastructure.repository;
 
-import com.logistcshub.user.application.dtos.QUserDto;
+import com.logistcshub.user.presentation.response.QUserDto;
 import com.logistcshub.user.domain.repository.UserRepositoryCustom;
-import com.logistcshub.user.presentation.response.SearchResponse;
-import com.logistcshub.user.application.dtos.UserDto;
+import com.logistcshub.user.presentation.response.UserSearchResponse;
+import com.logistcshub.user.presentation.response.UserDto;
 import com.logistcshub.user.domain.model.UserRoleEnum;
-import com.logistcshub.user.presentation.request.SearchRequest;
+import com.logistcshub.user.presentation.request.UserSearchRequest;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -32,7 +32,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
     }
 
     @Override
-    public Page<SearchResponse> findAllUser(Pageable pageable, SearchRequest condition) {
+    public Page<UserSearchResponse> findAllUser(Pageable pageable, UserSearchRequest condition) {
 
         JPAQuery<UserDto> query = queryFactory
                 .select(new QUserDto(
@@ -84,9 +84,9 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                         emailContains(condition.email()),
                         user.isDelete.eq(false));
 
-        SearchResponse searchResponse = new SearchResponse(content);
+        UserSearchResponse userSearchResponse = new UserSearchResponse(content);
 
-        return PageableExecutionUtils.getPage(Collections.singletonList(searchResponse), pageable, countQuery::fetchOne);
+        return PageableExecutionUtils.getPage(Collections.singletonList(userSearchResponse), pageable, countQuery::fetchOne);
     }
 
     private BooleanExpression userIdEq(Long userId) {

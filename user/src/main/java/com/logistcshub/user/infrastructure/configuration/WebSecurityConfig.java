@@ -18,7 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @RequiredArgsConstructor
 @EnableMethodSecurity(securedEnabled = true, prePostEnabled = true)
-public class WebSecurity {
+public class WebSecurityConfig {
 
     private final CustomAuthPreFilter customAuthPreFilter;
 

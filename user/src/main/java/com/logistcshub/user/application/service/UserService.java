@@ -1,13 +1,13 @@
 package com.logistcshub.user.application.service;
 
-import com.logistcshub.user.application.dtos.MyInfoDto;
-import com.logistcshub.user.presentation.response.SearchResponse;
-import com.logistcshub.user.application.dtos.UserDto;
 import com.logistcshub.user.domain.model.User;
 import com.logistcshub.user.domain.model.UserRoleEnum;
 import com.logistcshub.user.infrastructure.repository.UserRepository;
-import com.logistcshub.user.presentation.request.SearchRequest;
+import com.logistcshub.user.presentation.request.UserSearchRequest;
 import com.logistcshub.user.presentation.request.UserUpdateRequest;
+import com.logistcshub.user.presentation.response.MyInfoDto;
+import com.logistcshub.user.presentation.response.UserDto;
+import com.logistcshub.user.presentation.response.UserSearchResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,9 +29,9 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Page<SearchResponse> getUserList(UserRoleEnum role, Pageable pageable, SearchRequest searchRequest) {
+    public Page<UserSearchResponse> getUserList(UserRoleEnum role, Pageable pageable, UserSearchRequest userSearchRequest) {
 
-        return userRepository.findAllUser(pageable, searchRequest);
+        return userRepository.findAllUser(pageable, userSearchRequest);
     }
 
     public UserDto get(Long id) {
