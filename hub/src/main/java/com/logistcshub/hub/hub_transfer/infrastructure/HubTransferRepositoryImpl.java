@@ -6,6 +6,9 @@ import com.logistcshub.hub.hub_transfer.domain.repository.HubTransferRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+import java.util.UUID;
+
 @Repository
 @RequiredArgsConstructor
 public class HubTransferRepositoryImpl implements HubTransferRepository {
@@ -18,7 +21,17 @@ public class HubTransferRepositoryImpl implements HubTransferRepository {
     }
 
     @Override
-    public boolean existsByStartHubAndEndHubAndDeletedFalse(Hub startHub, Hub endHub) {
-        return jpaHubTransferRepository.existsByStartHubAndEndHubAndDeletedFalse(startHub, endHub);
+    public boolean existsByStartHubAndEndHubAndIsDeletedFalse(Hub startHub, Hub endHub) {
+        return jpaHubTransferRepository.existsByStartHubAndEndHubAndIsDeletedFalse(startHub, endHub);
+    }
+
+    @Override
+    public Optional<HubTransfer> findByIdAndIsDeletedFalse(UUID id) {
+        return jpaHubTransferRepository.findByIdAndIsDeletedFalse(id);
+    }
+
+    @Override
+    public void delete(HubTransfer hubTransfer) {
+        jpaHubTransferRepository.delete(hubTransfer);
     }
 }
