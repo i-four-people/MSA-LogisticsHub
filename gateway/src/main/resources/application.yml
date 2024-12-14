@@ -25,6 +25,15 @@ spring:
           uri: lb://delivery-service
           predicates:
             - Path=/api/deliveries/**, /api/delivery-routes/**
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/api/products/**
+        - id: company-service
+          uri: lb://company-service
+          predicates:
+            - Path=/api/companies/**
+
 
       discovery:
         locator:
