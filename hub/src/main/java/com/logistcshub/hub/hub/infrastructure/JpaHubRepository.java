@@ -11,7 +11,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface JpaHubRepository extends JpaRepository<Hub, UUID> {
     @Query("select h from Hub h join fetch h.area where h.id = :id and h.isDeleted is false")
-    Optional<Hub> findByIdWithArea(UUID id);
+    Optional<Hub> findByIdWithAreaAndDeletedFalse(UUID id);
 
-    boolean existsByAreaAndAddress(Area area, String address);
+    boolean existsByAreaAndAddressAndDeletedFalse(Area area, String address);
+
+    Optional<Hub> findByIdAndDeletedFalse(UUID id);
 }

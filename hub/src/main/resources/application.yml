@@ -33,4 +33,12 @@ management:
       exposure:
         include: refresh
 
+kakaomap:
+  admin-key: ${KAKAO_MAP_ADMIN_KEY}
+  map-url: ${KAKAO_MAP_URL}
+
+kakaoroad:
+  admin-key: ${KAKAO_ROAD_API_ADMIN_KEY}
+  road-url: ${KAKAO_ROAD_API_URL}
+
 message: "default message"
