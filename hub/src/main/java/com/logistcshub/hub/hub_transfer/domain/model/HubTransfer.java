@@ -20,10 +20,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 
 @Entity
-@Table(
-        name = "p_hub_transfers",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"start_hub_id", "end_hub_id"})
-)
+@Table(name = "p_hub_transfers")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -49,5 +46,12 @@ public class HubTransfer extends BaseEntity {
     @Column(name = "distance")
     private Integer distance;
 
+    public void updateHubTransfer(Hub startHub, Hub endHub, Integer timeTaken, Integer distance, Long userId) {
+        this.startHub = startHub;
+        this.endHub = endHub;
+        this.timeTaken = timeTaken;
+        this.distance = distance;
+        update(userId);
+    }
 
 }
