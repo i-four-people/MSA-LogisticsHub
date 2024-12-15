@@ -1,9 +1,9 @@
 package com.logistics.order.presentation.controller;
 
-import com.logistics.order.application.dto.order.*;
 import com.logistics.order.application.dto.PageResponse;
-import com.logistics.order.domain.service.OrderService;
 import com.logistics.order.application.dto.SearchParameter;
+import com.logistics.order.application.dto.order.*;
+import com.logistics.order.domain.service.OrderService;
 import com.logistics.order.presentation.response.ApiResponse;
 import com.logistics.order.presentation.response.MessageType;
 import lombok.RequiredArgsConstructor;
@@ -44,6 +44,14 @@ public class OrderApiController {
     public ApiResponse<?> updateOrderById(@PathVariable("orderId") UUID orderId,
                                           @RequestBody OrderUpdateRequest request) {
         OrderDetailResponse result = orderService.updateOrderById(orderId, request);
+        return ApiResponse.success(MessageType.UPDATE, result);
+    }
+
+    // 주문 상태 변경
+    @PatchMapping("/{orderId}/status")
+    public ApiResponse<?> updateOrderStatus(@PathVariable UUID orderId,
+                                            @RequestBody OrderStatusUpdateRequest request) {
+        OrderStatusResponse result = orderService.updateOrderStatus(orderId, request.status());
         return ApiResponse.success(MessageType.UPDATE, result);
     }
 

@@ -2,9 +2,7 @@ package com.logistics.order.domain.model;
 
 import com.logistics.order.application.dto.order.OrderCreateRequest;
 import com.logistics.order.application.dto.order.OrderUpdateRequest;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.UuidGenerator;
@@ -44,6 +42,11 @@ public class Order extends AuditingFields {
     @Comment("요청 사항")
     private String requestNotes;
 
+    @Comment("주문 상태")
+    @Column(columnDefinition = "VARCHAR(50) DEFAULT 'PENDING'")
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
+
     @Comment("삭제 여부")
     private boolean isDelete;
 
@@ -56,6 +59,7 @@ public class Order extends AuditingFields {
         this.price = price;
         this.quantity = quantity;
         this.requestNotes = requestNotes;
+        this.status = OrderStatus.PENDING;
     }
 
     /**
@@ -92,5 +96,14 @@ public class Order extends AuditingFields {
     public void update(OrderUpdateRequest request) {
         this.quantity = request.quantity();
         this.requestNotes = request.requestNote();
+    }
+
+    /**
+     * 주문의 상태를 수정하는 메서드
+     *
+     * @param status 주문 상태
+     */
+    public void updateStatus(OrderStatus status) {
+        this.status = status;
     }
 }

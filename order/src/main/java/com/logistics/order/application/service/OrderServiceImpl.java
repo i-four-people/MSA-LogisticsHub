@@ -1,17 +1,20 @@
 package com.logistics.order.application.service;
 
-import com.logistics.order.application.dto.*;
+import com.logistics.order.application.dto.PageResponse;
+import com.logistics.order.application.dto.SearchParameter;
 import com.logistics.order.application.dto.company.CompanyResponse;
 import com.logistics.order.application.dto.event.OrderCreateEvent;
+import com.logistics.order.application.dto.event.OrderDeleteEvent;
 import com.logistics.order.application.dto.order.*;
 import com.logistics.order.application.dto.product.ProductResponse;
 import com.logistics.order.domain.model.Order;
+import com.logistics.order.domain.model.OrderStatus;
 import com.logistics.order.domain.repository.OrderRepository;
 import com.logistics.order.domain.service.OrderService;
 import com.logistics.order.infrastructure.client.CompanyClient;
+import com.logistics.order.infrastructure.client.DeliveryClient;
 import com.logistics.order.infrastructure.client.ProductClient;
-import com.logistics.order.infrastructure.config.RabbitMQConfig;
-import com.logistics.order.application.dto.SearchParameter;
+import com.logistics.order.infrastructure.config.RabbitMQProperties;
 import com.logistics.order.presentation.exception.BusinessException;
 import com.logistics.order.presentation.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -32,18 +35,22 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final RabbitTemplate rabbitTemplate;
+    private final RabbitMQProperties rabbitProperties;
 
     private final ProductClient productClient;
     private final CompanyClient companyClient;
+    private final DeliveryClient deliveryClient;
 
     @Override
     public void createOrder(OrderCreateRequest request) {
 
-        // 상품 수량 확인 및 감소
-        productClient.decreaseStock(request.productId(), request.quantity());
+        // 상품 수량 확인
+        ProductResponse product = productClient.findProductById(request.productId());
+        if (product.stock() < request.quantity()) {
+            throw new BusinessException(ErrorCode.OUT_OF_STOCK);
+        }
 
         // 주문 정보 저장
-        ProductResponse product = productClient.findProductById(request.productId());
         Order savedOrder = orderRepository.save(Order.create(request, product.companyId()));
 
         // 이벤트 생성
@@ -51,8 +58,8 @@ public class OrderServiceImpl implements OrderService {
 
         // 이벤트 발행
         rabbitTemplate.convertAndSend(
-                RabbitMQConfig.ORDER_EXCHANGE,
-                RabbitMQConfig.ORDER_CREATED_ROUTING_KEY,
+                rabbitProperties.getExchange().getOrder(),
+                rabbitProperties.getRoutingKeys().getCreated(),
                 event);
     }
 
@@ -87,7 +94,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private Page<Order> findOrders(SearchParameter searchParameter) {
-        if ("RECIPIENT_NAME".equals(searchParameter.searchType()) || "REQUESTER_NAME".equals(searchParameter.searchType())) {
+        if ("RECIPIENT_NAME".equals(searchParameter.searchType()) || "SUPPLIER_NAME".equals(searchParameter.searchType())) {
             // FeignClient로 업체 ID 리스트 조회
             List<CompanyResponse> findCompanies = companyClient.findCompaniesByName(searchParameter.searchValue());
             List<UUID> companyIds = findCompanies.stream().map(CompanyResponse::companyId).toList();
@@ -122,16 +129,40 @@ public class OrderServiceImpl implements OrderService {
         );
 
         // 상품 수량 확인 및 감소
-        productClient.decreaseStock(findOrder.getProductId(), request.quantity());
+        ProductResponse product = productClient.findProductById(findOrder.getProductId());
+        if (findOrder.getQuantity() != request.quantity() && product.stock() < request.quantity()) {
+            throw new BusinessException(ErrorCode.OUT_OF_STOCK);
+        }
 
         findOrder.update(request);
 
         // 업체 정보 및 상품 정보 조회
         CompanyResponse recipientCompany = companyClient.findCompanyById(findOrder.getRecipientCompanyId());
         CompanyResponse requestCompany = companyClient.findCompanyById(findOrder.getSupplyCompanyId());
-        ProductResponse product = productClient.findProductById(findOrder.getProductId());
 
         return OrderDetailResponse.from(findOrder, recipientCompany, requestCompany, product);
+    }
+
+    @Override
+    public OrderStatusResponse updateOrderStatus(UUID orderId, OrderStatus status) {
+
+        Order findOrder = orderRepository.findById(orderId).orElseThrow(
+                () -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND)
+        );
+
+        if (findOrder.getStatus() == status) {
+            return OrderStatusResponse.from(findOrder);
+        }
+
+        // 배송 상태에 따른 주문 상태 변경 가능 여부확인
+        boolean orderStatusChangeAllowed = deliveryClient.isOrderStatusChangeAllowed(findOrder.getDeliveryId(), status.toString());
+        if (!orderStatusChangeAllowed) {
+            throw new BusinessException(ErrorCode.INVALID_STATUS_CHANGE);
+        }
+
+        findOrder.updateStatus(status);
+
+        return OrderStatusResponse.from(findOrder);
     }
 
     @Override
@@ -145,14 +176,19 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException(ErrorCode.RESOURCE_NOT_FOUND);
         }
 
+        if (findOrder.getStatus() == OrderStatus.COMPLETED) {
+            throw new BusinessException(ErrorCode.ORDER_ALREADY_COMPLETED);
+        }
+
         // 이벤트 생성
-        OrderCreateEvent event = OrderCreateEvent.of(findOrder);
+        OrderDeleteEvent event = OrderDeleteEvent.of(findOrder);
 
         // 이벤트 발행
         rabbitTemplate.convertAndSend(
-                RabbitMQConfig.ORDER_EXCHANGE,
-                RabbitMQConfig.ORDER_DELETED_ROUTING_KEY,
-                event);
+                rabbitProperties.getExchange().getOrder(),
+                rabbitProperties.getRoutingKeys().getCreated(),
+                event
+        );
 
         return OrderDeleteResponse.from(findOrder);
     }

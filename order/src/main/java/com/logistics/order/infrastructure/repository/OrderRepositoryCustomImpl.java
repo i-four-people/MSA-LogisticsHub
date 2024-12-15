@@ -89,8 +89,8 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         if ("RECIPIENT_NAME".equals(searchParameter.searchType())) {
             booleanBuilder.and(order.recipientCompanyId.in(companyIds));
-        } else if ("REQUESTER_NAME".equals(searchParameter.searchType())) {
-            booleanBuilder.and(order.requesterCompanyId.in(companyIds));
+        } else if ("SUPPLIER_NAME".equals(searchParameter.searchType())) {
+            booleanBuilder.and(order.supplyCompanyId.in(companyIds));
         }
         return booleanBuilder;
     }
