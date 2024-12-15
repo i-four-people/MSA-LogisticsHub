@@ -2,8 +2,5 @@ message:
   exchange:
     order: ${MESSAGE_EXCHANGE_ORDER}
   queues:
-    created: ${MESSAGE_QUEUE_CREATED}
-    deleted: ${MESSAGE_QUEUE_DELETED}
-  routing-keys:
-    created: ${MESSAGE_ROUTING_KEY_CREATED}
-    deleted: ${MESSAGE_ROUTING_KEY_DELETED}
+    product: ${MESSAGE_QUEUE_PRODUCT}
+    delivery: ${MESSAGE_QUEUE_DELIVERY}

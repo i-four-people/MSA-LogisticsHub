@@ -1,4 +1,4 @@
-package com.logistics.order.infrastructure.config;
+package com.logistics.delivery.infrastructure.config;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -17,14 +17,13 @@ public class RabbitMQProperties {
     @Getter
     @Setter
     public static class Exchange {
-        private String order;
+        private String delivery;
     }
 
     @Getter
     @Setter
     public static class Queues {
-        private String product;
-        private String delivery;
+        private String order;
     }
 
 }

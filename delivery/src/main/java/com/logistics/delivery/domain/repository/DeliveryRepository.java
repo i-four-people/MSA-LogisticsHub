@@ -10,6 +10,10 @@ public interface DeliveryRepository {
 
     Optional<Delivery> findById(UUID id);
 
+    Optional<Delivery> findByOrderId(UUID orderId);
+
+    boolean existsByOrderId(UUID orderId);
+
     List<Delivery> findAll();
 
     Delivery save(Delivery delivery);

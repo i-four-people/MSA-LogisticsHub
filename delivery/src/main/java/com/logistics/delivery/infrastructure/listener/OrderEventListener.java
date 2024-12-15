@@ -1,6 +1,6 @@
 package com.logistics.delivery.infrastructure.listener;
 
-import com.logistics.delivery.application.dto.event.OrderCreateEvent;
+import com.logistics.delivery.application.dto.event.consume.OrderCreateConsume;
 import com.logistics.delivery.domain.repository.DeliveryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -15,7 +15,7 @@ public class OrderEventListener {
 
     @RabbitListener(queues = "order.created.queue")
     @Transactional
-    public void handleOrderCreated(OrderCreateEvent event) {
+    public void handleOrderCreated(OrderCreateConsume event) {
         // 배송 생성
 
         // 배송 정보 저장

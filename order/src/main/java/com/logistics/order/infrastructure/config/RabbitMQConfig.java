@@ -1,10 +1,7 @@
 package com.logistics.order.infrastructure.config;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,28 +12,30 @@ public class RabbitMQConfig {
     private final RabbitMQProperties properties;
 
     @Bean
-    public TopicExchange orderExchange() {
-        return new TopicExchange(properties.getExchange().getOrder());
+    public FanoutExchange orderExchange() {
+        return new FanoutExchange(properties.getExchange().getOrder());
     }
 
     @Bean
-    public Queue orderCreatedQueue() {
-        return new Queue(properties.getQueues().getCreated());
+    public Queue productQueue() {
+        return new Queue(properties.getQueues().getProduct());
     }
 
     @Bean
-    public Queue orderDeletedQueue() {
-        return new Queue(properties.getQueues().getDeleted());
+    public Queue deliveryQueue() {
+        return new Queue(properties.getQueues().getDelivery());
     }
 
+    // 상품 큐와 Exchange 바인딩
     @Bean
-    public Binding orderCreatedBinding(Queue orderCreatedQueue, TopicExchange orderExchange) {
-        return BindingBuilder.bind(orderCreatedQueue).to(orderExchange).with(properties.getRoutingKeys().getCreated());
+    public Binding productBinding(Queue productQueue, FanoutExchange orderExchange) {
+        return BindingBuilder.bind(productQueue).to(orderExchange);
     }
 
+    // 배송 큐와 Exchange 바인딩
     @Bean
-    public Binding orderDeletedBinding(Queue orderDeletedQueue, TopicExchange orderExchange) {
-        return BindingBuilder.bind(orderDeletedQueue).to(orderExchange).with(properties.getRoutingKeys().getDeleted());
+    public Binding deliveryBinding(Queue deliveryQueue, FanoutExchange orderExchange) {
+        return BindingBuilder.bind(deliveryQueue).to(orderExchange);
     }
 
 }

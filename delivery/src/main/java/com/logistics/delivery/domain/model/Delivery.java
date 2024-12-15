@@ -1,7 +1,10 @@
 package com.logistics.delivery.domain.model;
 
+import com.logistics.delivery.application.dto.company.CompanyResponse;
+import com.logistics.delivery.application.dto.event.consume.OrderCreateConsume;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
@@ -48,5 +51,36 @@ public class Delivery extends AuditingFields {
 
     @Comment("삭제 여부")
     private boolean isDelete;
+
+    @Builder
+    private Delivery(UUID orderId, DeliveryStatus status, String cancellationReason, UUID originHubId, UUID destinationHubId, String deliveryAddress, String recipientName, String recipientSlackId) {
+        this.orderId = orderId;
+        this.status = status;
+        this.cancellationReason = cancellationReason;
+        this.originHubId = originHubId;
+        this.destinationHubId = destinationHubId;
+        this.deliveryAddress = deliveryAddress;
+        this.recipientName = recipientName;
+        this.recipientSlackId = recipientSlackId;
+    }
+
+    /**
+     * 배송 생성하는 정적 팩토리 메서드
+     *
+     * @param event            주문 생성 event
+     * @param recipientCompany 수령 업체 정보
+     * @param supplyCompany    공급 업체 정보
+     * @return Delivery
+     */
+    public static Delivery create(OrderCreateConsume event, CompanyResponse recipientCompany, CompanyResponse supplyCompany) {
+        return Delivery.builder()
+                .orderId(event.orderId())
+                .status(DeliveryStatus.PENDING)
+                .originHubId(supplyCompany.hubId())
+                .destinationHubId(recipientCompany.hubId())
+                .recipientName(event.recipientName())
+                .recipientSlackId(event.recipientSlackId())
+                .build();
+    }
 
 }

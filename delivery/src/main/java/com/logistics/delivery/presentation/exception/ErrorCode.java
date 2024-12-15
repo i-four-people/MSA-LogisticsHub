@@ -13,7 +13,8 @@ public enum ErrorCode {
     INTERNAL_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E-002", "서버에 오류가 발생했습니다."),
     METHOD_NOT_ALLOWED(HttpStatus.METHOD_NOT_ALLOWED, "E-003", "지원하지 않는 HTTP Method 요청입니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "E-005", "인증에 실패했습니다."),
-    DELIVERY_NOT_FOUND(HttpStatus.NOT_FOUND, "D-001", "존재하지 않는 배송 정보입니다.")
+    DELIVERY_NOT_FOUND(HttpStatus.NOT_FOUND, "D-001", "존재하지 않는 배송 정보입니다."),
+    DUPLICATE_DELIVERY(HttpStatus.CONFLICT, "D-002", "해당 주문에 이미 존재하는 배송 정보입니다.")
     ;
 
     private final HttpStatus httpStatus;

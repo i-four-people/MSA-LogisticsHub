@@ -54,12 +54,11 @@ public class OrderServiceImpl implements OrderService {
         Order savedOrder = orderRepository.save(Order.create(request, product.companyId()));
 
         // 이벤트 생성
-        OrderCreateEvent event = OrderCreateEvent.of(savedOrder);
+        OrderCreateEvent event = OrderCreateEvent.of(savedOrder, request);
 
         // 이벤트 발행
         rabbitTemplate.convertAndSend(
                 rabbitProperties.getExchange().getOrder(),
-                rabbitProperties.getRoutingKeys().getCreated(),
                 event
         );
     }
@@ -187,7 +186,6 @@ public class OrderServiceImpl implements OrderService {
         // 이벤트 발행
         rabbitTemplate.convertAndSend(
                 rabbitProperties.getExchange().getOrder(),
-                rabbitProperties.getRoutingKeys().getCreated(),
                 event
         );
 

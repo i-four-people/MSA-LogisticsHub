@@ -54,10 +54,10 @@ class OrderServiceImplTest {
         exchange.setOrder("order.exchange");
         rabbitProperties.setExchange(exchange);
 
-        RabbitMQProperties.RoutingKeys routingKeys = new RabbitMQProperties.RoutingKeys();
-        routingKeys.setCreated("order.created");
-        routingKeys.setDeleted("order.deleted");
-        rabbitProperties.setRoutingKeys(routingKeys);
+        RabbitMQProperties.Queues queues = new RabbitMQProperties.Queues();
+        queues.setDelivery("order.delivery");
+        queues.setProduct("order.product");
+        rabbitProperties.setQueues(queues);
 
         injectRabbitMQProperties(orderService, rabbitProperties);
     }
@@ -82,7 +82,7 @@ class OrderServiceImplTest {
         int quantity = 5;
         int price = 1000;
 
-        OrderCreateRequest request = new OrderCreateRequest(recipientId, productId, quantity, price, null);
+        OrderCreateRequest request = new OrderCreateRequest(recipientId, productId, quantity, price, null, "배송지", "수령자", "슬랙ID");
 
         // Mock productClient response
         when(productClient.findProductById(productId)).thenReturn(new ProductResponse(productId, "Product Name", 10, companyId)); // Mock ProductResponse
@@ -106,7 +106,6 @@ class OrderServiceImplTest {
         ArgumentCaptor<OrderCreateEvent> eventCaptor = ArgumentCaptor.forClass(OrderCreateEvent.class);
         verify(rabbitTemplate).convertAndSend(
                 eq(rabbitProperties.getExchange().getOrder()),
-                eq(rabbitProperties.getRoutingKeys().getCreated()),
                 eventCaptor.capture()
         );
 
@@ -125,7 +124,7 @@ class OrderServiceImplTest {
         int quantity = 5;
         int price = 1000;
 
-        OrderCreateRequest request = new OrderCreateRequest(recipientId, productId, quantity, price, "Please deliver quickly");
+        OrderCreateRequest request = new OrderCreateRequest(recipientId, productId, quantity, price, null, "배송지", "수령자", "슬랙ID");
 
         // Mock productClient response with insufficient stock
         when(productClient.findProductById(productId))
