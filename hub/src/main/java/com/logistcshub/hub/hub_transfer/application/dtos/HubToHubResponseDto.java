@@ -20,6 +20,7 @@ public record HubToHubResponseDto(
     public static HubToHubResponseDto of(HubTransfer startToEnd, Hub startHub, Hub endHub) {
         List<HubToHubInfo> hubToHubInfoList = new ArrayList<>();
         hubToHubInfoList.add(new HubToHubInfo(
+                startToEnd.getId(),
                 startHub.getId(),
                 endHub.getId(),
                 startToEnd.getTimeTaken(),
@@ -49,6 +50,7 @@ public record HubToHubResponseDto(
     }
 
     public static record HubToHubInfo(
+            UUID id,
             UUID startHubId,
             UUID endHubId,
             Integer timeTaken,
@@ -56,6 +58,7 @@ public record HubToHubResponseDto(
     ) implements Serializable {
         public static HubToHubInfo of(HubTransfer hubTransfer) {
             return new HubToHubInfo(
+                    hubTransfer.getId(),
                     hubTransfer.getStartHub().getId(),
                     hubTransfer.getEndHub().getId(),
                     hubTransfer.getTimeTaken(),
