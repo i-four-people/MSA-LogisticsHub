@@ -28,7 +28,7 @@ public class HubRepositoryImpl implements HubRepository {
 
     @Override
     public Optional<Hub> findByIdWithAreaAndDeletedFalse(UUID id) {
-        return jpaHubRepository.findByIdWithAreaAndDeletedFalse(id);
+        return jpaHubRepository.findByIdWithAreaAndIsDeletedFalse(id);
     }
 
     @Override
@@ -39,5 +39,15 @@ public class HubRepositoryImpl implements HubRepository {
     @Override
     public List<Hub> findAll() {
         return jpaHubRepository.findByIsDeletedFalse();
+    }
+
+    @Override
+    public Optional<Hub> findByAreaAndIsDeletedFalse(UUID areaId, double lat, double lng) {
+        return jpaHubRepository.findByAreaAndIsDeletedFalse(areaId, lat, lng);
+    }
+
+    @Override
+    public Optional<Hub> findByAreaInAndIsDeletedFalse(List<UUID> areaList, double lat, double lng) {
+        return jpaHubRepository.findByAreaInAndIsDeletedFalse(areaList, lat, lng);
     }
 }

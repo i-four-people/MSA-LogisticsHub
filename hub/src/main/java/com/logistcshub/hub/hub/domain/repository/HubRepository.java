@@ -18,4 +18,8 @@ public interface HubRepository {
     boolean existsByAreaAndAddressAndDeletedFalse(Area area, String address);
 
     List<Hub> findAll();
+
+    Optional<Hub> findByAreaAndIsDeletedFalse(UUID areaId, double lat, double lng);
+
+    Optional<Hub> findByAreaInAndIsDeletedFalse(List<UUID> areaList, double lat, double lng);
 }

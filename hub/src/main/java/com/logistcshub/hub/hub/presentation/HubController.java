@@ -103,4 +103,20 @@ public class HubController {
         );
     }
 
+    @GetMapping("/company-address")
+    public ResponseEntity<SuccessResponse<HubResponseDto>> getHubFromCompanyAddress(
+            @RequestHeader(value = "X-USER-ID") Long userId,
+            @RequestHeader(value = "X-USER-ROLE") String role,
+            @RequestParam(name = "address") String address,
+            @RequestParam(name = "lat") double lat,
+            @RequestParam(name = "lng") double lng
+           ) {
+        userId = 1L;
+        role = "MASTER";
+
+        return ResponseEntity.ok().body(
+                SuccessResponse.of(SUCCESS_GET_HUB, hubService.getHubFromCompanyAddress(userId, role, address, lat, lng))
+        );
+    }
+
 }

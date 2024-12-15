@@ -29,6 +29,7 @@ import com.logistcshub.hub.hub.presentation.request.type.SortType;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -184,5 +185,41 @@ public class HubService {
 
     public PagedModel<HubResponseDto> searchHubs(Long userId, String role, String keyword, HubSearchType type, Pageable pageable, SortType sortBy, boolean isAsc) {
         return new PagedModel<>(hubSearchRepository.findAllHubResponseDto(keyword, type, pageable, sortBy, isAsc));
+    }
+
+    @Transactional(readOnly = true)
+    public HubResponseDto getHubFromCompanyAddress(Long userId, String role, String address, double lat, double lng) {
+        String[] addresses = address.split(" ");
+
+        State state = State.findState(addresses[0]);
+
+        City city = City.findCityIfNoTFoundReturnNull(addresses[1], state);
+
+        if(city != null) {
+            Area area = areaRepository.findByStateAndCity(state, city).orElse(null);
+
+            if(area == null) {
+                return findByAreaIn(state, lat, lng);
+            }
+
+            Hub hub = hubRepository.findByAreaAndIsDeletedFalse(area.getId(), lat, lng).orElse(null);
+
+            if(hub != null) {
+                return HubResponseDto.of(hub);
+            } else {
+                return findByAreaIn(state, lat, lng);
+            }
+        }
+
+        return findByAreaIn(state, lat, lng);
+
+    }
+
+    private HubResponseDto findByAreaIn(State state, double lat, double lng) {
+        List<Area> areaList = areaRepository.findByStateAndIsDeletedFalse(state);
+
+        return HubResponseDto.of(hubRepository.findByAreaInAndIsDeletedFalse(areaList.stream().map(Area::getId).toList(), lat, lng)
+                .orElseThrow(() ->
+                        new RestApiException(HUB_NOT_FOUND)));
     }
 }
