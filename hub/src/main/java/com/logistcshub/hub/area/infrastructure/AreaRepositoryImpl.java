@@ -27,16 +27,16 @@ public class AreaRepositoryImpl implements AreaRepository {
 
     @Override
     public Optional<Area> findById(UUID id) {
-        return jpaAreaRepository.findById(id);
+        return jpaAreaRepository.findByIdAndIsDeletedFalse(id);
     }
 
     @Override
     public Optional<Area> findByStateAndCity(State state, City city) {
-        return jpaAreaRepository.findByStateAndCity(state, city);
+        return jpaAreaRepository.findByStateAndCityAndIsDeletedFalse(state, city);
     }
 
     @Override
     public boolean existsByCity(City city) {
-        return jpaAreaRepository.existsByCity(city);
+        return jpaAreaRepository.existsByCityAndIsDeletedFalse(city);
     }
 }

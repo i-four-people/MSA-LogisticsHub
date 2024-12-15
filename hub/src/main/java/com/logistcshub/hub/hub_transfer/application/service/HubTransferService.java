@@ -1,12 +1,5 @@
 package com.logistcshub.hub.hub_transfer.application.service;
 
-import static com.logistcshub.hub.common.exception.application.type.ErrorCode.ALREADY_EXISTS_HUB_TRANSFER;
-import static com.logistcshub.hub.common.exception.application.type.ErrorCode.HUB_NOT_FOUND;
-import static com.logistcshub.hub.common.exception.application.type.ErrorCode.INTERNAL_SERVER_ERROR;
-import static com.logistcshub.hub.common.exception.application.type.ErrorCode.KAKAO_ROAD_CLIENT_ERROR;
-import static com.logistcshub.hub.common.exception.application.type.ErrorCode.KAKAO_ROAD_SERVER_ERROR;
-import static com.logistcshub.hub.common.exception.application.type.ErrorCode.KAKAO_ROAD_TIME_OUT;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.logistcshub.hub.common.config.KakaoRoadApiConfig;
 import com.logistcshub.hub.common.domain.model.dtos.KakaoResponse;
@@ -16,6 +9,9 @@ import com.logistcshub.hub.common.exception.RestApiException;
 import com.logistcshub.hub.hub.domain.mode.Hub;
 import com.logistcshub.hub.hub.domain.repository.HubRepository;
 import com.logistcshub.hub.hub_transfer.application.dtos.AddHubTransferResponseDto;
+import com.logistcshub.hub.hub_transfer.application.dtos.DeleteHubTransferResponseDto;
+import com.logistcshub.hub.hub_transfer.application.dtos.HubTransferResponseDto;
+import com.logistcshub.hub.hub_transfer.application.dtos.UpdateHubTransferResponseDto;
 import com.logistcshub.hub.hub_transfer.domain.model.HubTransfer;
 import com.logistcshub.hub.hub_transfer.domain.repository.HubTransferRepository;
 import com.logistcshub.hub.hub_transfer.presentation.request.AddHubTransferRequestDto;
@@ -24,6 +20,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import com.logistcshub.hub.hub_transfer.presentation.request.UpdateTransferRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
@@ -39,6 +38,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import static com.logistcshub.hub.common.exception.application.type.ErrorCode.*;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -51,31 +52,73 @@ public class HubTransferService {
     @Transactional
     public List<AddHubTransferResponseDto> addHubTransfer(AddHubTransferRequestDto request, String role, Long userId) {
 
-        Hub startHub = hubRepository.findByIdAndDeletedFalse(request.startHubId()).orElseThrow(() ->
-                new RestApiException(HUB_NOT_FOUND));
+        Hub startHub = getHubById(request.startHubId());
 
-        Hub endHub = hubRepository.findByIdAndDeletedFalse(request.endHubId()).orElseThrow(() ->
-                new RestApiException(HUB_NOT_FOUND));
+        Hub endHub = getHubById(request.endHubId());
 
-        if(hubTransferRepository.existsByStartHubAndEndHubAndDeletedFalse(startHub, endHub)) {
+        if(hubTransferRepository.existsByStartHubAndEndHubAndIsDeletedFalse(startHub, endHub)) {
             throw new RestApiException(ALREADY_EXISTS_HUB_TRANSFER);
         }
 
         HubTransfer startToEnd = extracted(startHub, endHub);
-        HubTransfer endToStart = extracted(endHub, startHub);
+        startToEnd.create(userId);
 
         startToEnd = hubTransferRepository.save(startToEnd);
-        endToStart = hubTransferRepository.save(endToStart);
 
         AddHubTransferResponseDto startToEndDto = AddHubTransferResponseDto.of(startToEnd, startHub, endHub);
-        AddHubTransferResponseDto endToStartDto = AddHubTransferResponseDto.of(endToStart, endHub, startHub);
 
         List<AddHubTransferResponseDto> responseDtos = new ArrayList<>();
         responseDtos.add(startToEndDto);
-        responseDtos.add(endToStartDto);
+
+        if(!hubTransferRepository.existsByStartHubAndEndHubAndIsDeletedFalse(endHub, startHub)) {
+            HubTransfer endToStart = extracted(endHub, startHub);
+
+            endToStart.create(userId);
+
+            endToStart = hubTransferRepository.save(endToStart);
+
+            AddHubTransferResponseDto endToStartDto = AddHubTransferResponseDto.of(endToStart, endHub, startHub);
+
+            responseDtos.add(endToStartDto);
+        }
 
         return responseDtos;
     }
+
+    @Transactional
+    public UpdateHubTransferResponseDto updateTransfer(UUID id, UpdateTransferRequestDto request, String role, Long userId) {
+        HubTransfer hubTransfer = getHubTransferById(id);
+
+        Hub startHub = getHubById(request.startHubId());
+
+        Hub endHub = getHubById(request.endHubId());
+
+        if(hubTransferRepository.existsByStartHubAndEndHubAndIsDeletedFalse(startHub, endHub)) {
+            throw new RestApiException(ALREADY_EXISTS_HUB_TRANSFER);
+        }
+
+        HubTransfer updatedHubTransfer = extracted(startHub, endHub);
+        hubTransfer.updateHubTransfer(startHub, endHub, updatedHubTransfer.getTimeTaken(), updatedHubTransfer.getDistance(), userId);
+
+        return UpdateHubTransferResponseDto.of(hubTransferRepository.save(hubTransfer), startHub, endHub);
+
+    }
+
+    @Transactional
+    public DeleteHubTransferResponseDto deleteHubTransfer(UUID id, String role, Long userId) {
+        HubTransfer hubTransfer = getHubTransferById(id);
+
+        hubTransferRepository.delete(hubTransfer);
+
+        return new DeleteHubTransferResponseDto(hubTransfer.getStartHub().getName() + "에서 " + hubTransfer.getEndHub().getName() + "로 연결된 노선은 삭제되었습니다.");
+
+    }
+
+    @Transactional(readOnly = true)
+    public HubTransferResponseDto getHubTransfer(UUID id, String role, Long userId) {
+        return HubTransferResponseDto.of(getHubTransferById(id));
+    }
+
 
     private HubTransfer extracted(Hub startHub, Hub endHub) {
         try {
@@ -129,4 +172,17 @@ public class HubTransferService {
 
         return httpHeaders;
     }
+
+
+    private Hub getHubById(UUID hubId) {
+        return hubRepository.findByIdAndDeletedFalse(hubId).orElseThrow(() ->
+                new RestApiException(HUB_NOT_FOUND));
+    }
+
+    private HubTransfer getHubTransferById(UUID id) {
+        return hubTransferRepository.findByIdAndIsDeletedFalse(id).orElseThrow(() ->
+                new RestApiException(HUB_TRANSFER_NOT_FOUND));
+    }
+
+
 }
