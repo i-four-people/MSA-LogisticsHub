@@ -9,10 +9,9 @@ public record CompanyRequestDto(
         String name,
         String address,
         String contact,
-        CompanyType companyType,
-        UUID hubId
+        CompanyType companyType
 ) {
-    public Company toEntity(double lng, double lat) {
+    public Company toEntity(double lng, double lat, UUID hubId) {
         return Company.builder()
                 .name(this.name)
                 .address(this.address)
@@ -20,7 +19,7 @@ public record CompanyRequestDto(
                 .lat(lat)
                 .contact(this.contact)
                 .companyType(this.companyType)
-                .hubId(this.hubId)
+                .hubId(hubId)
                 .build();
     }
 }
