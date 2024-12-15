@@ -60,7 +60,8 @@ public class OrderServiceImpl implements OrderService {
         rabbitTemplate.convertAndSend(
                 rabbitProperties.getExchange().getOrder(),
                 rabbitProperties.getRoutingKeys().getCreated(),
-                event);
+                event
+        );
     }
 
     @Override

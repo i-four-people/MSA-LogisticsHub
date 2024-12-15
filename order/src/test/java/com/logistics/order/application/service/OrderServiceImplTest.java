@@ -6,6 +6,7 @@ import com.logistics.order.application.dto.product.ProductResponse;
 import com.logistics.order.domain.model.Order;
 import com.logistics.order.domain.repository.OrderRepository;
 import com.logistics.order.infrastructure.client.ProductClient;
+import com.logistics.order.infrastructure.config.RabbitMQProperties;
 import com.logistics.order.presentation.exception.BusinessException;
 import com.logistics.order.presentation.exception.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,15 +44,32 @@ class OrderServiceImplTest {
     @InjectMocks
     private OrderServiceImpl orderService;
 
-    @BeforeEach
-    void setUp() throws Exception {
-        Field productQueueField = OrderServiceImpl.class.getDeclaredField("productQueue");
-        productQueueField.setAccessible(true);
-        productQueueField.set(orderService, "logistics.product");
+    private RabbitMQProperties rabbitProperties;
 
-        Field deliveryQueueField = OrderServiceImpl.class.getDeclaredField("deliveryQueue");
-        deliveryQueueField.setAccessible(true);
-        deliveryQueueField.set(orderService, "logistics.delivery");
+    @BeforeEach
+    void setUp() {
+        rabbitProperties = new RabbitMQProperties();
+
+        RabbitMQProperties.Exchange exchange = new RabbitMQProperties.Exchange();
+        exchange.setOrder("order.exchange");
+        rabbitProperties.setExchange(exchange);
+
+        RabbitMQProperties.RoutingKeys routingKeys = new RabbitMQProperties.RoutingKeys();
+        routingKeys.setCreated("order.created");
+        routingKeys.setDeleted("order.deleted");
+        rabbitProperties.setRoutingKeys(routingKeys);
+
+        injectRabbitMQProperties(orderService, rabbitProperties);
+    }
+
+    private void injectRabbitMQProperties(OrderServiceImpl orderService, RabbitMQProperties rabbitMQProperties) {
+        try {
+            Field field = OrderServiceImpl.class.getDeclaredField("rabbitProperties");
+            field.setAccessible(true);
+            field.set(orderService, rabbitMQProperties);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException("Failed to inject RabbitMQProperties into OrderServiceImpl", e);
+        }
     }
 
     @Test
@@ -87,11 +105,9 @@ class OrderServiceImplTest {
         // Verify that rabbitTemplate was used to send the event
         ArgumentCaptor<OrderCreateEvent> eventCaptor = ArgumentCaptor.forClass(OrderCreateEvent.class);
         verify(rabbitTemplate).convertAndSend(
-                eq("logistics.product"), eventCaptor.capture()
-        );
-
-        verify(rabbitTemplate).convertAndSend(
-                eq("logistics.delivery"), eventCaptor.capture()
+                eq(rabbitProperties.getExchange().getOrder()),
+                eq(rabbitProperties.getRoutingKeys().getCreated()),
+                eventCaptor.capture()
         );
 
         OrderCreateEvent capturedEvent = eventCaptor.getValue();
