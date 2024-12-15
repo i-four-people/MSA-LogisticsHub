@@ -1,7 +1,9 @@
 package com.logistics.delivery.domain.model;
 
+import com.logistics.delivery.application.dto.hub.HubToHubResponse;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
@@ -53,5 +55,29 @@ public class DeliveryRoute extends AuditingFields {
 
     @Comment("삭제 여부")
     private boolean isDelete;
+
+    @Builder
+    private DeliveryRoute(UUID deliveryId, int sequence, UUID startHubId, UUID endHubId, float estimatedDistance, float estimatedDuration, RouteStatus status) {
+        this.deliveryId = deliveryId;
+        this.sequence = sequence;
+        this.startHubId = startHubId;
+        this.endHubId = endHubId;
+        this.estimatedDistance = estimatedDistance;
+        this.estimatedDuration = estimatedDuration;
+        this.status = status;
+    }
+
+    public static DeliveryRoute create(Delivery delivery, int sequence, HubToHubResponse.HubDetail startHub,
+                              HubToHubResponse.HubDetail endHub, HubToHubResponse.HubToHubInfo hubToHubInfo) {
+        return DeliveryRoute.builder()
+                .deliveryId(delivery.getId())
+                .sequence(sequence)
+                .startHubId(startHub.getHubId())
+                .endHubId(endHub.getHubId())
+                .estimatedDistance(hubToHubInfo.getDistance())
+                .estimatedDuration(hubToHubInfo.getTimeTaken())
+                .status(RouteStatus.PENDING)
+                .build();
+    }
 
 }

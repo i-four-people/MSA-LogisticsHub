@@ -8,6 +8,7 @@ import com.logistics.delivery.application.dto.order.OrderStatusRequest;
 import com.logistics.delivery.domain.model.Delivery;
 import com.logistics.delivery.domain.model.DeliveryStatus;
 import com.logistics.delivery.domain.repository.DeliveryRepository;
+import com.logistics.delivery.domain.service.DeliveryRouteService;
 import com.logistics.delivery.domain.service.DeliveryService;
 import com.logistics.delivery.infrastructure.client.CompanyClient;
 import com.logistics.delivery.infrastructure.config.RabbitMQProperties;
@@ -26,6 +27,7 @@ import java.util.UUID;
 public class DeliveryServiceImpl implements DeliveryService {
 
     private final DeliveryRepository deliveryRepository;
+    private final DeliveryRouteService deliveryRouteService;
     private final RabbitTemplate rabbitTemplate;
     private final RabbitMQProperties rabbitProperties;
 
@@ -66,6 +68,9 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         // 배송 정보 저장
         Delivery savedDelivery = deliveryRepository.save(Delivery.create(consume, recipientCompany, supplyCompany));
+
+        // 배송 경로 생성
+        deliveryRouteService.createRoutesForDelivery(savedDelivery);
 
         // 이벤트 생성
         DeliveryCreateEvent event = DeliveryCreateEvent.of(savedDelivery);
