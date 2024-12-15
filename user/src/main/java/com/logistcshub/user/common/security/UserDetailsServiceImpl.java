@@ -1,6 +1,6 @@
-package com.logistcshub.user.application.security;
+package com.logistcshub.user.common.security;
 
-import com.logistcshub.user.domain.model.User;
+import com.logistcshub.user.domain.model.user.User;
 import com.logistcshub.user.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;

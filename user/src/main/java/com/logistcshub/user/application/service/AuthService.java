@@ -2,9 +2,9 @@ package com.logistcshub.user.application.service;
 
 import com.logistcshub.user.presentation.response.TokenDto;
 import com.logistcshub.user.presentation.response.UserDto;
-import com.logistcshub.user.application.jwt.JwtUtil;
-import com.logistcshub.user.domain.model.User;
-import com.logistcshub.user.domain.model.UserRoleEnum;
+import com.logistcshub.user.common.jwt.JwtUtil;
+import com.logistcshub.user.domain.model.user.User;
+import com.logistcshub.user.domain.model.user.UserRoleEnum;
 import com.logistcshub.user.infrastructure.repository.UserRepository;
 import com.logistcshub.user.presentation.request.LoginRequest;
 import com.logistcshub.user.presentation.request.SignupRequest;

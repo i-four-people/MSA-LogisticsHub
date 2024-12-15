@@ -1,7 +1,7 @@
 package com.logistcshub.user.presentation.response;
 
-import com.logistcshub.user.domain.model.User;
-import com.logistcshub.user.domain.model.UserRoleEnum;
+import com.logistcshub.user.domain.model.user.User;
+import com.logistcshub.user.domain.model.user.UserRoleEnum;
 import com.querydsl.core.annotations.QueryProjection;
 
 import java.time.LocalDateTime;

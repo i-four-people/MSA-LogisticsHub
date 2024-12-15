@@ -1,7 +1,7 @@
 package com.logistcshub.user.application.service;
 
-import com.logistcshub.user.domain.model.User;
-import com.logistcshub.user.domain.model.UserRoleEnum;
+import com.logistcshub.user.domain.model.user.User;
+import com.logistcshub.user.domain.model.user.UserRoleEnum;
 import com.logistcshub.user.infrastructure.repository.UserRepository;
 import com.logistcshub.user.presentation.request.UserSearchRequest;
 import com.logistcshub.user.presentation.request.UserUpdateRequest;

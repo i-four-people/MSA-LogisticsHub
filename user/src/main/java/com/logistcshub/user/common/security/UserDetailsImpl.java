@@ -1,7 +1,7 @@
-package com.logistcshub.user.application.security;
+package com.logistcshub.user.common.security;
 
-import com.logistcshub.user.domain.model.User;
-import com.logistcshub.user.domain.model.UserRoleEnum;
+import com.logistcshub.user.domain.model.user.User;
+import com.logistcshub.user.domain.model.user.UserRoleEnum;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

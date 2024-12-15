@@ -1,9 +1,9 @@
 package com.logistcshub.user.presentation.controller;
 
-import com.logistcshub.user.application.security.UserDetailsImpl;
+import com.logistcshub.user.common.security.UserDetailsImpl;
 import com.logistcshub.user.application.service.HubManagerService;
-import com.logistcshub.user.infrastructure.common.ApiResponse;
-import com.logistcshub.user.infrastructure.common.MessageType;
+import com.logistcshub.user.common.response.ApiResponse;
+import com.logistcshub.user.common.message.MessageType;
 import com.logistcshub.user.presentation.request.HubManagerRequest;
 import com.logistcshub.user.presentation.response.HubManagerResponse;
 import lombok.RequiredArgsConstructor;

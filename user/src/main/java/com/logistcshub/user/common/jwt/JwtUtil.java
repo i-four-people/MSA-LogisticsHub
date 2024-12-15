@@ -1,8 +1,8 @@
-package com.logistcshub.user.application.jwt;
+package com.logistcshub.user.common.jwt;
 
 import com.logistcshub.user.presentation.response.TokenDto;
-import com.logistcshub.user.application.security.UserDetailsServiceImpl;
-import com.logistcshub.user.domain.model.UserRoleEnum;
+import com.logistcshub.user.common.security.UserDetailsServiceImpl;
+import com.logistcshub.user.domain.model.user.UserRoleEnum;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;

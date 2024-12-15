@@ -1,8 +1,8 @@
 package com.logistcshub.user.presentation.response;
 
-import com.logistcshub.user.domain.model.DeliveryManager;
-import com.logistcshub.user.domain.model.DeliveryManagerType;
-import com.logistcshub.user.domain.model.DeliveryStatus;
+import com.logistcshub.user.domain.model.deliveryManager.DeliveryManager;
+import com.logistcshub.user.domain.model.deliveryManager.DeliveryManagerType;
+import com.logistcshub.user.domain.model.deliveryManager.DeliveryStatus;
 import com.querydsl.core.annotations.QueryProjection;
 
 import java.io.Serializable;

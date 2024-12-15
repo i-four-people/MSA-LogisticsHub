@@ -1,6 +1,6 @@
 package com.logistcshub.user.infrastructure.configuration;
 
-import com.logistcshub.user.application.security.UserDetailsImpl;
+import com.logistcshub.user.common.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;

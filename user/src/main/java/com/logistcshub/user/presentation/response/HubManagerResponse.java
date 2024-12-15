@@ -1,6 +1,6 @@
 package com.logistcshub.user.presentation.response;
 
-import com.logistcshub.user.domain.model.HubManager;
+import com.logistcshub.user.domain.model.deliveryManager.HubManager;
 
 import java.io.Serializable;
 import java.util.UUID;

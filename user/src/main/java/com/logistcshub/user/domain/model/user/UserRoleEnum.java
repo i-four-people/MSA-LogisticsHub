@@ -1,4 +1,4 @@
-package com.logistcshub.user.domain.model;
+package com.logistcshub.user.domain.model.user;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

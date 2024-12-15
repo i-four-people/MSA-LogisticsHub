@@ -1,4 +1,4 @@
-package com.logistcshub.user.application.jwt;
+package com.logistcshub.user.common.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

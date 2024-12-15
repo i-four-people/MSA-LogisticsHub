@@ -2,9 +2,9 @@ package com.logistcshub.user.infrastructure.repository;
 
 import com.logistcshub.user.presentation.response.DeliveryManagerDto;
 import com.logistcshub.user.presentation.response.QDeliveryManagerDto;
-import com.logistcshub.user.domain.model.DeliveryManagerType;
-import com.logistcshub.user.domain.model.DeliveryStatus;
-import com.logistcshub.user.domain.model.UserRoleEnum;
+import com.logistcshub.user.domain.model.deliveryManager.DeliveryManagerType;
+import com.logistcshub.user.domain.model.deliveryManager.DeliveryStatus;
+import com.logistcshub.user.domain.model.user.UserRoleEnum;
 import com.logistcshub.user.domain.repository.DeliveryManagerRepositoryCustom;
 import com.logistcshub.user.presentation.request.DeliSearchRequest;
 import com.logistcshub.user.presentation.response.DeliSearchResponse;
@@ -22,8 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static com.logistcshub.user.domain.model.QDeliveryManager.deliveryManager;
-import static com.logistcshub.user.domain.model.QHubManager.hubManager;
+import static com.logistcshub.user.domain.model.deliveryManager.QDeliveryManager.deliveryManager;
+import static com.logistcshub.user.domain.model.deliveryManager.QHubManager.hubManager;
 
 @Repository
 public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepositoryCustom {

@@ -1,5 +1,6 @@
-package com.logistcshub.user.infrastructure.common;
+package com.logistcshub.user.common.response;
 
+import com.logistcshub.user.common.message.MessageType;
 import lombok.Builder;
 
 public record ApiResponse<T>(String status, String message, T data) {
