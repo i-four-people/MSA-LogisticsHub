@@ -39,4 +39,9 @@ public class AreaRepositoryImpl implements AreaRepository {
     public boolean existsByCity(City city) {
         return jpaAreaRepository.existsByCityAndIsDeletedFalse(city);
     }
+
+    @Override
+    public List<Area> findByStateAndIsDeletedFalse(State state) {
+        return jpaAreaRepository.findByStateAndIsDeletedFalse(state);
+    }
 }
