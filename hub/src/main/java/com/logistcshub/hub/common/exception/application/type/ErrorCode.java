@@ -27,7 +27,9 @@ public enum ErrorCode {
 
     HUB_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 허브를 찾을 수 없습니다."),
     ALREADY_EXISTS_HUB(HttpStatus.BAD_REQUEST, "이미 존재하는 허브입니다."),
-    ALREADY_EXISTS_HUB_TRANSFER(HttpStatus.BAD_REQUEST, "이미 존재하는 경로입니다. 시간 혹은 거리를 업데이트 하시고 싶으시면 PUT 요청해주세요."),
+    ALREADY_EXISTS_HUB_TRANSFER(HttpStatus.BAD_REQUEST, "이미 존재하는 경로입니다."),
+
+    HUB_TRANSFER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 hub transfer를 찾을 수 없습니다."),
 
 
     ;

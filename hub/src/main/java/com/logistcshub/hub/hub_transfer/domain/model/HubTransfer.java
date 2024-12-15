@@ -11,9 +11,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
-
-import java.util.List;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,9 +19,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 
 @Entity
-@Table(
-        name = "p_hub_transfers"
-)
+@Table(name = "p_hub_transfers")
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -50,5 +45,12 @@ public class HubTransfer extends BaseEntity {
     @Column(name = "distance")
     private Integer distance;
 
+    public void updateHubTransfer(Hub startHub, Hub endHub, Integer timeTaken, Integer distance, Long userId) {
+        this.startHub = startHub;
+        this.endHub = endHub;
+        this.timeTaken = timeTaken;
+        this.distance = distance;
+        update(userId);
+    }
 
 }

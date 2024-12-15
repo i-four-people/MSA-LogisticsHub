@@ -61,4 +61,11 @@ public class CompanyController {
                 .body(ApiResponse.success(MessageType.RETRIEVE, Companies));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<CompanyResponseDto>> getCompany(@RequestParam(value = "id", required = false) UUID id) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success(MessageType.RETRIEVE, companyService.getCompany(id)));
+    }
+
 }

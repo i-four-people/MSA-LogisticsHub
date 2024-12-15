@@ -65,13 +65,13 @@ public class AddHubTransferInserter {
             Hub hub1 = hubMap.get(hubs[0]);
             Hub hub2 = hubMap.get(hubs[1]);
 
-            if(!hubTransferRepository.existsByStartHubAndEndHubAndDeletedFalse(hub1, hub2)) {
+            if(!hubTransferRepository.existsByStartHubAndEndHubAndIsDeletedFalse(hub1, hub2)) {
                 HubTransfer hubTransfer = hubTransferService.extracted(hub1, hub2);
                 hubTransfer.create(userid);
                 saveList.add(hubTransfer);
             }
 
-            if(!hubTransferRepository.existsByStartHubAndEndHubAndDeletedFalse(hub2, hub1)) {
+            if(!hubTransferRepository.existsByStartHubAndEndHubAndIsDeletedFalse(hub2, hub1)) {
                 HubTransfer hubTransfer = hubTransferService.extracted(hub2, hub1);
                 hubTransfer.create(userid);
                 saveList.add(hubTransfer);

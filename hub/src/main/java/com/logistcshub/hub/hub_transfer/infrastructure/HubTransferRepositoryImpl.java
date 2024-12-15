@@ -20,6 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+import java.util.UUID;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +45,20 @@ public class HubTransferRepositoryImpl implements HubTransferRepository {
     }
 
     @Override
+    public boolean existsByStartHubAndEndHubAndIsDeletedFalse(Hub startHub, Hub endHub) {
+        return jpaHubTransferRepository.existsByStartHubAndEndHubAndIsDeletedFalse(startHub, endHub);
+    }
+
+    @Override
+    public Optional<HubTransfer> findByIdAndIsDeletedFalse(UUID id) {
+        return jpaHubTransferRepository.findByIdAndIsDeletedFalse(id);
+    }
+
+    @Override
+    public void delete(HubTransfer hubTransfer) {
+        jpaHubTransferRepository.delete(hubTransfer);
+    }
+
     public boolean existsByStartHubAndEndHubAndDeletedFalse(Hub startHub, Hub endHub) {
         return jpaHubTransferRepository.existsByStartHubAndEndHubAndIsDeletedFalse(startHub, endHub);
     }

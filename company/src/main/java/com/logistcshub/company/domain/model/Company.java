@@ -25,16 +25,28 @@ public class Company {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String address;
 
+    @Column(nullable = false)
     private String contact;
 
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private CompanyType companyType;
 
+    @Column(nullable = false)
     private UUID hubId;
+
+    @Column(nullable = false)
+    private double lat;
+
+    @Column(nullable = false)
+    private double lng;
+
 
     @Builder.Default
     private boolean isDelete = false;
@@ -55,10 +67,9 @@ public class Company {
 
     private String deletedBy;
 
-    public void create(Long id){
+    public void create(Long id) {
         createdBy = id.toString();
         createdAt = LocalDateTime.now();
-
     }
 
     public void delete(String id) {

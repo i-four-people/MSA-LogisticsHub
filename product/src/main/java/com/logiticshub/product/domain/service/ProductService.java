@@ -1,9 +1,12 @@
 package com.logiticshub.product.domain.service;
 
+import com.logiticshub.product.application.client.CompanyClient;
+import com.logiticshub.product.application.dto.CompanyResponseDto;
 import com.logiticshub.product.application.dto.ProductResponseDto;
 import com.logiticshub.product.domain.model.Product;
 import com.logiticshub.product.domain.repository.ProductRepository;
 import com.logiticshub.product.presentation.request.ProductRequestDto;
+import com.logiticshub.product.presentation.response.ApiResponse;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import jakarta.ws.rs.NotFoundException;
@@ -11,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,9 +27,13 @@ import static com.logiticshub.product.domain.model.QProduct.product;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final CompanyClient companyClient;
 
     public ProductResponseDto createProduct(Long userId, String role, ProductRequestDto productRequestDto) {
-        Product product = productRequestDto.toEntity();
+        ResponseEntity<ApiResponse<CompanyResponseDto>> getCompanyInfo = companyClient.getCompany(productRequestDto.companyId());
+        CompanyResponseDto companyInfo= getCompanyInfo.getBody().data();
+        Product product = productRequestDto.toEntity(companyInfo.hubId());
+
         product.create(userId);
 
         productRepository.save(product);

@@ -13,14 +13,14 @@ public record ProductRequestDto(
         UUID hubId
 
 ) {
-    public Product toEntity(){
+    public Product toEntity(UUID hubId){
         return Product.builder()
                 .name(this.name)
                 .description(this.description)
                 .price(this.price)
                 .stock(this.stock)
                 .companyId(this.companyId)
-                .hubId(this.hubId)
+                .hubId(hubId)
                 .build();
     }
 }
