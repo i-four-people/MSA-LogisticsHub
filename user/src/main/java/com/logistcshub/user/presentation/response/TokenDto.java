@@ -1,6 +1,4 @@
-package com.logistcshub.user.application.dtos;
-
-import lombok.*;
+package com.logistcshub.user.presentation.response;
 
 public record TokenDto(String accessToken) {
     public static TokenDto of(String accessToken) {

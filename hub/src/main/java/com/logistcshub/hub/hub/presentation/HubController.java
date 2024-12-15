@@ -1,10 +1,5 @@
 package com.logistcshub.hub.hub.presentation;
 
-import static com.logistcshub.hub.common.domain.model.type.ResponseMessage.SUCCESS_CREATE_HUB;
-import static com.logistcshub.hub.common.domain.model.type.ResponseMessage.SUCCESS_DELETE_HUB;
-import static com.logistcshub.hub.common.domain.model.type.ResponseMessage.SUCCESS_GET_HUB;
-import static com.logistcshub.hub.common.domain.model.type.ResponseMessage.SUCCESS_UPDATE_HUB;
-
 import com.logistcshub.hub.common.domain.model.dtos.SuccessResponse;
 import com.logistcshub.hub.hub.application.dtos.AddHubResponseDto;
 import com.logistcshub.hub.hub.application.dtos.DeleteHubResponseDto;
@@ -31,6 +26,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.logistcshub.hub.common.domain.model.type.ResponseMessage.*;
 
 @RestController
 @RequestMapping("/api/hubs")
@@ -102,7 +99,7 @@ public class HubController {
         role = "MASTER";
 
         return ResponseEntity.ok().body(
-                SuccessResponse.of(SUCCESS_GET_HUB, hubService.searchHubs(userId, role, keyword, type, pageable, sortBy, isAsc))
+                SuccessResponse.of(SUCCESS_GET_HUBS, hubService.searchHubs(userId, role, keyword, type, pageable, sortBy, isAsc))
         );
     }
 

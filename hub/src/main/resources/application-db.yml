@@ -12,9 +12,6 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
     open-in-view: false
 
-kakaomap:
-  admin-key: ${KAKAO_MAP_ADMIN_KEY}
-  map-url: ${KAKAO_MAP_URL}
 
 ---
 # Local 환경

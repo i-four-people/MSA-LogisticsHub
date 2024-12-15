@@ -4,6 +4,7 @@ import com.logistcshub.hub.common.domain.model.BaseEntity;
 import com.logistcshub.hub.hub.domain.mode.Hub;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -28,11 +29,11 @@ public class HubTransfer extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "start_hub_id")
     private Hub startHub;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "end_hub_id")
     private Hub endHub;
 
@@ -44,5 +45,12 @@ public class HubTransfer extends BaseEntity {
     @Column(name = "distance")
     private Integer distance;
 
+    public void updateHubTransfer(Hub startHub, Hub endHub, Integer timeTaken, Integer distance, Long userId) {
+        this.startHub = startHub;
+        this.endHub = endHub;
+        this.timeTaken = timeTaken;
+        this.distance = distance;
+        update(userId);
+    }
 
 }
