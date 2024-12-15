@@ -55,9 +55,9 @@ public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepositoryC
                 .on(deliveryManager.hubId.eq(hubManager.hubId))
                 .where(hubManagerFilter(role, userId),
                         userIdEq(condition.userId()),
-                        deliveryManagerTypeEq(String.valueOf(condition.deliveryManagerType())),
+                        deliveryManagerTypeEq(condition.deliveryManagerType()),
                         hubIdEq(condition.hubId()),
-                        statusEq(String.valueOf(condition.deliveryStatus())),
+                        statusEq(condition.deliveryStatus()),
                         deliveryManager.isDelete.eq(false));
 
         if (pageable.getSort().isEmpty()) {
@@ -85,9 +85,9 @@ public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepositoryC
                 .select(deliveryManager.count())
                 .from(deliveryManager)
                 .where(userIdEq(condition.userId()),
-                        deliveryManagerTypeEq(String.valueOf(condition.deliveryManagerType())),
+                        deliveryManagerTypeEq(condition.deliveryManagerType()),
                         hubIdEq(condition.hubId()),
-                        statusEq(String.valueOf(condition.deliveryStatus())),
+                        statusEq(condition.deliveryStatus()),
                         deliveryManager.isDelete.eq(false));
 
         DeliSearchResponse deliSearchResponse = new DeliSearchResponse(content);
@@ -107,15 +107,15 @@ public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepositoryC
         return userId != null ? deliveryManager.userId.eq(userId) : null;
     }
 
-    private BooleanExpression deliveryManagerTypeEq(String type) {
-        return type != null ? deliveryManager.deliveryManagerType.eq(DeliveryManagerType.valueOf(type)) : null;
+    private BooleanExpression deliveryManagerTypeEq(DeliveryManagerType type) {
+        return type != null ? deliveryManager.deliveryManagerType.eq(type) : null;
     }
 
     private BooleanExpression hubIdEq(UUID hubId) {
         return hubId != null ? deliveryManager.hubId.eq(hubId) : null;
     }
 
-    private BooleanExpression statusEq(String status) {
-        return status != null ? deliveryManager.status.eq(DeliveryStatus.valueOf(status)) : null;
+    private BooleanExpression statusEq(DeliveryStatus status) {
+        return status != null ? deliveryManager.status.eq(status) : null;
     }
 }

@@ -1,6 +1,6 @@
 ### 허브 매니저 생성
 POST http://localhost:19093/api/hub-managers
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDA5NDYzNiwiZXhwIjoxNzM0MDk0OTk2fQ.R13NOdbs1e0H4mOeT4jykLHFhPDgB-kcbT9EOArwf8iZ2CAylHCdc8WCjhhWj36BGEtCB4orS-YSdVG5eOyxeg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDI4NDE4MSwiZXhwIjoxNzM0Mjg0NTQxfQ.ZdT4zz4-6ORLasAVeKSKWiO-lTwkgyg28Cj8lARjOFbh_T3d-JnWredXNjhS_yl3MRIQPg8JFDMZJV1W7O38fg
 Content-Type: application/json
 X-User-Id: 1
 X-User-Role: MASTER
