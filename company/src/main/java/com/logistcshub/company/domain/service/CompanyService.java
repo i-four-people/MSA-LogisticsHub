@@ -59,4 +59,11 @@ public class CompanyService {
         return new PagedModel<>(companies.map(CompanyResponseDto::toDto));
     }
 
+    public CompanyResponseDto getCompany(UUID id) {
+        Company company = companyRepository.findById(id).orElseThrow(
+                () -> new NoSuchElementException("해당 Id값을 갖는 업체가 존재하지 않습니다."));
+
+        return CompanyResponseDto.toDto(company);
+    }
+
 }
