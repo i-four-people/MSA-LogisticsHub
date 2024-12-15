@@ -1,5 +1,12 @@
 package com.logistcshub.hub.hub_transfer.application.service;
 
+import static com.logistcshub.hub.common.exception.application.type.ErrorCode.ALREADY_EXISTS_HUB_TRANSFER;
+import static com.logistcshub.hub.common.exception.application.type.ErrorCode.HUB_NOT_FOUND;
+import static com.logistcshub.hub.common.exception.application.type.ErrorCode.INTERNAL_SERVER_ERROR;
+import static com.logistcshub.hub.common.exception.application.type.ErrorCode.KAKAO_ROAD_CLIENT_ERROR;
+import static com.logistcshub.hub.common.exception.application.type.ErrorCode.KAKAO_ROAD_SERVER_ERROR;
+import static com.logistcshub.hub.common.exception.application.type.ErrorCode.KAKAO_ROAD_TIME_OUT;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.logistcshub.hub.common.config.KakaoRoadApiConfig;
 import com.logistcshub.hub.common.domain.model.dtos.KakaoResponse;
@@ -9,6 +16,7 @@ import com.logistcshub.hub.common.exception.RestApiException;
 import com.logistcshub.hub.hub.domain.mode.Hub;
 import com.logistcshub.hub.hub.domain.repository.HubRepository;
 import com.logistcshub.hub.hub_transfer.application.dtos.AddHubTransferResponseDto;
+import com.logistcshub.hub.hub_transfer.application.dtos.HubTransferPageDto;
 import com.logistcshub.hub.hub_transfer.application.dtos.DeleteHubTransferResponseDto;
 import com.logistcshub.hub.hub_transfer.application.dtos.HubTransferResponseDto;
 import com.logistcshub.hub.hub_transfer.application.dtos.UpdateHubTransferResponseDto;
@@ -22,9 +30,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.querydsl.core.types.Predicate;
+
 import com.logistcshub.hub.hub_transfer.presentation.request.UpdateTransferRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -85,7 +96,7 @@ public class HubTransferService {
         return responseDtos;
     }
 
-    @Transactional
+
     public UpdateHubTransferResponseDto updateTransfer(UUID id, UpdateTransferRequestDto request, String role, Long userId) {
         HubTransfer hubTransfer = getHubTransferById(id);
 
@@ -119,8 +130,8 @@ public class HubTransferService {
         return HubTransferResponseDto.of(getHubTransferById(id));
     }
 
-
-    private HubTransfer extracted(Hub startHub, Hub endHub) {
+    @Transactional
+    public HubTransfer extracted(Hub startHub, Hub endHub) {
         try {
             HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(this.getHeader());
 
@@ -139,8 +150,6 @@ public class HubTransferService {
             KakaoResponse kakaoResponse = mapper.convertValue(responseEntity.getBody(), KakaoResponse.class);
 
             Summary summary = kakaoResponse.routes().get(0).summary();
-            System.out.println(summary.distance());
-            System.out.println(summary.duration());
             KakaoRoadResponseDto kakaoMapResponse = KakaoRoadResponseDto.of(summary);
 
             return HubTransfer.builder()
@@ -185,4 +194,11 @@ public class HubTransferService {
     }
 
 
+
+    @Transactional(readOnly = true)
+    public HubTransferPageDto searchHubTransfer(List<UUID> idList, Predicate predicate, Pageable pageable, String role, Long userId) {
+
+        return hubTransferRepository.findAll(idList, predicate, pageable);
+
+    }
 }

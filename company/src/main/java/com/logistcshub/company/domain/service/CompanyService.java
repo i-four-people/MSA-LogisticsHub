@@ -25,8 +25,8 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-import static com.logistcshub.company.domain.model.QCompany.company;
 import static com.logistcshub.company.presentation.response.ErrorCode.*;
+import static com.logistcshub.company.domain.model.QCompany.company;
 
 @Service
 @RequiredArgsConstructor
