@@ -17,4 +17,6 @@ public interface AreaRepository {
     Optional<Area> findByStateAndCity(State state, City city);
 
     boolean existsByCity(City city);
+
+    List<Area> findByStateAndIsDeletedFalse(State state);
 }

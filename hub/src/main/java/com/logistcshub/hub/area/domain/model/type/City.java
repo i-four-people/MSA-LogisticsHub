@@ -81,6 +81,19 @@ public enum City {
                 .orElseThrow(() -> new RestApiException(CITY_NOT_FOUND));
     }
 
+    public static City findCityIfNoTFoundReturnNull(String koreanName, State state) {
+        return Arrays.stream(City.values())
+                .filter(city -> city.getKoreanName().equals(koreanName) && city.getState().equals(state))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public static List<City> findAllCitiesByState(State state) {
+        return Arrays.stream(City.values())
+                .filter(city -> city.state.equals(state))
+                .toList();
+    }
+
     public static List<City> findAllCity(String keyword) {
         return Arrays.stream(City.values())
                 .filter(city -> city.getKoreanName().contains(keyword))

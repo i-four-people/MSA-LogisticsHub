@@ -20,4 +20,25 @@ public interface JpaHubRepository extends JpaRepository<Hub, UUID> {
     Optional<Hub> findByIdAndIsDeletedFalse(UUID id);
 
     List<Hub> findByIsDeletedFalse();
+
+    @Query(value = "select h.* " +
+            " from p_hubs h " +
+            " join p_areas a on h.area_id = a.id  " +
+            " where a.id = :areaId and h.is_deleted is false " +
+            " order by earth_distance( " +
+            "        ll_to_earth(h.lat, h.lng), " +
+            "        ll_to_earth(:lat, :lng) " +
+            ") limit 1", nativeQuery = true)
+    Optional<Hub> findByAreaAndIsDeletedFalse(UUID areaId, double lat, double lng);
+
+
+    @Query(value = "select h.* " +
+            " from p_hubs h " +
+            " join p_areas a on h.area_id = a.id " +
+            " where a.id in(:areaList) and h.is_deleted is false " +
+            " order by earth_distance( " +
+            "        ll_to_earth(h.lat, h.lng), " +
+            "        ll_to_earth(:lat, :lng) " +
+            ") limit 1", nativeQuery = true)
+    Optional<Hub> findByAreaInAndIsDeletedFalse(List<UUID> areaList, double lat, double lng);
 }
