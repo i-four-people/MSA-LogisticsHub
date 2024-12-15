@@ -5,6 +5,7 @@ import com.logistics.order.application.dto.SearchParameter;
 import com.logistics.order.application.dto.company.CompanyResponse;
 import com.logistics.order.application.dto.event.OrderCreateEvent;
 import com.logistics.order.application.dto.event.OrderDeleteEvent;
+import com.logistics.order.application.dto.event.consume.DeliveryCreateConsume;
 import com.logistics.order.application.dto.order.*;
 import com.logistics.order.application.dto.product.ProductResponse;
 import com.logistics.order.domain.model.Order;
@@ -192,4 +193,17 @@ public class OrderServiceImpl implements OrderService {
         return OrderDeleteResponse.from(findOrder);
     }
 
+    @Override
+    public void updateOrderWithDeliveryId(DeliveryCreateConsume deliveryCreateConsume) {
+
+        Order findOrder = orderRepository.findById(deliveryCreateConsume.orderId()).orElseThrow(
+                () -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND)
+        );
+
+        if (findOrder.getDeliveryId() != null) {
+            throw new BusinessException(ErrorCode.ORDER_ALREADY_DELIVERY);
+        }
+
+        findOrder.updateDelivery(deliveryCreateConsume.deliveryId());
+    }
 }

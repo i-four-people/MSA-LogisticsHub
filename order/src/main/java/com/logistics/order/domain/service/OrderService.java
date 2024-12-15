@@ -1,5 +1,6 @@
 package com.logistics.order.domain.service;
 
+import com.logistics.order.application.dto.event.consume.DeliveryCreateConsume;
 import com.logistics.order.application.dto.order.*;
 import com.logistics.order.application.dto.PageResponse;
 import com.logistics.order.application.dto.SearchParameter;
@@ -20,4 +21,6 @@ public interface OrderService {
     OrderDeleteResponse deleteOrderById(UUID orderId);
 
     OrderStatusResponse updateOrderStatus(UUID orderId, OrderStatus status);
+
+    void updateOrderWithDeliveryId(DeliveryCreateConsume deliveryCreateConsume);
 }
