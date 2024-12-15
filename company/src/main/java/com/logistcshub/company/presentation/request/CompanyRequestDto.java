@@ -12,10 +12,12 @@ public record CompanyRequestDto(
         CompanyType companyType,
         UUID hubId
 ) {
-    public Company toEntity() {
+    public Company toEntity(double lng, double lat) {
         return Company.builder()
                 .name(this.name)
                 .address(this.address)
+                .lng(lng)
+                .lat(lat)
                 .contact(this.contact)
                 .companyType(this.companyType)
                 .hubId(this.hubId)
