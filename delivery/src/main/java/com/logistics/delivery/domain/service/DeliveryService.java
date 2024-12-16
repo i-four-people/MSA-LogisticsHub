@@ -32,4 +32,6 @@ public interface DeliveryService {
     List<Delivery> findAllByStatusNotIn(List<DeliveryStatus> statusList);
 
     void updateStatusForDelivery(Delivery delivery);
+
+    DeliveryDetailResponse updateDeliveryStatus(UUID deliveryId, DeliveryStatus status);
 }

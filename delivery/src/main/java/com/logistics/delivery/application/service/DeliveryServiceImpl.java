@@ -111,12 +111,37 @@ public class DeliveryServiceImpl implements DeliveryService {
                 () -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND)
         );
 
+        return getDeliveryDetailResponse(findDelivery);
+    }
+
+    @Override
+    public DeliveryDetailResponse updateDeliveryStatus(UUID deliveryId, DeliveryStatus status) {
+
+        Delivery findDelivery = deliveryRepository.findById(deliveryId).orElseThrow(
+                () -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND)
+        );
+
+        // DELIVERED, CANCELLED 상태만 수동 변경 가능
+        if (status != DeliveryStatus.DELIVERED && status != DeliveryStatus.CANCELLED) {
+            throw new BusinessException(ErrorCode.INVALID_DELIVERY_STATUS_CHANGE);
+        }
+
+        findDelivery.updateStatus(status);
+
+        log.info("Updated delivery {} to status {}.", deliveryId, status);
+
+        // 출발 허브, 도착 허브 정보 조회
+        return getDeliveryDetailResponse(findDelivery);
+    }
+
+    private DeliveryDetailResponse getDeliveryDetailResponse(Delivery findDelivery) {
+
         // 출발 허브, 도착 허브 정보 조회
         HubResponse originHub = hubClient.getHub(findDelivery.getOriginHubId());
         HubResponse destinationHub = hubClient.getHub(findDelivery.getDestinationHubId());
 
         // 배송 이동 경로 조회
-        List<DeliveryRoute> deliveryRoutes = deliveryRouteService.getRoutesByDeliveryId(deliveryId);
+        List<DeliveryRoute> deliveryRoutes = deliveryRouteService.getRoutesByDeliveryId(findDelivery.getId());
 
         List<UUID> startHubIds = deliveryRoutes.stream().map(DeliveryRoute::getStartHubId).distinct().toList();
         List<HubResponse> startHubs = hubClient.findHubsByIds(startHubIds);
