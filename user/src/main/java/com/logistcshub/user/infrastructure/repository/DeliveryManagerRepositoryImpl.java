@@ -1,7 +1,7 @@
 package com.logistcshub.user.infrastructure.repository;
 
 import com.logistcshub.user.presentation.response.deliveryManager.DeliveryManagerDto;
-import com.logistcshub.user.presentation.response.QDeliveryManagerDto;
+import com.logistcshub.user.presentation.response.deliveryManager.QDeliveryManagerDto;
 import com.logistcshub.user.domain.model.deliveryManager.DeliveryManagerType;
 import com.logistcshub.user.domain.model.deliveryManager.DeliveryStatus;
 import com.logistcshub.user.domain.model.user.UserRoleEnum;

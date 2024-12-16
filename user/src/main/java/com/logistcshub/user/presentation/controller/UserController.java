@@ -59,9 +59,11 @@ public class UserController {
     // 유저 상세 조회
     @GetMapping("/{id}")
     @PreAuthorize("hasAuthority('MASTER')")
-    public ResponseEntity<? extends CommonResponse> get(@PathVariable Long id) {
+    public ResponseEntity<? extends CommonResponse> get(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                                        @PathVariable Long id) {
+        UserRoleEnum loggedUserRole = userDetails.user().getRole();
 
-        UserDto output = userService.get(id);
+        UserDto output = userService.get(loggedUserRole, id);
 
         return ResponseEntity.status(SUCCESS_GET_SINGLE_USER.getHttpStatus())
                 .body(SuccessResponse.success(SUCCESS_GET_SINGLE_USER.getMessage(), output));

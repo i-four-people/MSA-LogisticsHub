@@ -23,6 +23,7 @@ import com.logistcshub.user.presentation.response.deliveryManager.DeliveryManage
 import com.logistcshub.user.presentation.response.deliveryManager.DeliveryManagerResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -96,6 +97,7 @@ public class DeliveryManagerService {
         return deliveryManagerRepository.findAllDeliveryPerson(pageable, deliSearchRequest, userId, role);
     }
 
+    @Cacheable(cacheNames = "deliveryPersonInfo", key = "#role + ':' + #userId + ':' + #deliveryPersonId")
     public DeliveryManagerDto get(UserDetailsImpl userDetails, Long deliveryManagerId) {
         Long userId = userDetails.getUserId();
         UserRoleEnum role = userDetails.user().getRole();

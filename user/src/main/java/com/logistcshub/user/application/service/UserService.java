@@ -10,6 +10,7 @@ import com.logistcshub.user.presentation.response.user.UserDto;
 import com.logistcshub.user.presentation.response.user.UserSearchResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -28,13 +29,15 @@ public class UserService {
         return MyInfoDto.of(user);
     }
 
+    @Cacheable(cacheNames = "user_list", key = "#role + ':' + #userSearchRequest.userId + ':' + #userSearchRequest.role + ':' + #userSearchRequest.username")
     @Transactional(readOnly = true)
     public Page<UserSearchResponse> getUserList(UserRoleEnum role, Pageable pageable, UserSearchRequest userSearchRequest) {
 
         return userRepository.findAllUser(pageable, userSearchRequest);
     }
 
-    public UserDto get(Long id) {
+    @Cacheable(cacheNames = "user_info", key = "#role + ':' + #id")
+    public UserDto get(UserRoleEnum role, Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
 

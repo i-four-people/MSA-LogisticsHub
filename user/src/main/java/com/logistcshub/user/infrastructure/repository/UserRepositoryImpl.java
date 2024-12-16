@@ -1,6 +1,6 @@
 package com.logistcshub.user.infrastructure.repository;
 
-import com.logistcshub.user.presentation.response.QUserDto;
+import com.logistcshub.user.presentation.response.user.QUserDto;
 import com.logistcshub.user.domain.repository.UserRepositoryCustom;
 import com.logistcshub.user.presentation.response.user.UserSearchResponse;
 import com.logistcshub.user.presentation.response.user.UserDto;

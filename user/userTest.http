@@ -36,6 +36,14 @@ Content-Type: application/json
 X-User-Id: 1
 X-User-Role: MASTER
 
+### 유저 상세 조회 (MASTER)
+GET http://localhost:19093/api/users/3
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDM2MTg3MywiZXhwIjoxNzM0MzYyMjMzfQ.ixAJNxOmHtjW69xN1UlkY_3ciT5qkoNG0cdqLz5XGhZ3d2qiwzCC6flSQdoRcNQ5PYGChKTgcFKqu6n5oiep6w
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: MASTER
+
+
 ### 유저 권한 수정 (MASTER)
 PATCH http://localhost:19093/api/users/5
 Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDI4NDE4MSwiZXhwIjoxNzM0Mjg0NTQxfQ.ZdT4zz4-6ORLasAVeKSKWiO-lTwkgyg28Cj8lARjOFbh_T3d-JnWredXNjhS_yl3MRIQPg8JFDMZJV1W7O38fg
