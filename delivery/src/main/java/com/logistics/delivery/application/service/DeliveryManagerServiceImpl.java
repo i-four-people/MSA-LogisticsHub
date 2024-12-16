@@ -1,6 +1,7 @@
 package com.logistics.delivery.application.service;
 
 import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerType;
+import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerUpdateRequest;
 import com.logistics.delivery.application.dto.event.SlackCreateEvent;
 import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerResponse;
 import com.logistics.delivery.domain.model.DeliveryRoute;
@@ -129,6 +130,9 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
 
             log.info("Assigned manager {} to route from {} to {}",
                     assignedManager.id(), route.getStartHubId(), route.getEndHubId());
+
+            // 배송 담당자의 hubId를 출발지 허브로 업데이트
+            deliveryManagerClient.updateHubForManager(assignedManager.id(), new DeliveryManagerUpdateRequest(route.getStartHubId()));
 
             // 이벤트 생성
             SlackCreateEvent event = SlackCreateEvent.of(route, assignedManager);
