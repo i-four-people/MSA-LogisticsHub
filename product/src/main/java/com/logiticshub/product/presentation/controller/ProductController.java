@@ -1,5 +1,6 @@
 package com.logiticshub.product.presentation.controller;
 
+import com.logiticshub.product.application.dto.ProductResponse;
 import com.logiticshub.product.application.dto.ProductResponseDto;
 import com.logiticshub.product.domain.model.Product;
 import com.logiticshub.product.domain.service.ProductService;
@@ -83,9 +84,15 @@ public class ProductController {
 
     //    상품 단건 조회
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ProductResponseDto>> getProduct(@PathVariable(value = "id") UUID id) {
+    public ResponseEntity<ApiResponse<ProductResponseDto>> findProductById(@PathVariable(value = "id") UUID id) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(MessageType.RETRIEVE,productService.getProduct(id)));
+    }
+
+
+    @PostMapping("/batch")
+    List<ProductResponse> findProductsByIds(@RequestBody List<UUID> ids) {
+        return productService.findProductsByIds(ids);
     }
 }

@@ -2,6 +2,7 @@ package com.logiticshub.product.domain.service;
 
 import com.logiticshub.product.application.client.CompanyClient;
 import com.logiticshub.product.application.dto.CompanyResponseDto;
+import com.logiticshub.product.application.dto.ProductResponse;
 import com.logiticshub.product.application.dto.ProductResponseDto;
 import com.logiticshub.product.domain.model.Product;
 import com.logiticshub.product.domain.repository.ProductRepository;
@@ -19,6 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static com.logiticshub.product.domain.model.QProduct.product;
@@ -75,5 +78,14 @@ public class ProductService {
     public ProductResponseDto getProduct(UUID id) {
         return ProductResponseDto.toDto(productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("입력한 id값을 가진 상품이 존재하지 않습니다.")));
+    }
+
+    public List<ProductResponse> findProductsByIds(List<UUID> ids) {
+        List<Product> products = productRepository.findAllById(ids);
+        List<ProductResponse> productResponses = new ArrayList<>();
+        for (Product product : products) {
+            productResponses.add(ProductResponse.toDto(product));
+        }
+        return productResponses;
     }
 }
