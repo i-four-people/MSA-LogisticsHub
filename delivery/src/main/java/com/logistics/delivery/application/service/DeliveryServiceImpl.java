@@ -18,6 +18,7 @@ import com.logistics.delivery.application.dto.order.OrderStatusRequest;
 import com.logistics.delivery.domain.model.Delivery;
 import com.logistics.delivery.domain.model.DeliveryRoute;
 import com.logistics.delivery.domain.model.DeliveryStatus;
+import com.logistics.delivery.domain.model.RouteStatus;
 import com.logistics.delivery.domain.repository.DeliveryRepository;
 import com.logistics.delivery.domain.service.DeliveryRouteService;
 import com.logistics.delivery.domain.service.DeliveryService;
@@ -209,8 +210,42 @@ public class DeliveryServiceImpl implements DeliveryService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Delivery> findUnassignedDeliveries() {
         return deliveryRepository.findUnassignedDeliveries();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Delivery> findAllByStatusNotIn(List<DeliveryStatus> statusList) {
+        return deliveryRepository.findAllByStatusNotIn(statusList);
+    }
+
+    @Override
+    public void updateStatusForDelivery(Delivery delivery) {
+        List<DeliveryRoute> routes = deliveryRouteService.getRoutesByDeliveryId(delivery.getId());
+        if (routes.isEmpty()) {
+            log.warn("Delivery {} has no routes.", delivery.getId());
+            return;
+        }
+
+        // 모든 경로가 AT_HUB인 경우 배송 상태를 AT_HUB로 변경
+        boolean allAtHub = routes.stream().allMatch(route -> route.getStatus() == RouteStatus.AT_HUB);
+        if (allAtHub) {
+            delivery.updateStatus(DeliveryStatus.AT_HUB);
+            log.info("Updated delivery {} to status AT_HUB.", delivery.getId());
+            return;
+        }
+
+        // 적어도 하나의 경로가 IN_TRANSIT인 경우 배송 상태를 IN_TRANSIT로 변경
+        boolean anyInTransit = routes.stream().anyMatch(route -> route.getStatus() == RouteStatus.IN_TRANSIT);
+        if (anyInTransit) {
+            delivery.updateStatus(DeliveryStatus.IN_TRANSIT);
+            log.info("Updated delivery {} to status IN_TRANSIT.", delivery.getId());
+            return;
+        }
+
+        log.info("No status update for delivery {}. Current status: {}", delivery.getId(), delivery.getStatus());
     }
 
     @Override

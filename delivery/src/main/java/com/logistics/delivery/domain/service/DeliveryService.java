@@ -8,6 +8,7 @@ import com.logistics.delivery.application.dto.delivery.DeliveryResponse;
 import com.logistics.delivery.application.dto.event.consume.OrderCreateConsume;
 import com.logistics.delivery.application.dto.order.OrderStatusRequest;
 import com.logistics.delivery.domain.model.Delivery;
+import com.logistics.delivery.domain.model.DeliveryStatus;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,4 +28,8 @@ public interface DeliveryService {
     DeliveryDetailResponse getDeliveryById(UUID deliveryId);
 
     DeliveryDeleteResponse deleteDeliveryById(UUID deliveryId);
+
+    List<Delivery> findAllByStatusNotIn(List<DeliveryStatus> statusList);
+
+    void updateStatusForDelivery(Delivery delivery);
 }
