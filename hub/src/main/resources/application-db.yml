@@ -24,6 +24,12 @@ spring:
     username: ${SPRING_DATASOURCE_LOCAL_USERNAME}
     password: ${SPRING_DATASOURCE_LOCAL_PASSWORD}
     url: ${SPRING_DATASOURCE_LOCAL_URL}
+  data:
+    redis:
+      host: ${REDIS_LOCAL_HOST_NAME}
+      port: ${REDIS_LOCAL_PORT}
+      username: ${REDIS_LOCAL_USERNAME}
+      password: ${REDIS_LOCAL_PASSWORD}
 
 ---
 # Production 환경
@@ -36,3 +42,9 @@ spring:
     username: ${SPRING_DATASOURCE_PROD_USERNAME}
     password: ${SPRING_DATASOURCE_PROD_PASSWORD}
     url: ${SPRING_DATASOURCE_PROD_URL}
+  data:
+    redis:
+      host: ${REDIS_PROD_HOST_NAME}
+      port: ${REDIS_PROD_PORT}
+      username: ${REDIS_PROD_USERNAME}
+      password: ${REDIS_PROD_PASSWORD}

@@ -8,9 +8,6 @@ import com.logistcshub.hub.hub_transfer.domain.repository.HubTransferRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.NumberPath;
-import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +23,7 @@ import java.util.UUID;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-import static com.logistcshub.hub.hub.domain.mode.QHub.hub;
 import static com.logistcshub.hub.hub_transfer.domain.model.QHubTransfer.hubTransfer;
 
 
@@ -109,6 +104,16 @@ public class HubTransferRepositoryImpl implements HubTransferRepository {
     @Override
     public List<HubTransfer> saveAll(List<HubTransfer> saveList) {
         return jpaHubTransferRepository.saveAll(saveList);
+    }
+
+    @Override
+    public List<HubTransfer> findByIsDeletedFalse() {
+        return jpaHubTransferRepository.findByIsDeletedFalse();
+    }
+
+    @Override
+    public Optional<HubTransfer> findByStartHubIdAndEndHubIdAndIsDeletedFalse(UUID startHubId, UUID endHubId) {
+        return jpaHubTransferRepository.findByStartHubIdAndEndHubIdAndIsDeletedFalse(startHubId, endHubId);
     }
 
     private OrderSpecifier<?>[] buildOrderBy(Sort sort) {

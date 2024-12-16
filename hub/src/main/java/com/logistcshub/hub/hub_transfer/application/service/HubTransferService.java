@@ -15,26 +15,20 @@ import com.logistcshub.hub.common.domain.model.dtos.KakaoRoadResponseDto;
 import com.logistcshub.hub.common.exception.RestApiException;
 import com.logistcshub.hub.hub.domain.mode.Hub;
 import com.logistcshub.hub.hub.domain.repository.HubRepository;
-import com.logistcshub.hub.hub_transfer.application.dtos.AddHubTransferResponseDto;
-import com.logistcshub.hub.hub_transfer.application.dtos.HubTransferPageDto;
-import com.logistcshub.hub.hub_transfer.application.dtos.DeleteHubTransferResponseDto;
-import com.logistcshub.hub.hub_transfer.application.dtos.HubTransferResponseDto;
-import com.logistcshub.hub.hub_transfer.application.dtos.UpdateHubTransferResponseDto;
+import com.logistcshub.hub.hub_transfer.application.dtos.*;
 import com.logistcshub.hub.hub_transfer.domain.model.HubTransfer;
 import com.logistcshub.hub.hub_transfer.domain.repository.HubTransferRepository;
 import com.logistcshub.hub.hub_transfer.presentation.request.AddHubTransferRequestDto;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import com.querydsl.core.types.Predicate;
 
 import com.logistcshub.hub.hub_transfer.presentation.request.UpdateTransferRequestDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -201,4 +195,103 @@ public class HubTransferService {
         return hubTransferRepository.findAll(idList, predicate, pageable);
 
     }
+
+    @Cacheable(cacheNames = "hubToHub", key = "#startHubId + ':' + #endHubId")
+    public HubToHubResponseDto getHubToHub(UUID startHubId, UUID endHubId, String role, Long userId) {
+        HubTransfer startToEnd = hubTransferRepository.findByStartHubIdAndEndHubIdAndIsDeletedFalse(startHubId, endHubId).orElse(null);
+        Hub startHub = getHubById(startHubId);
+        Hub endHub = getHubById(endHubId);
+
+        if(startToEnd != null) {
+            return HubToHubResponseDto.of(startToEnd, startHub, endHub);
+        }
+
+        List<Hub> hubList = hubRepository.findAll();
+
+        int[] timeTaken = new int[hubList.size()];
+        int[] totalDistance = new int[hubList.size()];
+
+        Arrays.fill(timeTaken, Integer.MAX_VALUE);
+
+        Map<UUID, Integer> hubMap = new HashMap<>();
+        Map<UUID, List<HubTransfer>> hubTransferMap = new HashMap<>();
+
+        for(int i = 0; i < hubList.size(); i++) {
+            hubMap.put(hubList.get(i).getId(), i);
+            hubTransferMap.put(hubList.get(i).getId(), new ArrayList<>());
+        }
+
+        timeTaken[hubMap.get(startHubId)] = 0;
+
+        List<HubTransfer> hubTransferList = hubTransferRepository.findByIsDeletedFalse();
+
+        Map<UUID, HubTransfer> uuidHubTransferMap = new HashMap<>();
+
+        hubTransferList.forEach(hubTransfer -> {
+            hubTransferMap.get(hubTransfer.getStartHub().getId()).add(hubTransfer);
+            uuidHubTransferMap.put(hubTransfer.getId(), hubTransfer);
+        });
+
+        Queue<List<List<UUID>>> queue = new LinkedList<>();
+
+        List<List<UUID>> list = new ArrayList<>();
+
+        List<List<UUID>> startList = new ArrayList<>();
+        List<UUID> start = new ArrayList<>();
+        start.add(startHubId);
+        startList.add(start);
+        startList.add(new ArrayList<>());
+
+        queue.add(startList);
+
+        while(!queue.isEmpty()) {
+            List<List<UUID>> uuids = queue.poll();
+            List<UUID> hubUUids = uuids.get(0);
+            List<UUID> transferUUids = uuids.get(1);
+
+            for(HubTransfer hubTransfer : hubTransferMap.get(hubUUids.get(hubUUids.size()-1))) {
+                if(hubTransfer.getTimeTaken() + timeTaken[hubMap.get(hubUUids.get(hubUUids.size()-1))] < timeTaken[hubMap.get(hubTransfer.getEndHub().getId())]) {
+                    timeTaken[hubMap.get(hubTransfer.getEndHub().getId())] = hubTransfer.getTimeTaken() + timeTaken[hubMap.get(hubUUids.get(hubUUids.size()-1))];
+                    totalDistance[hubMap.get(hubTransfer.getEndHub().getId())] = hubTransfer.getDistance() + totalDistance[hubMap.get(hubUUids.get(hubUUids.size()-1))];
+                    List<UUID> newHubList = new ArrayList<>(hubUUids);
+                    newHubList.add(hubTransfer.getEndHub().getId());
+                    List<UUID> newHubTransferList = new ArrayList<>(transferUUids);
+                    newHubTransferList.add(hubTransfer.getId());
+                    List<List<UUID>> newUUIDs = new ArrayList<>();
+                    newUUIDs.add(newHubList);
+                    newUUIDs.add(newHubTransferList);
+
+                    if(hubTransfer.getEndHub().getId().equals(endHubId)) {
+                        list = new ArrayList<>(newUUIDs);
+                    }
+
+                    queue.add(newUUIDs);
+                }
+            }
+        }
+
+        List<HubToHubResponseDto.HubToHub> hubToHubResponseDtoList = new ArrayList<>();
+
+        for(int i=1; i < list.get(0).size() - 1; i++) {
+            hubToHubResponseDtoList.add(
+                    HubToHubResponseDto.HubToHub.of(hubList.get(hubMap.get(list.get(0).get(i))))
+            );
+        }
+
+        List<HubToHubResponseDto.HubToHubInfo> hubToHubInfoList = new ArrayList<>();
+
+        for(int i=0; i < list.get(1).size(); i++) {
+            hubToHubInfoList.add(HubToHubResponseDto.HubToHubInfo.of(uuidHubTransferMap.get(list.get(1).get(i))));
+        }
+
+        return new HubToHubResponseDto(
+                HubToHubResponseDto.HubToHub.of(hubList.get(hubMap.get(startHubId))),
+                HubToHubResponseDto.HubToHub.of(hubList.get(hubMap.get(endHubId))),
+                hubToHubResponseDtoList,
+                timeTaken[hubMap.get(endHubId)],
+                totalDistance[hubMap.get(endHubId)],
+                hubToHubInfoList
+        );
+    }
+
 }

@@ -4,11 +4,7 @@ import static com.logistcshub.hub.common.domain.model.type.ResponseMessage.SUCCE
 import static com.logistcshub.hub.common.domain.model.type.ResponseMessage.SUCCESS_SEARCH_HUB_TRANSFERS;
 
 import com.logistcshub.hub.common.domain.model.dtos.SuccessResponse;
-import com.logistcshub.hub.hub_transfer.application.dtos.AddHubTransferResponseDto;
-import com.logistcshub.hub.hub_transfer.application.dtos.DeleteHubTransferResponseDto;
-import com.logistcshub.hub.hub_transfer.application.dtos.HubTransferResponseDto;
-import com.logistcshub.hub.hub_transfer.application.dtos.UpdateHubTransferResponseDto;
-import com.logistcshub.hub.hub_transfer.application.dtos.HubTransferPageDto;
+import com.logistcshub.hub.hub_transfer.application.dtos.*;
 import com.logistcshub.hub.hub_transfer.application.service.HubTransferService;
 import com.logistcshub.hub.hub_transfer.domain.model.HubTransfer;
 import com.logistcshub.hub.hub_transfer.presentation.request.AddHubTransferRequestDto;
@@ -96,6 +92,20 @@ public class HubTransferController {
 
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_SEARCH_HUB_TRANSFERS, hubTransferService.searchHubTransfer(idList, predicate, pageable, role, userId))
+        );
+    }
+
+    @GetMapping("/hub-to-hub")
+    public ResponseEntity<SuccessResponse<HubToHubResponseDto>> getAllHubTransfers(@RequestParam(required = true) UUID startHubId,
+                                                                                   @RequestParam(required = true) UUID endHubId,
+                                                                                   @RequestHeader(value = "X-USER-ID") Long userId,
+                                                                                   @RequestHeader(value = "X-USER-ROLE") String role) {
+
+        userId = 1L;
+        role = "MASTER";
+
+        return ResponseEntity.ok().body(
+                SuccessResponse.of(SUCCESS_SEARCH_HUB_TRANSFER, hubTransferService.getHubToHub(startHubId,endHubId, role, userId))
         );
     }
 }

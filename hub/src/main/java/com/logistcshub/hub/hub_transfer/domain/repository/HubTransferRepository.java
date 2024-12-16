@@ -23,4 +23,8 @@ public interface HubTransferRepository {
     HubTransferPageDto findAll(List<UUID> idList, Predicate predicate, Pageable pageable);
 
     List<HubTransfer> saveAll(List<HubTransfer> saveList);
+
+    List<HubTransfer> findByIsDeletedFalse();
+
+    Optional<HubTransfer> findByStartHubIdAndEndHubIdAndIsDeletedFalse(UUID startHubId, UUID endHubId);
 }

@@ -26,7 +26,7 @@ public enum ResponseMessage {
     SUCCESS_GET_HUB_TRANSFER(HttpStatus.OK, "허브 to 허브 조회에 성공했습니다."),
 
 
-
+    SUCCESS_SEARCH_HUB_TRANSFER(HttpStatus.OK, "허브 to 허브 조회에 성공했습니다."),
     SUCCESS_SEARCH_HUB_TRANSFERS(HttpStatus.OK, "Hub-Transfer 검색에 성공했습니다.")
 
     ;
