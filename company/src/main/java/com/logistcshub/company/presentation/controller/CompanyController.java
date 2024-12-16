@@ -75,10 +75,12 @@ public class CompanyController {
 
 //    단건 조회
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<CompanyResponseDto>> getCompany(@RequestParam(value = "id", required = false) UUID id,
+    public ResponseEntity<ApiResponse<CompanyResponseDto>> getCompany(@PathVariable(value = "id") UUID id,
                                                                       @RequestHeader(value = "X-USER-ID") Long userId,
                                                                       @RequestHeader(value = "X-USER-ROLE") String role) {
 
+        userId=1L;
+        role="MASTER";
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(MessageType.RETRIEVE, companyService.getCompany(id)));
