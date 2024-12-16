@@ -9,6 +9,6 @@ import java.util.UUID;
 @FeignClient(name = "hub-service")
 public interface HubClient {
 
-    @GetMapping("/api/hub-tranfers/routes")
+    @GetMapping("/api/hub-transfers/routes")
     HubToHubResponse getHubToHubRoutes(UUID startHubId, UUID endHubId);
 }

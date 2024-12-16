@@ -15,4 +15,8 @@ public interface DeliveryRouteRepository {
     DeliveryRoute save(DeliveryRoute delivery);
 
     void deleteById(UUID id);
+
+    List<DeliveryRoute> findPendingRoutes();
+
+    Optional<UUID> findAssignedManagerByRoute(UUID startHubId, UUID endHubId);
 }

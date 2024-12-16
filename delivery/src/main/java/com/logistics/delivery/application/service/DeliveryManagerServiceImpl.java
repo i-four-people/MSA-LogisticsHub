@@ -1,0 +1,108 @@
+package com.logistics.delivery.application.service;
+
+import com.logistics.delivery.application.dto.user.DeliveryManagerResponse;
+import com.logistics.delivery.domain.model.DeliveryRoute;
+import com.logistics.delivery.domain.repository.DeliveryRouteRepository;
+import com.logistics.delivery.domain.service.DeliveryManagerService;
+import com.logistics.delivery.infrastructure.client.UserClient;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+@Transactional
+public class DeliveryManagerServiceImpl implements DeliveryManagerService {
+
+    private final DeliveryRouteRepository deliveryRouteRepository;
+
+    private final UserClient userClient;
+
+    @Value("${delivery.max-waiting-time-minutes}")
+    private int maxWaitingTimeMinutes;
+
+    @Override
+    public void assignManagersForPendingRoutes() {
+        // 대기 중인 배송 경로 가져오기
+        List<DeliveryRoute> pendingRoutes = deliveryRouteRepository.findPendingRoutes();
+
+        // 배송 이동 경로를 출발 허브와 도착 허브로 그룹화
+        Map<RouteKey, List<DeliveryRoute>> groupedRoutes = pendingRoutes.stream()
+                .collect(Collectors.groupingBy(route -> new RouteKey(route.getStartHubId(), route.getEndHubId())));
+
+        // 각 그룹에 대해 배송 담당자 배정 처리
+        groupedRoutes.forEach((routeKey, routes) -> {
+            // 동일 경로에서 이미 배정된 배송 담당자가 있는지 확인
+            UUID assignedManagerId = findAssignedManagerForRoute(routeKey);
+
+            if (assignedManagerId != null && !hasExceededWaitingTime(routes)) {
+                // 담당자가 배정되어 있고 대기 시간이 초과되지 않은 경우, 기존 담당자를 배정
+                assignExistingManagerToRoutes(routes, assignedManagerId);
+            } else {
+                // 기존 담당자가 없거나 대기 시간이 초과된 경우, 새로운 담당자를 배정
+                assignManagerToGroupedRoutes(routeKey, routes);
+            }
+        });
+    }
+
+    // 동일 경로에서 ASSIGNED 상태의 배송 담당자가 있는지 확인
+    private UUID findAssignedManagerForRoute(RouteKey routeKey) {
+        return deliveryRouteRepository.findAssignedManagerByRoute(routeKey.startHubId(), routeKey.endHubId())
+                .orElse(null);
+    }
+
+    // 기존 배송 담당자를 경로에 배정
+    private void assignExistingManagerToRoutes(List<DeliveryRoute> routes, UUID assignedManagerId) {
+        routes.forEach(route -> {
+            route.assignManager(assignedManagerId); // 기존 담당자 배정
+        });
+    }
+
+    private boolean hasExceededWaitingTime(List<DeliveryRoute> routes) {
+        return routes.stream().anyMatch(route ->
+                Duration.between(route.getCreatedAt(), LocalDateTime.now()).toMinutes() >= maxWaitingTimeMinutes
+        );
+    }
+
+    private void assignManagerToGroupedRoutes(RouteKey routeKey, List<DeliveryRoute> routes) {
+        UUID startHubId = routeKey.startHubId();
+
+        // 허브 배송 담당자 조회
+        List<DeliveryManagerResponse> availableManagers = userClient.findAvailableManagersByHubId(startHubId);
+
+        // 배정 가능한 담당자가 없으면 새로운 배송 경로를 PENDING 상태로 유지
+        // 스케줄러를 통해 주기적으로 PENDING 상태의 경로를 확인하고, 완료된 담당자가 있는지 확인.
+        if (availableManagers.isEmpty()) {
+            log.info("No available delivery managers at hub: {}. The route will remain in PENDING state.", startHubId);
+            return; // 배송 담당자 배정 생략
+        }
+
+        // 순번 기준으로 정렬
+        availableManagers.sort(Comparator.comparingInt(DeliveryManagerResponse::sequence));
+
+        // 순번 기준으로 라운드 로빈 방식 적용
+        AtomicInteger index = new AtomicInteger(0);
+
+        routes.forEach(route -> {
+            // 담당자 배정 (순번 기준으로 라운드 로빈)
+            DeliveryManagerResponse assignedManager = availableManagers.get(index.getAndIncrement() % availableManagers.size());
+            route.assignManager(assignedManager.id());
+        });
+    }
+
+    // 경로 키: 출발 허브와 도착 허브를 묶는 키
+    private record RouteKey(UUID startHubId, UUID endHubId) {}
+
+}

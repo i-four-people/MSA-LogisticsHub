@@ -80,4 +80,13 @@ public class DeliveryRoute extends AuditingFields {
                 .build();
     }
 
+    /**
+     * 배송 경로에 배송 담당 매니저를 배정하는 메서드
+     *
+     * @param assignedManagerId 배송 담당자 ID
+     */
+    public void assignManager(UUID assignedManagerId) {
+        this.deliveryManagerId = assignedManagerId;
+        this.status = RouteStatus.ASSIGNED;
+    }
 }

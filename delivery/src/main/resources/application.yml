@@ -21,3 +21,6 @@ eureka:
   client:
     service-url:
       defaultZone: ${EUREKA_SERVICE_URL}
+
+delivery:
+  max-waiting-time-minutes: ${DELIVERY_MAX_WAITING_TIME_MINUTES}

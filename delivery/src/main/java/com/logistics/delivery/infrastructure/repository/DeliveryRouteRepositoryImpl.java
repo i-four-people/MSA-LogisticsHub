@@ -35,4 +35,13 @@ public class DeliveryRouteRepositoryImpl implements DeliveryRouteRepository {
         jpaDeliveryRouteRepository.deleteById(id);
     }
 
+    @Override
+    public List<DeliveryRoute> findPendingRoutes() {
+        return jpaDeliveryRouteRepository.findPendingRoutes();
+    }
+
+    @Override
+    public Optional<UUID> findAssignedManagerByRoute(UUID startHubId, UUID endHubId) {
+        return jpaDeliveryRouteRepository.findAssignedManagerByRoute(startHubId, endHubId);
+    }
 }
