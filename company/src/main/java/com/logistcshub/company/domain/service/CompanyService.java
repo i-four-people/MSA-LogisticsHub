@@ -143,9 +143,6 @@ public class CompanyService {
 
         List<String> splitAddress = List.of(address.split(" "));
         String searchAddress = splitAddress.get(0) + " " + splitAddress.get(1);
-        log.info("searchAddress=========" + searchAddress);
-        log.info("Type of position.get('x'): {}", position.get("x").getClass().getName());
-        log.info("Type of position.get('y'): {}", position.get("y").getClass().getName());
 
         Double lng = null;
         Double lat = null;
