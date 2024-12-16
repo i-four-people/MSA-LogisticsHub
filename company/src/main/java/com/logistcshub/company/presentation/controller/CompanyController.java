@@ -9,6 +9,7 @@ import com.logistcshub.company.presentation.response.MessageType;
 import com.querydsl.core.types.Predicate;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
