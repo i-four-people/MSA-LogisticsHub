@@ -9,6 +9,8 @@ public record SlackCreateConsume(
         UUID deliveryId, // 배송 ID
         Long deliveryManagerId, // 배송 담당자 ID
         String deliveryManagerName, // 배송 담당자 이름
-        String deliveryManagerSlackId // 배송 담당자 slack Id
+        String deliveryManagerSlackId, // 배송 담당자 slack Id,
+        UUID startHubId, // 출발 허브 ID,
+        UUID endHubId // 도착 허브 ID
 ) {
 }
