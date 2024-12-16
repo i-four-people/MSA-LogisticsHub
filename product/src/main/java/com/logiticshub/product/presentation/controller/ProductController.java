@@ -26,7 +26,7 @@ import java.util.UUID;
 public class ProductController {
 
     private final ProductService productService;
-
+//    상품 생성
     @PostMapping
     public ResponseEntity<ApiResponse<ProductResponseDto>> createProduct(@RequestBody ProductRequestDto productRequestDto,
                                                                          @RequestHeader(value = "X-USER-ID") Long userId,
@@ -39,6 +39,7 @@ public class ProductController {
 
     }
 
+//  상품 수정
     @PutMapping("/{id}")
     public ResponseEntity<ApiResponse<ProductResponseDto>> updateProduct(@RequestBody ProductRequestDto productRequestDto,
                                                                          @PathVariable UUID id,
@@ -50,7 +51,7 @@ public class ProductController {
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(MessageType.UPDATE, productService.updateProduct(id, userId, productRequestDto)));
     }
-
+//    상품 삭제
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<ProductResponseDto>> deleteProduct(@PathVariable UUID id,
                                                                          @RequestHeader(value = "X-USER-ID") Long userId,
@@ -62,6 +63,7 @@ public class ProductController {
                 .body(ApiResponse.success(MessageType.DELETE, productService.deleteProduct(id, userId)));
     }
 
+//    상품 전체 조회
     @GetMapping
     public ResponseEntity<ApiResponse<?>> getProducts(
             @QuerydslPredicate(root = Product.class) Predicate predicate,
@@ -79,4 +81,11 @@ public class ProductController {
 
     }
 
+    //    상품 단건 조회
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<?>> getProduct(@PathVariable(value = "id") UUID id) {
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success(MessageType.RETRIEVE,productService.getProduct(id)));
+    }
 }
