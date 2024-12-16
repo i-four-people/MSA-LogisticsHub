@@ -83,7 +83,7 @@ public class ProductController {
 
     //    상품 단건 조회
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<?>> getProduct(@PathVariable(value = "id") UUID id) {
+    public ResponseEntity<ApiResponse<ProductResponseDto>> getProduct(@PathVariable(value = "id") UUID id) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(MessageType.RETRIEVE,productService.getProduct(id)));

@@ -11,6 +11,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
@@ -30,7 +31,7 @@ public class ProductService {
     private final CompanyClient companyClient;
 
     public ProductResponseDto createProduct(Long userId, String role, ProductRequestDto productRequestDto) {
-        ResponseEntity<ApiResponse<CompanyResponseDto>> getCompanyInfo = companyClient.getCompany(productRequestDto.companyId());
+        ResponseEntity<ApiResponse<CompanyResponseDto>> getCompanyInfo = companyClient.getCompany(productRequestDto.companyId(),userId, role);
         CompanyResponseDto companyInfo= getCompanyInfo.getBody().data();
         Product product = productRequestDto.toEntity(companyInfo.hubId());
 
@@ -68,8 +69,9 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Object getProduct(UUID id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("입력한 id값을 가진 상품이 존재하지 않습니다."));
+    @Cacheable(value = "products", key = "#id")
+    public ProductResponseDto getProduct(UUID id) {
+        return ProductResponseDto.toDto(productRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("입력한 id값을 가진 상품이 존재하지 않습니다.")));
     }
 }
