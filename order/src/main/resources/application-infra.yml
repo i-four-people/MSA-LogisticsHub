@@ -4,3 +4,5 @@ message:
   queues:
     product: ${MESSAGE_QUEUE_PRODUCT}
     delivery: ${MESSAGE_QUEUE_DELIVERY}
+  receive:
+    order: ${MESSAGE_RECEIVE_QUEUE_ORDER}

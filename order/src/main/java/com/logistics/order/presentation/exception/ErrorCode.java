@@ -20,6 +20,7 @@ public enum ErrorCode {
 
     // 주문
     ORDER_ALREADY_COMPLETED(HttpStatus.CONFLICT, "O-001", "이미 완료된 주문입니다."),
+    ORDER_ALREADY_DELIVERY(HttpStatus.CONFLICT, "O-002", "해당 주문에 이미 배송 정보가 존재합니다.")
     ;
 
     private final HttpStatus httpStatus;

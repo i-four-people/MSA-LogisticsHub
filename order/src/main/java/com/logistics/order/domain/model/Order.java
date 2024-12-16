@@ -106,4 +106,13 @@ public class Order extends AuditingFields {
     public void updateStatus(OrderStatus status) {
         this.status = status;
     }
+
+    /**
+     * 주문의 배송 정보를 추가하는 메서드
+     *
+     * @param deliveryId 배송 ID
+     */
+    public void updateDelivery(UUID deliveryId) {
+
+    }
 }
