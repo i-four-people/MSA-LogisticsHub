@@ -10,8 +10,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface JpaDeliveryRepository extends JpaRepository<Delivery, UUID> {
+public interface JpaDeliveryRepository extends JpaRepository<Delivery, UUID>, DeliveryRepositoryCustom {
+
     Optional<Delivery> findByOrderId(UUID orderId);
+
     boolean existsByOrderId(UUID orderId);
 
     @Query("SELECT d FROM Delivery d " +

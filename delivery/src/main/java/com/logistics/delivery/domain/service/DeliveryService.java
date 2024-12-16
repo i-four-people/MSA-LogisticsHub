@@ -1,5 +1,8 @@
 package com.logistics.delivery.domain.service;
 
+import com.logistics.delivery.application.dto.PageResponse;
+import com.logistics.delivery.application.dto.SearchParameter;
+import com.logistics.delivery.application.dto.delivery.DeliveryResponse;
 import com.logistics.delivery.application.dto.event.consume.OrderCreateConsume;
 import com.logistics.delivery.application.dto.order.OrderStatusRequest;
 import com.logistics.delivery.domain.model.Delivery;
@@ -16,4 +19,6 @@ public interface DeliveryService {
     void assignCompanyDeliveryManager(Delivery delivery);
 
     List<Delivery> findUnassignedDeliveries();
+
+    PageResponse<DeliveryResponse> getDeliveries(SearchParameter searchParameter);
 }

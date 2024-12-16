@@ -1,11 +1,15 @@
 package com.logistics.delivery.application.service;
 
 import com.logistics.delivery.application.common.OrderStatus;
+import com.logistics.delivery.application.dto.PageResponse;
+import com.logistics.delivery.application.dto.SearchParameter;
 import com.logistics.delivery.application.dto.company.CompanyResponse;
+import com.logistics.delivery.application.dto.delivery.DeliveryResponse;
 import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerResponse;
 import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerType;
 import com.logistics.delivery.application.dto.event.DeliveryCreateEvent;
 import com.logistics.delivery.application.dto.event.consume.OrderCreateConsume;
+import com.logistics.delivery.application.dto.hub.HubResponse;
 import com.logistics.delivery.application.dto.order.OrderStatusRequest;
 import com.logistics.delivery.domain.model.Delivery;
 import com.logistics.delivery.domain.model.DeliveryStatus;
@@ -14,18 +18,22 @@ import com.logistics.delivery.domain.service.DeliveryRouteService;
 import com.logistics.delivery.domain.service.DeliveryService;
 import com.logistics.delivery.infrastructure.client.CompanyClient;
 import com.logistics.delivery.infrastructure.client.DeliveryManagerClient;
+import com.logistics.delivery.infrastructure.client.HubClient;
 import com.logistics.delivery.infrastructure.config.RabbitMQProperties;
 import com.logistics.delivery.presentation.exception.BusinessException;
 import com.logistics.delivery.presentation.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -40,6 +48,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     private final CompanyClient companyClient;
     private final DeliveryManagerClient deliveryManagerClient;
+    private final HubClient hubClient;
 
     @Override
     public boolean isOrderStatusChangeAllowed(UUID deliveryId, OrderStatusRequest request) {
@@ -59,6 +68,31 @@ public class DeliveryServiceImpl implements DeliveryService {
             case DELIVERED -> newOrderStatus == OrderStatus.COMPLETED;
         };
 
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public PageResponse<DeliveryResponse> getDeliveries(SearchParameter searchParameter) {
+        Page<Delivery> deliveries = deliveryRepository.searchDeliveries(searchParameter);
+
+        // 출발 허브, 도착 허브 정보 조회
+        List<UUID> originHubIds = deliveries.map(Delivery::getOriginHubId).stream().distinct().toList();
+        List<HubResponse> originHubs = hubClient.findHubsByIds(originHubIds);
+
+        List<UUID> destinationHubIds = deliveries.map(Delivery::getDestinationHubId).stream().distinct().toList();
+        List<HubResponse> destinationHubs = hubClient.findHubsByIds(destinationHubIds);
+
+        // 응답값 반환
+        Map<UUID, HubResponse> originHubMap = originHubs.stream().collect(Collectors.toMap(HubResponse::id, h -> h));
+        Map<UUID, HubResponse> destinationHubMap = destinationHubs.stream().collect(Collectors.toMap(HubResponse::id, h -> h));
+
+        Page<DeliveryResponse> results = deliveries.map(delivery -> {
+            HubResponse originHub = originHubMap.get(delivery.getOriginHubId());
+            HubResponse destinationHub = destinationHubMap.get(delivery.getDestinationHubId());
+            return DeliveryResponse.from(delivery, originHub, destinationHub);
+        });
+
+        return PageResponse.of(results);
     }
 
     @Override

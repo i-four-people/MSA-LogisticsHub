@@ -1,5 +1,8 @@
 package com.logistics.delivery.presentation.controller;
 
+import com.logistics.delivery.application.dto.PageResponse;
+import com.logistics.delivery.application.dto.SearchParameter;
+import com.logistics.delivery.application.dto.delivery.DeliveryResponse;
 import com.logistics.delivery.application.dto.order.OrderStatusRequest;
 import com.logistics.delivery.domain.service.DeliveryService;
 import com.logistics.delivery.presentation.response.ApiResponse;
@@ -22,4 +25,13 @@ public class DeliveryApiController {
         boolean result = deliveryService.isOrderStatusChangeAllowed(deliveryId, request);
         return ApiResponse.success(MessageType.RETRIEVE, result);
     }
+
+    // 배송 전체 조회
+    @GetMapping("/")
+    public ApiResponse<?> getDeliveries(@ModelAttribute SearchParameter searchParameter) {
+        PageResponse<DeliveryResponse> results = deliveryService.getDeliveries(searchParameter);
+        return ApiResponse.success(MessageType.RETRIEVE, results);
+    }
+
+
 }
