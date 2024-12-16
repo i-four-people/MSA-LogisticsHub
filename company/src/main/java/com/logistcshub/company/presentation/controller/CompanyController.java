@@ -1,5 +1,6 @@
 package com.logistcshub.company.presentation.controller;
 
+import com.logistcshub.company.application.dto.CompanyResponse;
 import com.logistcshub.company.domain.model.Company;
 import com.logistcshub.company.domain.service.CompanyService;
 import com.logistcshub.company.presentation.request.CompanyRequestDto;
@@ -18,6 +19,8 @@ import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -76,15 +79,16 @@ public class CompanyController {
 
 //    단건 조회
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<CompanyResponseDto>> getCompany(@PathVariable(value = "id") UUID id,
-                                                                      @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                      @RequestHeader(value = "X-USER-ROLE") String role) {
+    public ResponseEntity<ApiResponse<CompanyResponseDto>> findCompanyById(@PathVariable(value = "id") UUID id) {
 
-        userId=1L;
-        role="MASTER";
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(MessageType.RETRIEVE, companyService.getCompany(id)));
     }
+
+    @PostMapping("/batch")
+    List<CompanyResponse> findCompaniesByIds(@RequestBody List<UUID> ids){
+        return companyService.findCompaniesByIds(ids);
+    };
 
 }
