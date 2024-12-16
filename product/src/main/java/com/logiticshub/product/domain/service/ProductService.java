@@ -2,6 +2,7 @@ package com.logiticshub.product.domain.service;
 
 import com.logiticshub.product.application.client.CompanyClient;
 import com.logiticshub.product.application.dto.CompanyResponseDto;
+import com.logiticshub.product.application.dto.ProductResponse;
 import com.logiticshub.product.application.dto.ProductResponseDto;
 import com.logiticshub.product.domain.model.Product;
 import com.logiticshub.product.domain.repository.ProductRepository;
@@ -11,6 +12,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
 import jakarta.ws.rs.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PagedModel;
@@ -18,6 +20,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static com.logiticshub.product.domain.model.QProduct.product;
@@ -30,7 +34,7 @@ public class ProductService {
     private final CompanyClient companyClient;
 
     public ProductResponseDto createProduct(Long userId, String role, ProductRequestDto productRequestDto) {
-        ResponseEntity<ApiResponse<CompanyResponseDto>> getCompanyInfo = companyClient.getCompany(productRequestDto.companyId());
+        ResponseEntity<ApiResponse<CompanyResponseDto>> getCompanyInfo = companyClient.getCompany(productRequestDto.companyId(),userId, role);
         CompanyResponseDto companyInfo= getCompanyInfo.getBody().data();
         Product product = productRequestDto.toEntity(companyInfo.hubId());
 
@@ -41,10 +45,12 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponseDto updateProduct(UUID id, Long userId, ProductRequestDto productRequestDto) {
+    public ProductResponseDto updateProduct(UUID id, Long userId, String role,ProductRequestDto productRequestDto) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("입력한 id값을 가진 상품이 존재하지 않습니다."));
-        product.update(userId, productRequestDto);
+        ResponseEntity<ApiResponse<CompanyResponseDto>> getCompanyInfo = companyClient.getCompany(productRequestDto.companyId(),userId, role);
+        CompanyResponseDto companyInfo= getCompanyInfo.getBody().data();
+        product.update(userId, productRequestDto,companyInfo.hubId());
         productRepository.save(product);
         return ProductResponseDto.toDto(product);
     }
@@ -65,5 +71,21 @@ public class ProductService {
 
         Page<Product> products = productRepository.findAll(booleanBuilder, pageable);
         return new PagedModel<>(products.map(ProductResponseDto::toDto));
+    }
+
+    @Transactional(readOnly = true)
+    @Cacheable(value = "products", key = "#id")
+    public ProductResponseDto getProduct(UUID id) {
+        return ProductResponseDto.toDto(productRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("입력한 id값을 가진 상품이 존재하지 않습니다.")));
+    }
+
+    public List<ProductResponse> findProductsByIds(List<UUID> ids) {
+        List<Product> products = productRepository.findAllById(ids);
+        List<ProductResponse> productResponses = new ArrayList<>();
+        for (Product product : products) {
+            productResponses.add(ProductResponse.toDto(product));
+        }
+        return productResponses;
     }
 }

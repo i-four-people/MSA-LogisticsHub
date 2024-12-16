@@ -25,8 +25,18 @@ public class RabbitMQConfig {
     }
 
     @Bean
+    public Queue slackQueue() {
+        return new Queue(properties.getQueues().getSlack());
+    }
+
+    @Bean
     public Binding orderBinding(Queue orderQueue, FanoutExchange deliveryExchange) {
         return BindingBuilder.bind(orderQueue).to(deliveryExchange);
+    }
+
+    @Bean
+    public Binding slackBinding(Queue slackQueue, FanoutExchange deliveryExchange) {
+        return BindingBuilder.bind(slackQueue).to(deliveryExchange);
     }
 
 }

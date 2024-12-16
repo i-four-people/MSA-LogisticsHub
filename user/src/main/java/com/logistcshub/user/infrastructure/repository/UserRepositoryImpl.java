@@ -4,7 +4,7 @@ import com.logistcshub.user.presentation.response.QUserDto;
 import com.logistcshub.user.domain.repository.UserRepositoryCustom;
 import com.logistcshub.user.presentation.response.UserSearchResponse;
 import com.logistcshub.user.presentation.response.UserDto;
-import com.logistcshub.user.domain.model.UserRoleEnum;
+import com.logistcshub.user.domain.model.user.UserRoleEnum;
 import com.logistcshub.user.presentation.request.UserSearchRequest;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Collections;
 import java.util.List;
 
-import static com.logistcshub.user.domain.model.QUser.user;
+import static com.logistcshub.user.domain.model.user.QUser.user;
 import static org.springframework.util.StringUtils.hasText;
 
 @Repository

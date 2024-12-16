@@ -15,4 +15,10 @@ public interface DeliveryRouteRepository {
     DeliveryRoute save(DeliveryRoute delivery);
 
     void deleteById(UUID id);
+
+    List<DeliveryRoute> findPendingRoutes();
+
+    Optional<Long> findAssignedManagerByRoute(UUID startHubId, UUID endHubId);
+
+    List<Long> findAssignedManagerIds();
 }

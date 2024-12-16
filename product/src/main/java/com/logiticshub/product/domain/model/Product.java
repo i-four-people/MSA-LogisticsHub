@@ -25,16 +25,22 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
     private Integer price;
 
+    @Column(nullable = false)
     private Integer stock;
 
+    @Column(nullable = false)
     private UUID companyId;
 
+    @Column(nullable = false)
     private UUID hubId;
 
     @Builder.Default
@@ -62,7 +68,7 @@ public class Product {
         createdBy = id.toString();
     }
 
-    public void update(Long id, ProductRequestDto productRequestDto) {
+    public void update(Long id, ProductRequestDto productRequestDto, UUID hubId) {
         this.updatedAt = LocalDateTime.now();
         this.updatedBy = id.toString();
         this.name= productRequestDto.name();
@@ -70,7 +76,7 @@ public class Product {
         this.price = productRequestDto.price();
         this.stock = productRequestDto.stock();
         this.companyId = productRequestDto.companyId();
-        this.hubId = productRequestDto.hubId();
+        this.hubId = hubId;
         this.isDelete = false;
     }
 

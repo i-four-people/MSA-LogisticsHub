@@ -5,5 +5,6 @@ import lombok.Getter;
 @Getter
 public enum EventType {
     ORDER_CREATED,
-    ORDER_DELETED
+    ORDER_DELETED,
+    DELIVERY_CREATED
 }
