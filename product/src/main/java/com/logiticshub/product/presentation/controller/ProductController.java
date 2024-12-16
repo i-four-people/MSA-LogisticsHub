@@ -49,7 +49,7 @@ public class ProductController {
         role = "MASTER";
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(MessageType.UPDATE, productService.updateProduct(id, userId, productRequestDto)));
+                .body(ApiResponse.success(MessageType.UPDATE, productService.updateProduct(id, userId, role, productRequestDto)));
     }
 //    상품 삭제
     @DeleteMapping("/{id}")

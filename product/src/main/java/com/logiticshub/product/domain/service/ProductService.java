@@ -42,10 +42,12 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponseDto updateProduct(UUID id, Long userId, ProductRequestDto productRequestDto) {
+    public ProductResponseDto updateProduct(UUID id, Long userId, String role,ProductRequestDto productRequestDto) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("입력한 id값을 가진 상품이 존재하지 않습니다."));
-        product.update(userId, productRequestDto);
+        ResponseEntity<ApiResponse<CompanyResponseDto>> getCompanyInfo = companyClient.getCompany(productRequestDto.companyId(),userId, role);
+        CompanyResponseDto companyInfo= getCompanyInfo.getBody().data();
+        product.update(userId, productRequestDto,companyInfo.hubId());
         productRepository.save(product);
         return ProductResponseDto.toDto(product);
     }
