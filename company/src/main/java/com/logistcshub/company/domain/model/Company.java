@@ -78,14 +78,16 @@ public class Company {
         isDelete = true;
     }
 
-    public void update(String id, CompanyRequestDto companyRequestDto) {
+    public void update(String id, CompanyRequestDto companyRequestDto, Double lng, Double lat, UUID hubId) {
         updatedBy = id;
         updatedAt = LocalDateTime.now();
         this.name= companyRequestDto.name();
         this.address = companyRequestDto.address();
         this.contact = companyRequestDto.contact();
         this.companyType = companyRequestDto.companyType();
-        this.hubId = companyRequestDto.hubId();
+        this.lng = lng;
+        this.lat = lat;
+        this.hubId = hubId;
         this.isDelete = false;
     }
 

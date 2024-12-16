@@ -66,4 +66,10 @@ public class ProductService {
         Page<Product> products = productRepository.findAll(booleanBuilder, pageable);
         return new PagedModel<>(products.map(ProductResponseDto::toDto));
     }
+
+    @Transactional(readOnly = true)
+    public Object getProduct(UUID id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("입력한 id값을 가진 상품이 존재하지 않습니다."));
+    }
 }
