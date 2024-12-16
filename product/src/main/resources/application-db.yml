@@ -34,3 +34,12 @@ spring:
     username: ${SPRING_DATASOURCE_PROD_USERNAME}
     password: ${SPRING_DATASOURCE_PROD_PASSWORD}
     url: ${SPRING_DATASOURCE_PROD_URL}
+
+---
+spring:
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST}
+      port: ${SPRING_DATA_REDIS_PORT}
+      username: ${SPRING_DATA_REDIS_USERNAME}
+      password: ${SPRING_DATA_REDIS_PASSWORD}
