@@ -1,7 +1,8 @@
 package com.logistics.delivery.application.service;
 
+import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerType;
 import com.logistics.delivery.application.dto.event.SlackCreateEvent;
-import com.logistics.delivery.application.dto.user.DeliveryManagerResponse;
+import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerResponse;
 import com.logistics.delivery.domain.model.DeliveryRoute;
 import com.logistics.delivery.domain.repository.DeliveryRouteRepository;
 import com.logistics.delivery.domain.service.DeliveryManagerService;
@@ -82,7 +83,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         UUID startHubId = routeKey.startHubId();
 
         // 허브 배송 담당자 조회
-        List<DeliveryManagerResponse> availableManagers = deliveryManagerClient.findAvailableManagers();
+        List<DeliveryManagerResponse> availableManagers = deliveryManagerClient.findAvailableManagers(DeliveryManagerType.HUB_PIC);
 
         // 배정 가능한 담당자가 없으면 새로운 배송 경로를 PENDING 상태로 유지
         // 스케줄러를 통해 주기적으로 PENDING 상태의 경로를 확인하고, 완료된 담당자가 있는지 확인.
@@ -116,7 +117,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         );
 
         // 순번 기준으로 정렬
-        managersToAssign.sort(Comparator.comparingInt(DeliveryManagerResponse::sequence));
+        managersToAssign.sort(Comparator.comparing(DeliveryManagerResponse::sequence));
 
         // 순번 기준으로 라운드 로빈 방식 적용
         AtomicInteger index = new AtomicInteger(0);

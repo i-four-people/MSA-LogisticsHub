@@ -1,6 +1,6 @@
 package com.logistics.delivery.application.dto.event;
 
-import com.logistics.delivery.application.dto.user.DeliveryManagerResponse;
+import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerResponse;
 import com.logistics.delivery.domain.model.DeliveryRoute;
 
 import java.util.UUID;

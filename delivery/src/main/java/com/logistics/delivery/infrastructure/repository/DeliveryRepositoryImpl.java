@@ -1,6 +1,7 @@
 package com.logistics.delivery.infrastructure.repository;
 
 import com.logistics.delivery.domain.model.Delivery;
+import com.logistics.delivery.domain.model.DeliveryStatus;
 import com.logistics.delivery.domain.repository.DeliveryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -45,4 +46,13 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
         jpaDeliveryRepository.deleteById(id);
     }
 
+    @Override
+    public List<Delivery> findActiveDeliveriesByDestinationHubId(UUID destinationHubId, List<DeliveryStatus> statusList) {
+        return jpaDeliveryRepository.findActiveDeliveriesByDestinationHubId(destinationHubId, statusList);
+    }
+
+    @Override
+    public List<Delivery> findUnassignedDeliveries() {
+        return jpaDeliveryRepository.findByCompanyDeliveryManagerIdIsNull(List.of(DeliveryStatus.DELIVERED, DeliveryStatus.CANCELLED));
+    }
 }
