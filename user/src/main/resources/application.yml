@@ -21,6 +21,12 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         default_batch_fetch_size: 1000
 
+data:
+  redis:
+    host: localhost
+    port: 6379
+    username: default
+    password: systempass
 
 jwt:
   admin-token: admin-token-1234
