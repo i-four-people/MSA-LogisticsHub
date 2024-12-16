@@ -2,6 +2,7 @@ package com.logistics.delivery.presentation.controller;
 
 import com.logistics.delivery.application.dto.PageResponse;
 import com.logistics.delivery.application.dto.SearchParameter;
+import com.logistics.delivery.application.dto.delivery.DeliveryDeleteResponse;
 import com.logistics.delivery.application.dto.delivery.DeliveryDetailResponse;
 import com.logistics.delivery.application.dto.delivery.DeliveryResponse;
 import com.logistics.delivery.application.dto.order.OrderStatusRequest;
@@ -41,5 +42,10 @@ public class DeliveryApiController {
         return ApiResponse.success(MessageType.RETRIEVE, result);
     }
 
-
+    // 배송 삭제
+    @DeleteMapping("/{deliveryId}")
+    public ApiResponse<?> deleteDeliveryById(@PathVariable("deliveryId") UUID deliveryId) {
+        DeliveryDeleteResponse result = deliveryService.deleteDeliveryById(deliveryId);
+        return ApiResponse.success(MessageType.DELETE, result);
+    }
 }

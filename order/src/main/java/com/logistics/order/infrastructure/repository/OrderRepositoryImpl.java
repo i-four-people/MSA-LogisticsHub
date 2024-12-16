@@ -20,7 +20,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Optional<Order> findById(UUID id) {
-        return jpaOrderRepository.findById(id);
+        return jpaOrderRepository.findByIdAndDeleteFalse(id);
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.logistics.delivery.application.common.OrderStatus;
 import com.logistics.delivery.application.dto.PageResponse;
 import com.logistics.delivery.application.dto.SearchParameter;
 import com.logistics.delivery.application.dto.company.CompanyResponse;
+import com.logistics.delivery.application.dto.delivery.DeliveryDeleteResponse;
 import com.logistics.delivery.application.dto.delivery.DeliveryDetailResponse;
 import com.logistics.delivery.application.dto.delivery.DeliveryResponse;
 import com.logistics.delivery.application.dto.delivery.DeliveryRouteResponse;
@@ -12,6 +13,7 @@ import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerTyp
 import com.logistics.delivery.application.dto.event.DeliveryCreateEvent;
 import com.logistics.delivery.application.dto.event.consume.OrderCreateConsume;
 import com.logistics.delivery.application.dto.hub.HubResponse;
+import com.logistics.delivery.application.dto.order.OrderResponse;
 import com.logistics.delivery.application.dto.order.OrderStatusRequest;
 import com.logistics.delivery.domain.model.Delivery;
 import com.logistics.delivery.domain.model.DeliveryRoute;
@@ -22,6 +24,7 @@ import com.logistics.delivery.domain.service.DeliveryService;
 import com.logistics.delivery.infrastructure.client.CompanyClient;
 import com.logistics.delivery.infrastructure.client.DeliveryManagerClient;
 import com.logistics.delivery.infrastructure.client.HubClient;
+import com.logistics.delivery.infrastructure.client.OrderClient;
 import com.logistics.delivery.infrastructure.config.RabbitMQProperties;
 import com.logistics.delivery.presentation.exception.BusinessException;
 import com.logistics.delivery.presentation.exception.ErrorCode;
@@ -49,6 +52,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     private final RabbitTemplate rabbitTemplate;
     private final RabbitMQProperties rabbitProperties;
 
+    private final OrderClient orderClient;
     private final CompanyClient companyClient;
     private final DeliveryManagerClient deliveryManagerClient;
     private final HubClient hubClient;
@@ -207,5 +211,26 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Override
     public List<Delivery> findUnassignedDeliveries() {
         return deliveryRepository.findUnassignedDeliveries();
+    }
+
+    @Override
+    public DeliveryDeleteResponse deleteDeliveryById(UUID deliveryId) {
+
+        Delivery findDelivery = deliveryRepository.findById(deliveryId).orElseThrow(
+                () -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND)
+        );
+
+        OrderResponse findOrder = orderClient.getOrderById(findDelivery.getOrderId());
+        if (findOrder != null) {
+            throw new BusinessException(ErrorCode.DELIVERY_DEPENDENT_ORDER_EXISTS);
+        }
+
+        // 배송 경로 삭제
+        deliveryRouteService.deleteByDeliveryId(findDelivery.getId());
+
+        // TODO: 삭제자 가져오기
+        findDelivery.delete("user1");
+
+        return DeliveryDeleteResponse.from(findDelivery);
     }
 }

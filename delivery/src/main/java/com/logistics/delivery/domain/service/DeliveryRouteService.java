@@ -11,4 +11,6 @@ public interface DeliveryRouteService {
     void createRoutesForDelivery(Delivery delivery);
 
     List<DeliveryRoute> getRoutesByDeliveryId(UUID deliveryId);
+
+    void deleteByDeliveryId(UUID id);
 }

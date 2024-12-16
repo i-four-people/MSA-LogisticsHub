@@ -73,4 +73,12 @@ public class DeliveryRouteServiceImpl implements DeliveryRouteService {
     public List<DeliveryRoute> getRoutesByDeliveryId(UUID deliveryId) {
         return deliveryRouteRepository.findByDeliveryId(deliveryId);
     }
+
+    @Override
+    public void deleteByDeliveryId(UUID deliveryId) {
+
+        List<DeliveryRoute> findDeliveryRoutes = deliveryRouteRepository.findByDeliveryId(deliveryId);
+        findDeliveryRoutes.forEach(DeliveryRoute::delete);
+
+    }
 }

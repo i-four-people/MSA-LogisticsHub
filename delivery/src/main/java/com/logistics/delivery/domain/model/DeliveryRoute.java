@@ -90,4 +90,11 @@ public class DeliveryRoute extends AuditingFields {
         this.deliveryManagerId = assignedManagerId;
         this.status = RouteStatus.ASSIGNED;
     }
+
+    /**
+     * 배송 경로 삭제 (soft delete)
+     */
+    public void delete() {
+        this.isDelete = true;
+    }
 }
