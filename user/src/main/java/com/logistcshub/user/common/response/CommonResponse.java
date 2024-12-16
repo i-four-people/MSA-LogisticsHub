@@ -1,4 +1,4 @@
-package com.logistcshub.user.infrastructure.common;
+package com.logistcshub.user.common.response;
 
 import lombok.NonNull;
 

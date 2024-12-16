@@ -1,4 +1,4 @@
-package com.logistcshub.user.infrastructure.common;
+package com.logistcshub.user.domain.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

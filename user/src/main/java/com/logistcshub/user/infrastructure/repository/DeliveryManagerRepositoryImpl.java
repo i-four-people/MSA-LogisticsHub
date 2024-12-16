@@ -2,9 +2,9 @@ package com.logistcshub.user.infrastructure.repository;
 
 import com.logistcshub.user.presentation.response.DeliveryManagerDto;
 import com.logistcshub.user.presentation.response.QDeliveryManagerDto;
-import com.logistcshub.user.domain.model.DeliveryManagerType;
-import com.logistcshub.user.domain.model.DeliveryStatus;
-import com.logistcshub.user.domain.model.UserRoleEnum;
+import com.logistcshub.user.domain.model.deliveryManager.DeliveryManagerType;
+import com.logistcshub.user.domain.model.deliveryManager.DeliveryStatus;
+import com.logistcshub.user.domain.model.user.UserRoleEnum;
 import com.logistcshub.user.domain.repository.DeliveryManagerRepositoryCustom;
 import com.logistcshub.user.presentation.request.DeliSearchRequest;
 import com.logistcshub.user.presentation.response.DeliSearchResponse;
@@ -22,8 +22,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import static com.logistcshub.user.domain.model.QDeliveryManager.deliveryManager;
-import static com.logistcshub.user.domain.model.QHubManager.hubManager;
+import static com.logistcshub.user.domain.model.deliveryManager.QDeliveryManager.deliveryManager;
+import static com.logistcshub.user.domain.model.deliveryManager.QHubManager.hubManager;
 
 @Repository
 public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepositoryCustom {
@@ -55,9 +55,9 @@ public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepositoryC
                 .on(deliveryManager.hubId.eq(hubManager.hubId))
                 .where(hubManagerFilter(role, userId),
                         userIdEq(condition.userId()),
-                        deliveryManagerTypeEq(String.valueOf(condition.deliveryManagerType())),
+                        deliveryManagerTypeEq(condition.deliveryManagerType()),
                         hubIdEq(condition.hubId()),
-                        statusEq(String.valueOf(condition.deliveryStatus())),
+                        statusEq(condition.deliveryStatus()),
                         deliveryManager.isDelete.eq(false));
 
         if (pageable.getSort().isEmpty()) {
@@ -85,9 +85,9 @@ public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepositoryC
                 .select(deliveryManager.count())
                 .from(deliveryManager)
                 .where(userIdEq(condition.userId()),
-                        deliveryManagerTypeEq(String.valueOf(condition.deliveryManagerType())),
+                        deliveryManagerTypeEq(condition.deliveryManagerType()),
                         hubIdEq(condition.hubId()),
-                        statusEq(String.valueOf(condition.deliveryStatus())),
+                        statusEq(condition.deliveryStatus()),
                         deliveryManager.isDelete.eq(false));
 
         DeliSearchResponse deliSearchResponse = new DeliSearchResponse(content);
@@ -107,15 +107,15 @@ public class DeliveryManagerRepositoryImpl implements DeliveryManagerRepositoryC
         return userId != null ? deliveryManager.userId.eq(userId) : null;
     }
 
-    private BooleanExpression deliveryManagerTypeEq(String type) {
-        return type != null ? deliveryManager.deliveryManagerType.eq(DeliveryManagerType.valueOf(type)) : null;
+    private BooleanExpression deliveryManagerTypeEq(DeliveryManagerType type) {
+        return type != null ? deliveryManager.deliveryManagerType.eq(type) : null;
     }
 
     private BooleanExpression hubIdEq(UUID hubId) {
         return hubId != null ? deliveryManager.hubId.eq(hubId) : null;
     }
 
-    private BooleanExpression statusEq(String status) {
-        return status != null ? deliveryManager.status.eq(DeliveryStatus.valueOf(status)) : null;
+    private BooleanExpression statusEq(DeliveryStatus status) {
+        return status != null ? deliveryManager.status.eq(status) : null;
     }
 }

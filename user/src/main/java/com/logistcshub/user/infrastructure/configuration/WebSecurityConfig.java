@@ -1,6 +1,6 @@
 package com.logistcshub.user.infrastructure.configuration;
 
-import com.logistcshub.user.application.jwt.CustomAuthPreFilter;
+import com.logistcshub.user.common.jwt.CustomAuthPreFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,6 +1,6 @@
 ### 허브 매니저 생성
 POST http://localhost:19093/api/hub-managers
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDA5NDYzNiwiZXhwIjoxNzM0MDk0OTk2fQ.R13NOdbs1e0H4mOeT4jykLHFhPDgB-kcbT9EOArwf8iZ2CAylHCdc8WCjhhWj36BGEtCB4orS-YSdVG5eOyxeg
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDI4NDE4MSwiZXhwIjoxNzM0Mjg0NTQxfQ.ZdT4zz4-6ORLasAVeKSKWiO-lTwkgyg28Cj8lARjOFbh_T3d-JnWredXNjhS_yl3MRIQPg8JFDMZJV1W7O38fg
 Content-Type: application/json
 X-User-Id: 1
 X-User-Role: MASTER
@@ -52,6 +52,13 @@ X-User-Role: MASTER
 ### 배송 담당자 삭제
 DELETE http://localhost:19093/api/delivery-managers/5
 Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDA5NDYzNiwiZXhwIjoxNzM0MDk0OTk2fQ.R13NOdbs1e0H4mOeT4jykLHFhPDgB-kcbT9EOArwf8iZ2CAylHCdc8WCjhhWj36BGEtCB4orS-YSdVG5eOyxeg
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: MASTER
+
+### 배정 가능한 허브 배송 담당자 조회
+GET http://localhost:19093/api/delivery-managers/api/delivery-managers/available-manager
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDMzNDkxNywiZXhwIjoxNzM0MzM1Mjc3fQ.WNMz2BJKNVuCvwl4DFm34nUoXV16g_F3nngs6XrnV6Ma1r7t_yGuxntPJxhCczCaeZFpsTGJZjVv5jCLZ9kIOA
 Content-Type: application/json
 X-User-Id: 1
 X-User-Role: MASTER

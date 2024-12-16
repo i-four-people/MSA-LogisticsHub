@@ -1,6 +1,6 @@
 package com.logistcshub.user.infrastructure.repository;
 
-import com.logistcshub.user.domain.model.HubManager;
+import com.logistcshub.user.domain.model.deliveryManager.HubManager;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

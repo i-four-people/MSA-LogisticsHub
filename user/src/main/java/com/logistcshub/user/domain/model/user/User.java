@@ -1,6 +1,6 @@
-package com.logistcshub.user.domain.model;
+package com.logistcshub.user.domain.model.user;
 
-import com.logistcshub.user.infrastructure.common.AuditEntity;
+import com.logistcshub.user.domain.model.AuditEntity;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,5 +1,6 @@
-package com.logistcshub.user.domain.model;
+package com.logistcshub.user.domain.model.deliveryManager;
 
+import com.logistcshub.user.domain.model.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
