@@ -24,6 +24,7 @@ public class RabbitMQProperties {
     @Setter
     public static class Queues {
         private String order;
+        private String slack;
     }
 
 }

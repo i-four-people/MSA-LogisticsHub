@@ -3,5 +3,6 @@ message:
     delivery: ${MESSAGE_EXCHANGE_DELIVERY}
   queues:
     order: ${MESSAGE_QUEUE_ORDER}
+    slack: ${MESSAGE_QUEUE_SLACK}
   receive:
     delivery: ${MESSAGE_RECEIVE_QUEUE_DELIVERY}

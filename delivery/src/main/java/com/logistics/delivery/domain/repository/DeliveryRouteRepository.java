@@ -18,7 +18,7 @@ public interface DeliveryRouteRepository {
 
     List<DeliveryRoute> findPendingRoutes();
 
-    Optional<UUID> findAssignedManagerByRoute(UUID startHubId, UUID endHubId);
+    Optional<Long> findAssignedManagerByRoute(UUID startHubId, UUID endHubId);
 
-    List<UUID> findAssignedManagerIds();
+    List<Long> findAssignedManagerIds();
 }

@@ -24,3 +24,7 @@ eureka:
 
 delivery:
   max-waiting-time-minutes: ${DELIVERY_MAX_WAITING_TIME_MINUTES}
+
+scheduler:
+  delivery-assignment:
+    interval: ${DELIVERY_ASSIGNMENT_SCHEDULER_INTERVAL}
