@@ -19,6 +19,7 @@ public class DeliveryRoute extends AuditingFields {
 
     @Id
     @UuidGenerator(style = UuidGenerator.Style.TIME)
+    @Comment("배송 이동 경로 ID")
     private UUID id;
 
     @Comment("배송 ID")

@@ -4,7 +4,9 @@ import com.logistics.delivery.application.common.OrderStatus;
 import com.logistics.delivery.application.dto.PageResponse;
 import com.logistics.delivery.application.dto.SearchParameter;
 import com.logistics.delivery.application.dto.company.CompanyResponse;
+import com.logistics.delivery.application.dto.delivery.DeliveryDetailResponse;
 import com.logistics.delivery.application.dto.delivery.DeliveryResponse;
+import com.logistics.delivery.application.dto.delivery.DeliveryRouteResponse;
 import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerResponse;
 import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerType;
 import com.logistics.delivery.application.dto.event.DeliveryCreateEvent;
@@ -12,6 +14,7 @@ import com.logistics.delivery.application.dto.event.consume.OrderCreateConsume;
 import com.logistics.delivery.application.dto.hub.HubResponse;
 import com.logistics.delivery.application.dto.order.OrderStatusRequest;
 import com.logistics.delivery.domain.model.Delivery;
+import com.logistics.delivery.domain.model.DeliveryRoute;
 import com.logistics.delivery.domain.model.DeliveryStatus;
 import com.logistics.delivery.domain.repository.DeliveryRepository;
 import com.logistics.delivery.domain.service.DeliveryRouteService;
@@ -93,6 +96,41 @@ public class DeliveryServiceImpl implements DeliveryService {
         });
 
         return PageResponse.of(results);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public DeliveryDetailResponse getDeliveryById(UUID deliveryId) {
+
+        Delivery findDelivery = deliveryRepository.findById(deliveryId).orElseThrow(
+                () -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND)
+        );
+
+        // 출발 허브, 도착 허브 정보 조회
+        HubResponse originHub = hubClient.getHub(findDelivery.getOriginHubId());
+        HubResponse destinationHub = hubClient.getHub(findDelivery.getDestinationHubId());
+
+        // 배송 이동 경로 조회
+        List<DeliveryRoute> deliveryRoutes = deliveryRouteService.getRoutesByDeliveryId(deliveryId);
+
+        List<UUID> startHubIds = deliveryRoutes.stream().map(DeliveryRoute::getStartHubId).distinct().toList();
+        List<HubResponse> startHubs = hubClient.findHubsByIds(startHubIds);
+
+        List<UUID> endHubIds = deliveryRoutes.stream().map(DeliveryRoute::getEndHubId).distinct().toList();
+        List<HubResponse> endHubs = hubClient.findHubsByIds(endHubIds);
+
+        // 응답값 반환
+        Map<UUID, HubResponse> startHubMap = startHubs.stream().collect(Collectors.toMap(HubResponse::id, h -> h));
+        Map<UUID, HubResponse> endHubMap = endHubs.stream().collect(Collectors.toMap(HubResponse::id, h -> h));
+
+        List<DeliveryRouteResponse> deliveryRouteResponses = deliveryRoutes.stream()
+                .map(delivery -> {
+                    HubResponse startHub = startHubMap.get(delivery.getStartHubId());
+                    HubResponse endHub = endHubMap.get(delivery.getEndHubId());
+                    return DeliveryRouteResponse.from(delivery, startHub, endHub);
+                }).toList();
+
+        return DeliveryDetailResponse.from(findDelivery, originHub, destinationHub, deliveryRouteResponses);
     }
 
     @Override

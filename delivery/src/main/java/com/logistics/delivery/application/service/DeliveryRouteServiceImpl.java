@@ -7,9 +7,9 @@ import com.logistics.delivery.domain.repository.DeliveryRouteRepository;
 import com.logistics.delivery.domain.service.DeliveryManagerService;
 import com.logistics.delivery.domain.service.DeliveryRouteService;
 import com.logistics.delivery.infrastructure.client.HubClient;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,5 +66,11 @@ public class DeliveryRouteServiceImpl implements DeliveryRouteService {
                 .filter(info -> info.getStartHubId().equals(startHubId) && info.getEndHubId().equals(endHubId))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("No matching HubToHubInfo found for the route."));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DeliveryRoute> getRoutesByDeliveryId(UUID deliveryId) {
+        return deliveryRouteRepository.findByDeliveryId(deliveryId);
     }
 }

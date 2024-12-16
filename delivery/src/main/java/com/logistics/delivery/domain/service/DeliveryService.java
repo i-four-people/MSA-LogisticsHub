@@ -2,6 +2,7 @@ package com.logistics.delivery.domain.service;
 
 import com.logistics.delivery.application.dto.PageResponse;
 import com.logistics.delivery.application.dto.SearchParameter;
+import com.logistics.delivery.application.dto.delivery.DeliveryDetailResponse;
 import com.logistics.delivery.application.dto.delivery.DeliveryResponse;
 import com.logistics.delivery.application.dto.event.consume.OrderCreateConsume;
 import com.logistics.delivery.application.dto.order.OrderStatusRequest;
@@ -21,4 +22,6 @@ public interface DeliveryService {
     List<Delivery> findUnassignedDeliveries();
 
     PageResponse<DeliveryResponse> getDeliveries(SearchParameter searchParameter);
+
+    DeliveryDetailResponse getDeliveryById(UUID deliveryId);
 }

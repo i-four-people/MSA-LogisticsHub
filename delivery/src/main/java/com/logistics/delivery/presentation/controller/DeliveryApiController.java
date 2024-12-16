@@ -2,6 +2,7 @@ package com.logistics.delivery.presentation.controller;
 
 import com.logistics.delivery.application.dto.PageResponse;
 import com.logistics.delivery.application.dto.SearchParameter;
+import com.logistics.delivery.application.dto.delivery.DeliveryDetailResponse;
 import com.logistics.delivery.application.dto.delivery.DeliveryResponse;
 import com.logistics.delivery.application.dto.order.OrderStatusRequest;
 import com.logistics.delivery.domain.service.DeliveryService;
@@ -31,6 +32,13 @@ public class DeliveryApiController {
     public ApiResponse<?> getDeliveries(@ModelAttribute SearchParameter searchParameter) {
         PageResponse<DeliveryResponse> results = deliveryService.getDeliveries(searchParameter);
         return ApiResponse.success(MessageType.RETRIEVE, results);
+    }
+
+    // 배송 단건 조회
+    @GetMapping("/{deliveryId}")
+    public ApiResponse<?> getDeliveryById(@PathVariable("deliveryId") UUID deliveryId) {
+        DeliveryDetailResponse result = deliveryService.getDeliveryById(deliveryId);
+        return ApiResponse.success(MessageType.RETRIEVE, result);
     }
 
 
