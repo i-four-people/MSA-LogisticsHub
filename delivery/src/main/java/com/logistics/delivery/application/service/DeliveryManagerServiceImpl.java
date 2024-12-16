@@ -1,12 +1,15 @@
 package com.logistics.delivery.application.service;
 
+import com.logistics.delivery.application.dto.event.SlackCreateEvent;
 import com.logistics.delivery.application.dto.user.DeliveryManagerResponse;
 import com.logistics.delivery.domain.model.DeliveryRoute;
 import com.logistics.delivery.domain.repository.DeliveryRouteRepository;
 import com.logistics.delivery.domain.service.DeliveryManagerService;
 import com.logistics.delivery.infrastructure.client.DeliveryManagerClient;
+import com.logistics.delivery.infrastructure.config.RabbitMQProperties;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +27,8 @@ import java.util.stream.Collectors;
 public class DeliveryManagerServiceImpl implements DeliveryManagerService {
 
     private final DeliveryRouteRepository deliveryRouteRepository;
+    private final RabbitTemplate rabbitTemplate;
+    private final RabbitMQProperties rabbitProperties;
 
     private final DeliveryManagerClient deliveryManagerClient;
 
@@ -42,7 +47,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         // 각 그룹에 대해 배송 담당자 배정 처리
         groupedRoutes.forEach((routeKey, routes) -> {
             // 동일 경로에서 이미 배정된 배송 담당자가 있는지 확인
-            UUID assignedManagerId = findAssignedManagerForRoute(routeKey);
+            Long assignedManagerId = findAssignedManagerForRoute(routeKey);
 
             if (assignedManagerId != null && !hasExceededWaitingTime(routes)) {
                 // 담당자가 배정되어 있고 대기 시간이 초과되지 않은 경우, 기존 담당자를 배정
@@ -55,13 +60,13 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
     }
 
     // 동일 경로에서 ASSIGNED 상태의 배송 담당자가 있는지 확인
-    private UUID findAssignedManagerForRoute(RouteKey routeKey) {
+    private Long findAssignedManagerForRoute(RouteKey routeKey) {
         return deliveryRouteRepository.findAssignedManagerByRoute(routeKey.startHubId(), routeKey.endHubId())
                 .orElse(null);
     }
 
     // 기존 배송 담당자를 경로에 배정
-    private void assignExistingManagerToRoutes(List<DeliveryRoute> routes, UUID assignedManagerId) {
+    private void assignExistingManagerToRoutes(List<DeliveryRoute> routes, Long assignedManagerId) {
         routes.forEach(route -> {
             route.assignManager(assignedManagerId); // 기존 담당자 배정
         });
@@ -87,7 +92,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         }
 
         // 이미 배정된 담당자 ID 가져오기
-        List<UUID> assignedManagerIds = deliveryRouteRepository.findAssignedManagerIds();
+        List<Long> assignedManagerIds = deliveryRouteRepository.findAssignedManagerIds();
 
         // 배정 가능한 담당자 필터링
         List<DeliveryManagerResponse> unassignedManagers = availableManagers.stream()
@@ -99,9 +104,9 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
             return;
         }
 
-        // 허브 ID가 startHubId와 일치하는 담당자를 먼저 필터링
+        // 허브 ID가 startHubId와 일치하는 담당자를 먼저 필터링 (현재 허브에 위차한 배송 담당자 먼저 확인)
         List<DeliveryManagerResponse> matchingHubManagers = availableManagers.stream()
-                .filter(manager -> manager.id().equals(startHubId))
+                .filter(manager -> manager.hubId().equals(startHubId))
                 .toList();
 
         // 일치하는 담당자가 없으면 모든 담당자를 사용
@@ -123,6 +128,16 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
 
             log.info("Assigned manager {} to route from {} to {}",
                     assignedManager.id(), route.getStartHubId(), route.getEndHubId());
+
+            // 이벤트 생성
+            SlackCreateEvent event = SlackCreateEvent.of(route, assignedManager);
+
+            // 슬랙 이벤트 생성
+            rabbitTemplate.convertAndSend(
+                    rabbitProperties.getExchange().getDelivery(),
+                    event
+            );
+
         });
     }
 

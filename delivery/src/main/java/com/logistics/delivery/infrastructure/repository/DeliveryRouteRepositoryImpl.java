@@ -41,12 +41,12 @@ public class DeliveryRouteRepositoryImpl implements DeliveryRouteRepository {
     }
 
     @Override
-    public Optional<UUID> findAssignedManagerByRoute(UUID startHubId, UUID endHubId) {
+    public Optional<Long> findAssignedManagerByRoute(UUID startHubId, UUID endHubId) {
         return jpaDeliveryRouteRepository.findAssignedManagerByRoute(startHubId, endHubId);
     }
 
     @Override
-    public List<UUID> findAssignedManagerIds() {
+    public List<Long> findAssignedManagerIds() {
         return jpaDeliveryRouteRepository.findAssignedManagerIds();
     }
 }

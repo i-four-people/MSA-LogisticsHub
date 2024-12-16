@@ -25,7 +25,7 @@ public class DeliveryRoute extends AuditingFields {
     private UUID deliveryId;
 
     @Comment("배송 담당자 ID")
-    private UUID deliveryManagerId;
+    private Long deliveryManagerId;
 
     @Comment("배송 경로 상 순번")
     private int sequence;
@@ -85,7 +85,7 @@ public class DeliveryRoute extends AuditingFields {
      *
      * @param assignedManagerId 배송 담당자 ID
      */
-    public void assignManager(UUID assignedManagerId) {
+    public void assignManager(Long assignedManagerId) {
         this.deliveryManagerId = assignedManagerId;
         this.status = RouteStatus.ASSIGNED;
     }
