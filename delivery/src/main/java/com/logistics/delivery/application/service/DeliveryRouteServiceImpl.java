@@ -4,6 +4,7 @@ import com.logistics.delivery.application.dto.hub.HubToHubResponse;
 import com.logistics.delivery.domain.model.Delivery;
 import com.logistics.delivery.domain.model.DeliveryRoute;
 import com.logistics.delivery.domain.repository.DeliveryRouteRepository;
+import com.logistics.delivery.domain.service.DeliveryManagerService;
 import com.logistics.delivery.domain.service.DeliveryRouteService;
 import com.logistics.delivery.infrastructure.client.HubClient;
 import jakarta.transaction.Transactional;
@@ -21,6 +22,7 @@ import java.util.stream.IntStream;
 public class DeliveryRouteServiceImpl implements DeliveryRouteService {
 
     private final DeliveryRouteRepository deliveryRouteRepository;
+    private final DeliveryManagerService deliveryManagerService;
 
     private final HubClient hubClient;
 
@@ -36,6 +38,8 @@ public class DeliveryRouteServiceImpl implements DeliveryRouteService {
         // 경로 저장
         deliveryRoutes.forEach(deliveryRouteRepository::save);
 
+        // 배송 담당자 배정
+        deliveryManagerService.assignManagersForPendingRoutes();
     }
 
     private List<DeliveryRoute> buildRoutes(Delivery delivery, HubToHubResponse hubToHubResponse) {
