@@ -1,6 +1,7 @@
 package com.logistcshub.company.domain.service;
 
 import com.logistcshub.company.application.client.HubClient;
+import com.logistcshub.company.application.dto.CompanyResponse;
 import com.logistcshub.company.application.dto.HubResponseDto;
 import com.logistcshub.company.domain.model.Company;
 import com.logistcshub.company.domain.repository.CompanyRepository;
@@ -88,6 +89,7 @@ public class CompanyService {
 
         return new PagedModel<>(companies.map(CompanyResponseDto::toDto));
     }
+
     @Transactional(readOnly = true)
     @Cacheable(value = "companies", key = "#id")
     public CompanyResponseDto getCompany(UUID id) {
@@ -162,4 +164,12 @@ public class CompanyService {
     }
 
 
+    public List<CompanyResponse> findCompaniesByIds(List<UUID> ids) {
+        List<Company>  companies =companyRepository.findAllById(ids);
+        List<CompanyResponse> companiesResponse = new ArrayList<>();
+        for (Company company : companies) {
+            companiesResponse.add(CompanyResponse.toDto(company));
+        }
+        return companiesResponse;
+    }
 }
