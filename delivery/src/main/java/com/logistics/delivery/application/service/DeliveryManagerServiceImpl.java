@@ -4,7 +4,7 @@ import com.logistics.delivery.application.dto.user.DeliveryManagerResponse;
 import com.logistics.delivery.domain.model.DeliveryRoute;
 import com.logistics.delivery.domain.repository.DeliveryRouteRepository;
 import com.logistics.delivery.domain.service.DeliveryManagerService;
-import com.logistics.delivery.infrastructure.client.UserClient;
+import com.logistics.delivery.infrastructure.client.DeliveryManagerClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +25,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
 
     private final DeliveryRouteRepository deliveryRouteRepository;
 
-    private final UserClient userClient;
+    private final DeliveryManagerClient deliveryManagerClient;
 
     @Value("${delivery.max-waiting-time-minutes}")
     private int maxWaitingTimeMinutes;
@@ -77,13 +77,26 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         UUID startHubId = routeKey.startHubId();
 
         // 허브 배송 담당자 조회
-        List<DeliveryManagerResponse> availableManagers = userClient.findAvailableManagers();
+        List<DeliveryManagerResponse> availableManagers = deliveryManagerClient.findAvailableManagers();
 
         // 배정 가능한 담당자가 없으면 새로운 배송 경로를 PENDING 상태로 유지
         // 스케줄러를 통해 주기적으로 PENDING 상태의 경로를 확인하고, 완료된 담당자가 있는지 확인.
         if (availableManagers.isEmpty()) {
             log.info("No available delivery managers at hub: {}. The route will remain in PENDING state.", startHubId);
             return; // 배송 담당자 배정 생략
+        }
+
+        // 이미 배정된 담당자 ID 가져오기
+        List<UUID> assignedManagerIds = deliveryRouteRepository.findAssignedManagerIds();
+
+        // 배정 가능한 담당자 필터링
+        List<DeliveryManagerResponse> unassignedManagers = availableManagers.stream()
+                .filter(manager -> !assignedManagerIds.contains(manager.id())) // 이미 배정된 담당자는 제외
+                .toList();
+
+        if (unassignedManagers.isEmpty()) {
+            log.info("All delivery managers are currently assigned. The route will remain in PENDING state.");
+            return;
         }
 
         // 허브 ID가 startHubId와 일치하는 담당자를 먼저 필터링

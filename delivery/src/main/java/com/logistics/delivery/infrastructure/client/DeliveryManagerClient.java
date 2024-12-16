@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 
 @FeignClient(name = "user-service")
-public interface UserClient {
+public interface DeliveryManagerClient {
 
-    @GetMapping("/api/users/available-manager")
+    @GetMapping("/api/delivery-managers/available-manager")
     List<DeliveryManagerResponse> findAvailableManagers();
 }
