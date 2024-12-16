@@ -4,11 +4,13 @@ import com.logistcshub.user.application.service.DeliveryManagerService;
 import com.logistcshub.user.common.response.CommonResponse;
 import com.logistcshub.user.common.response.SuccessResponse;
 import com.logistcshub.user.common.security.UserDetailsImpl;
+import com.logistcshub.user.domain.model.deliveryManager.DeliveryManagerType;
 import com.logistcshub.user.presentation.request.DeliSearchRequest;
 import com.logistcshub.user.presentation.request.DeliveryManagerCreate;
 import com.logistcshub.user.presentation.request.DeliveryManagerUpdate;
 import com.logistcshub.user.presentation.response.DeliSearchResponse;
 import com.logistcshub.user.presentation.response.DeliveryManagerDto;
+import com.logistcshub.user.presentation.response.DeliveryManagerResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static com.logistcshub.user.common.message.SuccessMessage.*;
 
@@ -89,5 +93,12 @@ public class DeliveryManagerController {
 
         return ResponseEntity.status(SUCCESS_DELETE_DELIVERY_MANAGER.getHttpStatus())
                 .body(SuccessResponse.success(SUCCESS_DELETE_DELIVERY_MANAGER.getMessage(), output));
+    }
+
+    // Delivery 호출 Api
+    @GetMapping("/api/delivery-managers/available-manager")
+    public List<DeliveryManagerResponse> findAvailableManagers(
+            @RequestParam(defaultValue = "HUB_PIC") DeliveryManagerType type) {
+        return deliveryManagerService.findAvailableManagers(type);
     }
 }

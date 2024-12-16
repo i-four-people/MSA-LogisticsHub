@@ -20,6 +20,7 @@ import com.logistcshub.user.presentation.request.DeliveryManagerCreate;
 import com.logistcshub.user.presentation.request.DeliveryManagerUpdate;
 import com.logistcshub.user.presentation.response.DeliSearchResponse;
 import com.logistcshub.user.presentation.response.DeliveryManagerDto;
+import com.logistcshub.user.presentation.response.DeliveryManagerResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -30,8 +31,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Type;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -197,5 +200,28 @@ public class DeliveryManagerService {
         if (hubManager.getHubId().equals(requestHubId)) {
             throw new AccessDeniedException("매니저님의 담당 허브가 아닙니다.");
         }
+    }
+
+    // Delivery 호출 Api
+    public List<DeliveryManagerResponse> findAvailableManagers(DeliveryManagerType type) {
+        List<DeliveryManager> deliveryManagers = deliveryManagerRepository.findByDeliveryManagerTypeAndDeletedAtIsNull(type);
+
+        List<Long> userIds = deliveryManagers.stream()
+                .map(DeliveryManager::getUserId)
+                .collect(Collectors.toList());
+
+        // 한번에 User 조회
+        List<User> users = userRepository.findAllById(userIds);
+
+        // Map으로 User 정보 빠르게 찾기
+        Map<Long, User> userMap = users.stream()
+                .collect(Collectors.toMap(User::getId, user -> user));
+
+        return deliveryManagers.stream()
+                .map(deliveryManager -> {
+                    User user = userMap.get(deliveryManager.getUserId());
+                    return DeliveryManagerResponse.from(deliveryManager, user);
+                })
+                .collect(Collectors.toList());
     }
 }
