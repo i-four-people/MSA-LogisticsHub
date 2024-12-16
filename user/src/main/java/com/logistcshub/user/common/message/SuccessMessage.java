@@ -7,8 +7,12 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum SuccessMessage {
+
+    // Auth
+    SUCCESS_SIGNUP_USER(HttpStatus.CREATED, "유저 등록이 완료되었습니다."),
+    SUCCESS_LOGIN_USER(HttpStatus.OK, "로그인에 성공하였습니다."),
+
     // User
-    SUCCESS_CREATE_USER(HttpStatus.CREATED, "유저 등록 완료되었습니다."),
     SUCCESS_GET_SINGLE_USER(HttpStatus.OK, "유저 상세 조회가 완료되었습니다."),
     SUCCESS_GET_ALL_USER(HttpStatus.OK, "유저 목록 조회가 완료되었습니다."),
     SUCCESS_UPDATE_USER(HttpStatus.OK, "유저 업데이트가 완료되었습니다."),
