@@ -32,8 +32,6 @@ public class ProductController {
     public ResponseEntity<ApiResponse<ProductResponseDto>> createProduct(@RequestBody ProductRequestDto productRequestDto,
                                                                          @RequestHeader(value = "X-USER-ID") Long userId,
                                                                          @RequestHeader(value = "X-USER-ROLE") String role) {
-        userId = 1L;
-        role = "MASTER";
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.success(MessageType.CREATE, productService.createProduct(userId, role, productRequestDto)));
@@ -46,8 +44,6 @@ public class ProductController {
                                                                          @PathVariable UUID id,
                                                                          @RequestHeader(value = "X-USER-ID") Long userId,
                                                                          @RequestHeader(value = "X-USER-ROLE") String role) {
-        userId = 1L;
-        role = "MASTER";
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(MessageType.UPDATE, productService.updateProduct(id, userId, role, productRequestDto)));
@@ -57,11 +53,9 @@ public class ProductController {
     public ResponseEntity<ApiResponse<ProductResponseDto>> deleteProduct(@PathVariable UUID id,
                                                                          @RequestHeader(value = "X-USER-ID") Long userId,
                                                                          @RequestHeader(value = "X-USER-ROLE") String role) {
-        userId = 1L;
-        role = "MASTER";
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(MessageType.DELETE, productService.deleteProduct(id, userId)));
+                .body(ApiResponse.success(MessageType.DELETE, productService.deleteProduct(id, role, userId)));
     }
 
 //    상품 전체 조회
