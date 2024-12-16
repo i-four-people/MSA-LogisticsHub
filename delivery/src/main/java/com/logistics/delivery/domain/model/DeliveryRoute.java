@@ -2,13 +2,12 @@ package com.logistics.delivery.domain.model;
 
 import com.logistics.delivery.application.dto.hub.HubToHubResponse;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -47,7 +46,7 @@ public class DeliveryRoute extends AuditingFields {
     private float actualDistance;
 
     @Comment("실제 소요 시간")
-    private float actualDuration;
+    @Setter private float actualDuration;
 
     @Comment("경로 상태")
     @Column(columnDefinition = "VARCHAR(50) DEFAULT 'PENDING'")
@@ -56,6 +55,12 @@ public class DeliveryRoute extends AuditingFields {
 
     @Comment("삭제 여부")
     private boolean isDelete;
+
+    @Comment("출발 시간")
+    private LocalDateTime departureTime; // 출발 시간
+
+    @Comment("도착 시간")
+    private LocalDateTime arrivalTime;   // 도착 시간
 
     @Builder
     private DeliveryRoute(UUID deliveryId, int sequence, UUID startHubId, UUID endHubId, float estimatedDistance, float estimatedDuration, RouteStatus status) {
@@ -97,4 +102,29 @@ public class DeliveryRoute extends AuditingFields {
     public void delete() {
         this.isDelete = true;
     }
+
+    /**
+     * 배송 경로의 상태를 업데이트하는 메서드
+     *
+     * @param status 배송 경로 상태
+     */
+    public void updateStatus(RouteStatus status) {
+        this.status = status;
+    }
+
+    public void recordDepartureTime() {
+        this.departureTime = LocalDateTime.now();
+    }
+
+    public void recordArrivalTime() {
+        this.arrivalTime = LocalDateTime.now();
+    }
+
+    public long calculateDurationInMinutes() {
+        if (departureTime != null && arrivalTime != null) {
+            return Duration.between(departureTime, arrivalTime).toMinutes();
+        }
+        return 0;
+    }
+
 }
