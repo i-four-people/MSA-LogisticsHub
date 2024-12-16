@@ -49,7 +49,7 @@ public class ProductController {
         role = "MASTER";
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(MessageType.UPDATE, productService.updateProduct(id, userId, productRequestDto)));
+                .body(ApiResponse.success(MessageType.UPDATE, productService.updateProduct(id, userId, role, productRequestDto)));
     }
 //    상품 삭제
     @DeleteMapping("/{id}")
@@ -83,7 +83,7 @@ public class ProductController {
 
     //    상품 단건 조회
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<?>> getProduct(@PathVariable(value = "id") UUID id) {
+    public ResponseEntity<ApiResponse<ProductResponseDto>> getProduct(@PathVariable(value = "id") UUID id) {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(MessageType.RETRIEVE,productService.getProduct(id)));

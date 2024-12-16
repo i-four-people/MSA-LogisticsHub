@@ -68,7 +68,7 @@ public class Product {
         createdBy = id.toString();
     }
 
-    public void update(Long id, ProductRequestDto productRequestDto) {
+    public void update(Long id, ProductRequestDto productRequestDto, UUID hubId) {
         this.updatedAt = LocalDateTime.now();
         this.updatedBy = id.toString();
         this.name= productRequestDto.name();
@@ -76,7 +76,7 @@ public class Product {
         this.price = productRequestDto.price();
         this.stock = productRequestDto.stock();
         this.companyId = productRequestDto.companyId();
-        this.hubId = productRequestDto.hubId();
+        this.hubId = hubId;
         this.isDelete = false;
     }
 

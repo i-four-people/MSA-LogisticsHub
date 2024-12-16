@@ -24,3 +24,12 @@ eureka:
 api:
   key:
     ${REST_API_KEY}
+
+
+management:
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_ENDPOINT}
+  tracing:
+    sampling:
+      probability: 1.0

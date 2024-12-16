@@ -12,6 +12,7 @@ import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.*;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.*;
@@ -87,7 +88,8 @@ public class CompanyService {
 
         return new PagedModel<>(companies.map(CompanyResponseDto::toDto));
     }
-
+    @Transactional(readOnly = true)
+    @Cacheable(value = "companies", key = "#id")
     public CompanyResponseDto getCompany(UUID id) {
         Company company = companyRepository.findById(id).orElseThrow(
                 () -> new NoSuchElementException("해당 Id값을 갖는 업체가 존재하지 않습니다."));
@@ -143,9 +145,6 @@ public class CompanyService {
 
         List<String> splitAddress = List.of(address.split(" "));
         String searchAddress = splitAddress.get(0) + " " + splitAddress.get(1);
-        log.info("searchAddress=========" + searchAddress);
-        log.info("Type of position.get('x'): {}", position.get("x").getClass().getName());
-        log.info("Type of position.get('y'): {}", position.get("y").getClass().getName());
 
         Double lng = null;
         Double lat = null;
