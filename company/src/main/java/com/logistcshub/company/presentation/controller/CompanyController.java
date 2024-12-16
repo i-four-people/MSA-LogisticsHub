@@ -1,5 +1,6 @@
 package com.logistcshub.company.presentation.controller;
 
+import com.logistcshub.company.application.dto.CompanyResponse;
 import com.logistcshub.company.domain.model.Company;
 import com.logistcshub.company.domain.service.CompanyService;
 import com.logistcshub.company.presentation.request.CompanyRequestDto;
@@ -9,6 +10,7 @@ import com.logistcshub.company.presentation.response.MessageType;
 import com.querydsl.core.types.Predicate;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
@@ -17,6 +19,8 @@ import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -75,13 +79,16 @@ public class CompanyController {
 
 //    단건 조회
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<CompanyResponseDto>> getCompany(@RequestParam(value = "id", required = false) UUID id,
-                                                                      @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                      @RequestHeader(value = "X-USER-ROLE") String role) {
+    public ResponseEntity<ApiResponse<CompanyResponseDto>> findCompanyById(@PathVariable(value = "id") UUID id) {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(MessageType.RETRIEVE, companyService.getCompany(id)));
     }
+
+    @PostMapping("/batch")
+    List<CompanyResponse> findCompaniesByIds(@RequestBody List<UUID> ids){
+        return companyService.findCompaniesByIds(ids);
+    };
 
 }
