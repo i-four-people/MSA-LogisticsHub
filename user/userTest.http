@@ -4,12 +4,12 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "username": "user2",
+  "username": "user3",
   "password": "Qwer1234@",
-  "email": "user2@email.com",
+  "email": "user3@email.com",
   "tel": "010-1234-5678",
   "slackId": "slack-id",
-  "role": "COMPANY_MANAGER",
+  "role": "DELIVERY_MANAGER",
   "adminToken": null
 }
 

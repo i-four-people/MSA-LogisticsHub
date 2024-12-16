@@ -2,10 +2,10 @@ package com.logistcshub.user.infrastructure.repository;
 
 import com.logistcshub.user.presentation.response.QUserDto;
 import com.logistcshub.user.domain.repository.UserRepositoryCustom;
-import com.logistcshub.user.presentation.response.UserSearchResponse;
-import com.logistcshub.user.presentation.response.UserDto;
+import com.logistcshub.user.presentation.response.user.UserSearchResponse;
+import com.logistcshub.user.presentation.response.user.UserDto;
 import com.logistcshub.user.domain.model.user.UserRoleEnum;
-import com.logistcshub.user.presentation.request.UserSearchRequest;
+import com.logistcshub.user.presentation.request.user.UserSearchRequest;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
