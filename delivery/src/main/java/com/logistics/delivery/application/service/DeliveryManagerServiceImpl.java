@@ -132,7 +132,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
             // 이벤트 생성
             SlackCreateEvent event = SlackCreateEvent.of(route, assignedManager);
 
-            // 슬랙 이벤트 생성
+            // 슬랙 이벤트 발행
             rabbitTemplate.convertAndSend(
                     rabbitProperties.getExchange().getDelivery(),
                     event
