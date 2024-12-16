@@ -44,8 +44,8 @@ public class AreaController {
 
     @PostMapping
     public ResponseEntity<SuccessResponse<AddAreaResponseDto>> addArea(@RequestBody AddAreaRequestDto request,
-                                                                       @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                       @RequestHeader(value = "X-USER-ROLE") String role) {
+                                                                       @RequestHeader(value = "X-User-Id") Long userId,
+                                                                       @RequestHeader(value = "X-User-Role") String role) {
         userId = 1L;
         role = "MASTER";
         return ResponseEntity.ok().body(
@@ -54,8 +54,8 @@ public class AreaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<SuccessResponse<UpdateAreaResponseDto>> updateArea(@RequestBody UpdateAreaRequestDto request,
-                                                                             @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                             @RequestHeader(value = "X-USER-ROLE") String role,
+                                                                             @RequestHeader(value = "X-User-Id") Long userId,
+                                                                             @RequestHeader(value = "X-User-Role") String role,
                                                                              @PathVariable UUID id) {
         userId = 1L;
         role = "MASTER";
@@ -64,8 +64,8 @@ public class AreaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<SuccessResponse<DeleteAreaResponseDto>> deleteArea(@RequestHeader(value = "X-USER-ID") Long userId,
-                                                                             @RequestHeader(value = "X-USER-ROLE") String role,
+    public ResponseEntity<SuccessResponse<DeleteAreaResponseDto>> deleteArea(@RequestHeader(value = "X-User-Id") Long userId,
+                                                                             @RequestHeader(value = "X-User-Role") String role,
                                                                              @PathVariable UUID id) {
         userId = 1L;
         role = "MASTER";
@@ -74,8 +74,8 @@ public class AreaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SuccessResponse<AreaResponseDto>> getArea(@RequestHeader(value = "X-USER-ID") Long userId,
-                                                                             @RequestHeader(value = "X-USER-ROLE") String role,
+    public ResponseEntity<SuccessResponse<AreaResponseDto>> getArea(@RequestHeader(value = "X-User-Id") Long userId,
+                                                                    @RequestHeader(value = "X-User-Role") String role,
                                                                              @PathVariable UUID id) {
         userId = 1L;
         role = "MASTER";
@@ -85,8 +85,8 @@ public class AreaController {
 
     @GetMapping
     public ResponseEntity<SuccessResponse<PagedModel<AreaResponseDto>>> searchAreas(
-            @RequestHeader(value = "X-USER-ID") Long userId,
-            @RequestHeader(value = "X-USER-ROLE") String role,
+            @RequestHeader(value = "X-User-Id") Long userId,
+            @RequestHeader(value = "X-User-Role") String role,
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "type", defaultValue = "ALL") AreaSearchType type,
             @PageableDefault Pageable pageable,

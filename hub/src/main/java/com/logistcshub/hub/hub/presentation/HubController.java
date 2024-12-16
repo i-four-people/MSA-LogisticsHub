@@ -38,8 +38,8 @@ public class HubController {
 
     @PostMapping
     public ResponseEntity<SuccessResponse<AddHubResponseDto>> addHub(@RequestBody AddHubRequestDto request,
-                                                                        @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                        @RequestHeader(value = "X-USER-ROLE") String role) {
+                                                                     @RequestHeader(value = "X-User-Id") Long userId,
+                                                                     @RequestHeader(value = "X-User-Role") String role) {
         userId = 1L;
         role = "MASTER";
 
@@ -52,8 +52,8 @@ public class HubController {
     @PutMapping("/{id}")
     public ResponseEntity<SuccessResponse<UpdateHubResponseDto>> updateHub(@RequestBody UpdateHubRequestDto request,
                                                                            @PathVariable UUID id,
-                                                                           @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                           @RequestHeader(value = "X-USER-ROLE") String role) {
+                                                                           @RequestHeader(value = "X-User-Id") Long userId,
+                                                                           @RequestHeader(value = "X-User-Role") String role) {
         userId = 1L;
         role = "MASTER";
 
@@ -64,8 +64,8 @@ public class HubController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<SuccessResponse<DeleteHubResponseDto>> deleteHub(@PathVariable UUID id,
-                                                                           @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                           @RequestHeader(value = "X-USER-ROLE") String role) {
+                                                                           @RequestHeader(value = "X-User-Id") Long userId,
+                                                                           @RequestHeader(value = "X-User-Role") String role) {
         userId = 1L;
         role = "MASTER";
 
@@ -76,8 +76,8 @@ public class HubController {
 
     @GetMapping("/{id}")
     public ResponseEntity<SuccessResponse<HubResponseDto>> getHub(@PathVariable UUID id,
-                                                                  @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                  @RequestHeader(value = "X-USER-ROLE") String role) {
+                                                                  @RequestHeader(value = "X-User-Id") Long userId,
+                                                                  @RequestHeader(value = "X-User-Role") String role) {
         userId = 1L;
         role = "MASTER";
 
@@ -88,8 +88,8 @@ public class HubController {
 
     @GetMapping
     public ResponseEntity<SuccessResponse<PagedModel<HubResponseDto>>> searchHubs(
-                                                                             @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                             @RequestHeader(value = "X-USER-ROLE") String role,
+                                                                            @RequestHeader(value = "X-User-Id") Long userId,
+                                                                            @RequestHeader(value = "X-User-Role") String role,
                                                                              @RequestParam(name = "keyword", required = false) String keyword,
                                                                              @RequestParam(name = "type", defaultValue = "ALL") HubSearchType type,
                                                                              @PageableDefault Pageable pageable,
@@ -105,8 +105,8 @@ public class HubController {
 
     @GetMapping("/company-address")
     public ResponseEntity<SuccessResponse<HubResponseDto>> getHubFromCompanyAddress(
-            @RequestHeader(value = "X-USER-ID") Long userId,
-            @RequestHeader(value = "X-USER-ROLE") String role,
+            @RequestHeader(value = "X-User-Id") Long userId,
+            @RequestHeader(value = "X-User-Role") String role,
             @RequestParam(name = "address") String address,
             @RequestParam(name = "lat") double lat,
             @RequestParam(name = "lng") double lng

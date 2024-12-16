@@ -34,8 +34,8 @@ public class HubTransferController {
 
     @PostMapping
     public ResponseEntity<SuccessResponse<List<AddHubTransferResponseDto>>> addHubTransfer(@RequestBody AddHubTransferRequestDto request,
-                                                                                          @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                                          @RequestHeader(value = "X-USER-ROLE") String role) {
+                                                                                           @RequestHeader(value = "X-User-Id") Long userId,
+                                                                                           @RequestHeader(value = "X-User-Role") String role) {
         userId = 1L;
         role = "MASTER";
 
@@ -47,8 +47,8 @@ public class HubTransferController {
     @PutMapping("/{id}")
     public ResponseEntity<SuccessResponse<UpdateHubTransferResponseDto>> updateHubTransfer(@PathVariable UUID id,
                                                                                             @RequestBody UpdateTransferRequestDto request,
-                                                                                            @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                                            @RequestHeader(value = "X-USER-ROLE") String role) {
+                                                                                           @RequestHeader(value = "X-User-Id") Long userId,
+                                                                                           @RequestHeader(value = "X-User-Role") String role) {
         userId = 1L;
         role = "MASTER";
 
@@ -59,8 +59,8 @@ public class HubTransferController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<SuccessResponse<DeleteHubTransferResponseDto>> deleteHubTransfer(@PathVariable UUID id,
-                                                                                           @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                                           @RequestHeader(value = "X-USER-ROLE") String role) {
+                                                                                           @RequestHeader(value = "X-User-Id") Long userId,
+                                                                                           @RequestHeader(value = "X-User-Role") String role) {
         userId = 1L;
         role = "MASTER";
 
@@ -71,8 +71,8 @@ public class HubTransferController {
 
     @GetMapping("/{id}")
     public ResponseEntity<SuccessResponse<HubTransferResponseDto>> getHubTransfer(@PathVariable UUID id,
-                                                                                  @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                                  @RequestHeader(value = "X-USER-ROLE") String role) {
+                                                                                  @RequestHeader(value = "X-User-Id") Long userId,
+                                                                                  @RequestHeader(value = "X-User-Role") String role) {
         userId = 1L;
         role = "MASTER";
 
@@ -85,8 +85,8 @@ public class HubTransferController {
     public ResponseEntity<SuccessResponse<HubTransferPageDto>> searchHubTransfer(@RequestParam(required = false) List<UUID> idList,
                                                                                  @QuerydslPredicate(root = HubTransfer.class) Predicate predicate,
                                                                                  @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                                                                                 @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                                 @RequestHeader(value = "X-USER-ROLE") String role) {
+                                                                                 @RequestHeader(value = "X-User-Id") Long userId,
+                                                                                 @RequestHeader(value = "X-User-Role") String role) {
         userId = 1L;
         role = "MASTER";
 
@@ -98,8 +98,8 @@ public class HubTransferController {
     @GetMapping("/hub-to-hub")
     public ResponseEntity<SuccessResponse<HubToHubResponseDto>> getAllHubTransfers(@RequestParam(required = true) UUID startHubId,
                                                                                    @RequestParam(required = true) UUID endHubId,
-                                                                                   @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                                   @RequestHeader(value = "X-USER-ROLE") String role) {
+                                                                                   @RequestHeader(value = "X-User-Id") Long userId,
+                                                                                   @RequestHeader(value = "X-User-Role") String role) {
 
         userId = 1L;
         role = "MASTER";
