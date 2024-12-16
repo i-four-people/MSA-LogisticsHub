@@ -26,7 +26,7 @@ public record OrderResponse(
     public static OrderResponse from(Order order, CompanyResponse requesterCompany, CompanyResponse recipientCompany, ProductResponse product) {
         return new OrderResponse(
                 order.getId(),
-                order.getRequesterCompanyId(),
+                order.getSupplyCompanyId(),
                 requesterCompany.companyName(),
                 order.getRecipientCompanyId(),
                 recipientCompany.companyName(),

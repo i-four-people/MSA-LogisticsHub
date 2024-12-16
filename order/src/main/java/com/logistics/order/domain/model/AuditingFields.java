@@ -24,12 +24,10 @@ public abstract class AuditingFields {
     @Comment("생성일")
     private LocalDateTime createdAt;
 
-
     @CreatedBy
     @Column(nullable = false, updatable = false)
     @Comment("생성자")
     private String createdBy;
-
 
     @LastModifiedDate
     @Column
@@ -37,12 +35,10 @@ public abstract class AuditingFields {
     @Comment("수정일")
     private LocalDateTime updatedAt;
 
-
     @LastModifiedBy
     @Column
     @Comment("수정자")
     private String updatedBy;
-
 
     @Column
     @Temporal(TemporalType.TIMESTAMP)

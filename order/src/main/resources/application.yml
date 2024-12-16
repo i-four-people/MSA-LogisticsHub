@@ -15,6 +15,7 @@ spring:
         - db-prod
     include:
       - db
+      - infra
 
 eureka:
   client:

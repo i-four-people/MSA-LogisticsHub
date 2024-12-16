@@ -2,9 +2,7 @@ package com.logistics.order.domain.model;
 
 import com.logistics.order.application.dto.order.OrderCreateRequest;
 import com.logistics.order.application.dto.order.OrderUpdateRequest;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.Comment;
 import org.hibernate.annotations.UuidGenerator;
@@ -23,11 +21,11 @@ public class Order extends AuditingFields {
     @Comment("주문 고유 ID")
     private UUID id;
 
-    @Comment("요청 업체(공급 업체) ID")
-    private UUID requesterCompanyId;
-
     @Comment("수령 업체 ID")
     private UUID recipientCompanyId;
+
+    @Comment("공급 업체 ID")
+    private UUID supplyCompanyId;
 
     @Comment("배송 ID")
     private UUID deliveryId;
@@ -44,18 +42,24 @@ public class Order extends AuditingFields {
     @Comment("요청 사항")
     private String requestNotes;
 
-    @Comment("비활성화 여부")
+    @Comment("주문 상태")
+    @Column(columnDefinition = "VARCHAR(50) DEFAULT 'PENDING'")
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
+
+    @Comment("삭제 여부")
     private boolean isDelete;
 
     @Builder
-    private Order(UUID requesterCompanyId, UUID recipientCompanyId, UUID deliveryId, UUID productId, BigDecimal price, int quantity, String requestNotes) {
-        this.requesterCompanyId = requesterCompanyId;
+    private Order(UUID supplyCompanyId, UUID recipientCompanyId, UUID deliveryId, UUID productId, BigDecimal price, int quantity, String requestNotes) {
+        this.supplyCompanyId = supplyCompanyId;
         this.recipientCompanyId = recipientCompanyId;
         this.deliveryId = deliveryId;
         this.productId = productId;
         this.price = price;
         this.quantity = quantity;
         this.requestNotes = requestNotes;
+        this.status = OrderStatus.PENDING;
     }
 
     /**
@@ -64,9 +68,10 @@ public class Order extends AuditingFields {
      * @param request 주문 생성 request
      * @return Order
      */
-    public static Order create(OrderCreateRequest request) {
+    public static Order create(OrderCreateRequest request, UUID supplyCompanyId) {
         return Order.builder()
                 .recipientCompanyId(request.recipientCompanyId())
+                .supplyCompanyId(supplyCompanyId)
                 .productId(request.productId())
                 .quantity(request.quantity())
                 .price(BigDecimal.valueOf(request.price()))
@@ -91,5 +96,14 @@ public class Order extends AuditingFields {
     public void update(OrderUpdateRequest request) {
         this.quantity = request.quantity();
         this.requestNotes = request.requestNote();
+    }
+
+    /**
+     * 주문의 상태를 수정하는 메서드
+     *
+     * @param status 주문 상태
+     */
+    public void updateStatus(OrderStatus status) {
+        this.status = status;
     }
 }

@@ -1,49 +1,41 @@
 package com.logistics.order.infrastructure.config;
 
-import org.springframework.amqp.core.Binding;
-import org.springframework.amqp.core.BindingBuilder;
-import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
+import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@RequiredArgsConstructor
 public class RabbitMQConfig {
 
-    public static final String ORDER_EXCHANGE = "order.exchange";
-
-    // 생성 관련
-    public static final String ORDER_CREATED_QUEUE = "order.created.queue";
-    public static final String ORDER_CREATED_ROUTING_KEY = "order.created";
-
-    // 삭제 관련
-    public static final String ORDER_DELETED_QUEUE = "order.deleted.queue";
-    public static final String ORDER_DELETED_ROUTING_KEY = "order.deleted";
-
+    private final RabbitMQProperties properties;
 
     @Bean
-    public TopicExchange orderExchange() {
-        return new TopicExchange(ORDER_EXCHANGE);
+    public FanoutExchange orderExchange() {
+        return new FanoutExchange(properties.getExchange().getOrder());
     }
 
     @Bean
-    public Queue orderCreatedQueue() {
-        return new Queue(ORDER_CREATED_QUEUE);
+    public Queue productQueue() {
+        return new Queue(properties.getQueues().getProduct());
     }
 
     @Bean
-    public Queue orderDeletedQueue() {
-        return new Queue(ORDER_DELETED_QUEUE);
+    public Queue deliveryQueue() {
+        return new Queue(properties.getQueues().getDelivery());
     }
 
+    // 상품 큐와 Exchange 바인딩
     @Bean
-    public Binding orderBinding(Queue orderCreatedQueue, TopicExchange orderExchange) {
-        return BindingBuilder.bind(orderCreatedQueue).to(orderExchange).with(ORDER_CREATED_ROUTING_KEY);
+    public Binding productBinding(Queue productQueue, FanoutExchange orderExchange) {
+        return BindingBuilder.bind(productQueue).to(orderExchange);
     }
 
+    // 배송 큐와 Exchange 바인딩
     @Bean
-    public Binding orderDeletedBinding(Queue orderDeletedQueue, TopicExchange orderExchange) {
-        return BindingBuilder.bind(orderDeletedQueue).to(orderExchange).with(ORDER_DELETED_ROUTING_KEY);
+    public Binding deliveryBinding(Queue deliveryQueue, FanoutExchange orderExchange) {
+        return BindingBuilder.bind(deliveryQueue).to(orderExchange);
     }
 
 }

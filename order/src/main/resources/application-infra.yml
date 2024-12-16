@@ -1,0 +1,6 @@
+message:
+  exchange:
+    order: ${MESSAGE_EXCHANGE_ORDER}
+  queues:
+    product: ${MESSAGE_QUEUE_PRODUCT}
+    delivery: ${MESSAGE_QUEUE_DELIVERY}

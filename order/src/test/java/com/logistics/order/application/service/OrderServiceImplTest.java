@@ -1,13 +1,15 @@
 package com.logistics.order.application.service;
 
-import com.logistics.order.application.dto.order.OrderCreateRequest;
 import com.logistics.order.application.dto.event.OrderCreateEvent;
+import com.logistics.order.application.dto.order.OrderCreateRequest;
+import com.logistics.order.application.dto.product.ProductResponse;
 import com.logistics.order.domain.model.Order;
 import com.logistics.order.domain.repository.OrderRepository;
 import com.logistics.order.infrastructure.client.ProductClient;
-import com.logistics.order.infrastructure.config.RabbitMQConfig;
+import com.logistics.order.infrastructure.config.RabbitMQProperties;
 import com.logistics.order.presentation.exception.BusinessException;
 import com.logistics.order.presentation.exception.ErrorCode;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
+import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,22 +44,51 @@ class OrderServiceImplTest {
     @InjectMocks
     private OrderServiceImpl orderService;
 
+    private RabbitMQProperties rabbitProperties;
+
+    @BeforeEach
+    void setUp() {
+        rabbitProperties = new RabbitMQProperties();
+
+        RabbitMQProperties.Exchange exchange = new RabbitMQProperties.Exchange();
+        exchange.setOrder("order.exchange");
+        rabbitProperties.setExchange(exchange);
+
+        RabbitMQProperties.Queues queues = new RabbitMQProperties.Queues();
+        queues.setDelivery("order.delivery");
+        queues.setProduct("order.product");
+        rabbitProperties.setQueues(queues);
+
+        injectRabbitMQProperties(orderService, rabbitProperties);
+    }
+
+    private void injectRabbitMQProperties(OrderServiceImpl orderService, RabbitMQProperties rabbitMQProperties) {
+        try {
+            Field field = OrderServiceImpl.class.getDeclaredField("rabbitProperties");
+            field.setAccessible(true);
+            field.set(orderService, rabbitMQProperties);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException("Failed to inject RabbitMQProperties into OrderServiceImpl", e);
+        }
+    }
+
     @Test
     @DisplayName("주문 생성 성공")
     void createOrder_Success() {
         // Given
         UUID productId = UUID.randomUUID();
         UUID recipientId = UUID.randomUUID();
+        UUID companyId = UUID.randomUUID();
         int quantity = 5;
         int price = 1000;
 
-        OrderCreateRequest request = new OrderCreateRequest(recipientId, productId, quantity, price, null);
+        OrderCreateRequest request = new OrderCreateRequest(recipientId, productId, quantity, price, null, "배송지", "수령자", "슬랙ID");
 
         // Mock productClient response
-        doNothing().when(productClient).decreaseStock(productId, quantity);
+        when(productClient.findProductById(productId)).thenReturn(new ProductResponse(productId, "Product Name", 10, companyId)); // Mock ProductResponse
 
         // Mock orderRepository save response
-        Order mockOrder = Order.create(request);
+        Order mockOrder = Order.create(request, companyId);
         when(orderRepository.save(any(Order.class)))
                 .thenReturn(mockOrder);
 
@@ -65,7 +97,7 @@ class OrderServiceImplTest {
 
         // Then
         // Verify that productClient was called
-        verify(productClient).decreaseStock(productId, quantity);
+        verify(productClient).findProductById(productId);
 
         // Verify that orderRepository save was called
         verify(orderRepository).save(any(Order.class));
@@ -73,8 +105,7 @@ class OrderServiceImplTest {
         // Verify that rabbitTemplate was used to send the event
         ArgumentCaptor<OrderCreateEvent> eventCaptor = ArgumentCaptor.forClass(OrderCreateEvent.class);
         verify(rabbitTemplate).convertAndSend(
-                eq(RabbitMQConfig.ORDER_EXCHANGE),
-                eq(RabbitMQConfig.ORDER_CREATED_ROUTING_KEY),
+                eq(rabbitProperties.getExchange().getOrder()),
                 eventCaptor.capture()
         );
 
@@ -89,14 +120,15 @@ class OrderServiceImplTest {
         // Given
         UUID productId = UUID.randomUUID();
         UUID recipientId = UUID.randomUUID();
+        UUID companyId = UUID.randomUUID();
         int quantity = 5;
         int price = 1000;
 
-        OrderCreateRequest request = new OrderCreateRequest(recipientId, productId, quantity, price, "Please deliver quickly");
+        OrderCreateRequest request = new OrderCreateRequest(recipientId, productId, quantity, price, null, "배송지", "수령자", "슬랙ID");
 
         // Mock productClient response with insufficient stock
-        doThrow(new BusinessException(ErrorCode.OUT_OF_STOCK))
-                .when(productClient).decreaseStock(productId, quantity);
+        when(productClient.findProductById(productId))
+                .thenReturn(new ProductResponse(productId, "Product Name", 3, companyId)); // Mock ProductResponse
 
         // When & Then
         BusinessException exception = assertThrows(BusinessException.class, () -> orderService.createOrder(request));
@@ -105,9 +137,6 @@ class OrderServiceImplTest {
 
         // Verify that productClient was called
         assertEquals(ErrorCode.OUT_OF_STOCK, exception.getErrorCode());
-
-        // Verify that productClient was called
-        verify(productClient).decreaseStock(productId, quantity);
 
         // Verify that orderRepository save was not called
         verify(orderRepository, never()).save(any(Order.class));
