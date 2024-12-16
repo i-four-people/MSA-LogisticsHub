@@ -3,6 +3,7 @@ package com.logistics.delivery.infrastructure.client;
 import com.logistics.delivery.application.dto.hub.HubToHubResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 
@@ -10,5 +11,6 @@ import java.util.UUID;
 public interface HubClient {
 
     @GetMapping("/api/hub-transfers/routes")
-    HubToHubResponse getHubToHubRoutes(UUID startHubId, UUID endHubId);
+    HubToHubResponse getHubToHubRoutes(@RequestParam("start") UUID startHubId,
+                                       @RequestParam("end") UUID endHubId);
 }
