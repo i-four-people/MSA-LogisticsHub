@@ -1,5 +1,6 @@
 package com.logiticshub.product.domain.service;
 
+import com.logiticshub.product.application.AuthorizationUtil;
 import com.logiticshub.product.application.client.CompanyClient;
 import com.logiticshub.product.application.dto.CompanyResponseDto;
 import com.logiticshub.product.application.dto.ProductResponse;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -34,6 +36,9 @@ public class ProductService {
     private final CompanyClient companyClient;
 
     public ProductResponseDto createProduct(Long userId, String role, ProductRequestDto productRequestDto) {
+        List<String> allowedRoles = Arrays.asList("MASTER","HUB_MANAGER","COMPANY_MANAGER");
+        AuthorizationUtil.checkUserRole(role, allowedRoles);
+
         ResponseEntity<ApiResponse<CompanyResponseDto>> getCompanyInfo = companyClient.getCompany(productRequestDto.companyId(),userId, role);
         CompanyResponseDto companyInfo= getCompanyInfo.getBody().data();
         Product product = productRequestDto.toEntity(companyInfo.hubId());
@@ -46,6 +51,9 @@ public class ProductService {
 
     @Transactional
     public ProductResponseDto updateProduct(UUID id, Long userId, String role,ProductRequestDto productRequestDto) {
+        List<String> allowedRoles = Arrays.asList("MASTER","HUB_MANAGER","COMPANY_MANAGER");
+        AuthorizationUtil.checkUserRole(role, allowedRoles);
+
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("입력한 id값을 가진 상품이 존재하지 않습니다."));
         ResponseEntity<ApiResponse<CompanyResponseDto>> getCompanyInfo = companyClient.getCompany(productRequestDto.companyId(),userId, role);
@@ -56,7 +64,10 @@ public class ProductService {
     }
 
     @Transactional
-    public ProductResponseDto deleteProduct(UUID id, Long userId) {
+    public ProductResponseDto deleteProduct(UUID id, String role, Long userId) {
+        List<String> allowedRoles = Arrays.asList("MASTER","HUB_MANAGER");
+        AuthorizationUtil.checkUserRole(role, allowedRoles);
+
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("입력한 id값을 가진 상품이 존재하지 않습니다."));
         product.delete(userId);
