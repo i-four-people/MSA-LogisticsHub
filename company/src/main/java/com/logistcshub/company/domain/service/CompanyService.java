@@ -1,5 +1,6 @@
 package com.logistcshub.company.domain.service;
 
+import com.logistcshub.company.application.AuthorizationUtil;
 import com.logistcshub.company.application.client.HubClient;
 import com.logistcshub.company.application.dto.CompanyResponse;
 import com.logistcshub.company.application.dto.HubResponseDto;
@@ -44,8 +45,10 @@ public class CompanyService {
 
     public CompanyResponseDto createCompany(Long userId, String role, CompanyRequestDto companyRequestDto ) {
         log.info("create company 실행");
+        List<String> allowedRoles = Arrays.asList("MASTER","HUB_MANAGER");
+        AuthorizationUtil.checkUserRole(role, allowedRoles);
+
         Map<String, Object> position = getPosition(companyRequestDto.address());
-        System.out.println("=============================="+position);
         HubResponseDto hub = getHub(userId, role, companyRequestDto.address(), position);
 
         Company company = companyRequestDto.toEntity(Double.valueOf((String) position.get("x")), Double.valueOf((String) position.get("y")), hub.id());
@@ -58,6 +61,9 @@ public class CompanyService {
 
 
     public CompanyResponseDto updateCompany(Long userId, String role, CompanyRequestDto companyRequestDto, UUID id) {
+        List<String> allowedRoles = Arrays.asList("MASTER","HUB_MANAGER","COMPANY_MANAGER");
+        AuthorizationUtil.checkUserRole(role, allowedRoles);
+
         Company company = companyRepository.findById(id).orElseThrow(
                 () -> new NoSuchElementException("해당 Id값을 갖는 업체가 존재하지 않습니다."));
 
@@ -70,7 +76,10 @@ public class CompanyService {
         return CompanyResponseDto.toDto(company);
     }
 
-    public CompanyResponseDto deleteCompany(UUID id, Long userId) {
+    public CompanyResponseDto deleteCompany(UUID id, Long userId, String role) {
+        List<String> allowedRoles = Arrays.asList("MASTER","HUB_MANAGER");
+        AuthorizationUtil.checkUserRole(role, allowedRoles);
+
         Company company = companyRepository.findById(id).orElseThrow(
                 () -> new NoSuchElementException("해당 Id값을 갖는 업체가 존재하지 않습니다."));
         company.delete(userId.toString());
@@ -172,4 +181,5 @@ public class CompanyService {
         }
         return companiesResponse;
     }
+
 }

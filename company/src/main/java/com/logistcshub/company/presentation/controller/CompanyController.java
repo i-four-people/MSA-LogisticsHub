@@ -33,16 +33,8 @@ public class CompanyController {
     // 업체 생성
     @PostMapping
     public ResponseEntity<ApiResponse<CompanyResponseDto>> createCompany(@RequestBody CompanyRequestDto companyRequestDto,
-                                                                         HttpServletRequest request,
                                                                          @RequestHeader(value = "X-USER-ID") Long userId,
                                                                          @RequestHeader(value = "X-USER-ROLE") String role) {
-//        if(role != "MASTER" || role != "HUB_MANAGER"){
-//            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "업체 생성 권한이 없습니다.");
-//        }
-        log.info("업체 생성 요청 수신 - UserId: {}, Role: {}, 요청 바디: {}", userId, role, companyRequestDto);
-
-        userId = 1L;
-        role = "MASTER";
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.success(MessageType.CREATE, companyService.createCompany(userId, role, companyRequestDto)));
@@ -53,7 +45,7 @@ public class CompanyController {
                                                                          @PathVariable UUID id,
                                                                          @RequestHeader(value = "X-USER-ID") Long userId,
                                                                          @RequestHeader(value = "X-USER-ROLE") String role) {
-        userId = 222L;
+
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(MessageType.UPDATE, companyService.updateCompany(userId, role, companyRequestDto, id)));
@@ -61,11 +53,13 @@ public class CompanyController {
 
 //    업체 삭제
     @DeleteMapping("/{id}")
-    public ResponseEntity<ApiResponse<CompanyResponseDto>> deleteCompany(@PathVariable UUID id) {
-        Long userId = 333L;
+    public ResponseEntity<ApiResponse<CompanyResponseDto>> deleteCompany(@PathVariable UUID id,
+                                                                         @RequestHeader(value = "X-USER-ID") Long userId,
+                                                                         @RequestHeader(value = "X-USER-ROLE") String role) {
+
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(ApiResponse.success(MessageType.DELETE, companyService.deleteCompany(id, userId)));
+                .body(ApiResponse.success(MessageType.DELETE, companyService.deleteCompany(id, userId, role)));
     }
 //    업체 전체 조회 및 검색
     @GetMapping
