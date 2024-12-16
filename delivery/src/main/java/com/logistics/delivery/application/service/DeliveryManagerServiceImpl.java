@@ -13,10 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -80,7 +77,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         UUID startHubId = routeKey.startHubId();
 
         // 허브 배송 담당자 조회
-        List<DeliveryManagerResponse> availableManagers = userClient.findAvailableManagersByHubId(startHubId);
+        List<DeliveryManagerResponse> availableManagers = userClient.findAvailableManagers();
 
         // 배정 가능한 담당자가 없으면 새로운 배송 경로를 PENDING 상태로 유지
         // 스케줄러를 통해 주기적으로 PENDING 상태의 경로를 확인하고, 완료된 담당자가 있는지 확인.
@@ -89,8 +86,19 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
             return; // 배송 담당자 배정 생략
         }
 
+        // 허브 ID가 startHubId와 일치하는 담당자를 먼저 필터링
+        List<DeliveryManagerResponse> matchingHubManagers = availableManagers.stream()
+                .filter(manager -> manager.id().equals(startHubId))
+                .toList();
+
+        // 일치하는 담당자가 없으면 모든 담당자를 사용
+        List<DeliveryManagerResponse> managersToAssign = new ArrayList<>(matchingHubManagers.isEmpty()
+                ? availableManagers
+                : matchingHubManagers
+        );
+
         // 순번 기준으로 정렬
-        availableManagers.sort(Comparator.comparingInt(DeliveryManagerResponse::sequence));
+        managersToAssign.sort(Comparator.comparingInt(DeliveryManagerResponse::sequence));
 
         // 순번 기준으로 라운드 로빈 방식 적용
         AtomicInteger index = new AtomicInteger(0);
@@ -99,6 +107,9 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
             // 담당자 배정 (순번 기준으로 라운드 로빈)
             DeliveryManagerResponse assignedManager = availableManagers.get(index.getAndIncrement() % availableManagers.size());
             route.assignManager(assignedManager.id());
+
+            log.info("Assigned manager {} to route from {} to {}",
+                    assignedManager.id(), route.getStartHubId(), route.getEndHubId());
         });
     }
 

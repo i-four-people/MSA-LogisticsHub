@@ -5,11 +5,10 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
-import java.util.UUID;
 
 @FeignClient(name = "user-service")
 public interface UserClient {
 
-    @GetMapping("/api/users/available")
-    List<DeliveryManagerResponse> findAvailableManagersByHubId(UUID startHubId);
+    @GetMapping("/api/users/available-manager")
+    List<DeliveryManagerResponse> findAvailableManagers();
 }
