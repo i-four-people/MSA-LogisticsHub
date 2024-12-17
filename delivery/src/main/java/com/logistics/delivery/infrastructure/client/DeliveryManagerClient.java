@@ -11,7 +11,7 @@ import java.util.List;
 @FeignClient(name = "user-service")
 public interface DeliveryManagerClient {
 
-    @GetMapping("/api/delivery-managers/available-manager")
+    @GetMapping("/api/delivery-managers/available-manager/list")
     List<DeliveryManagerResponse> findAvailableManagers(@RequestParam(defaultValue = "HUB_PIC") DeliveryManagerType type);
 
     @PutMapping("/api/delivery-managers/{deliveryManagerId}/hub")

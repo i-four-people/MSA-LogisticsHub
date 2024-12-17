@@ -230,6 +230,7 @@ public class DeliveryManagerService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void updateHubForManager(Long deliveryManagerId, DeliveryManagerUpdateRequest request) {
         DeliveryManager deliveryManager = deliveryManagerRepository.findById(deliveryManagerId)
                 .orElseThrow(() -> new UserException(ExceptionMessage.USER_NOT_FOUND));

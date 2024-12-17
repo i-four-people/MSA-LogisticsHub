@@ -28,6 +28,7 @@ import com.logistics.delivery.infrastructure.client.DeliveryManagerClient;
 import com.logistics.delivery.infrastructure.client.HubClient;
 import com.logistics.delivery.infrastructure.client.OrderClient;
 import com.logistics.delivery.infrastructure.config.RabbitMQProperties;
+import com.logistics.delivery.presentation.auth.AuthContext;
 import com.logistics.delivery.presentation.exception.BusinessException;
 import com.logistics.delivery.presentation.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -180,21 +181,21 @@ public class DeliveryServiceImpl implements DeliveryService {
         // 배송 정보 저장
         Delivery savedDelivery = deliveryRepository.save(Delivery.create(consume, recipientCompany, supplyCompany));
 
-        // 배송 경로 생성
-        deliveryRouteService.createRoutesForDelivery(savedDelivery);
-
-        // 업체 배송 담당자 배정
-        assignCompanyDeliveryManager(savedDelivery);
-
         // 이벤트 생성
-        DeliveryCreateEvent event = DeliveryCreateEvent.of(savedDelivery);
+        DeliveryCreateEvent event = DeliveryCreateEvent.of(savedDelivery, AuthContext.get());
 
-        // 이벤트 발행
+        // 배송 정보 저장 이벤트 발행
         rabbitTemplate.convertAndSend(
                 rabbitProperties.getExchange().getDelivery(),
                 "",
                 EventUtil.serializeEvent(event)
         );
+
+        // 배송 경로 생성
+        deliveryRouteService.createRoutesForDelivery(savedDelivery);
+
+        // 업체 배송 담당자 배정
+        assignCompanyDeliveryManager(savedDelivery);
 
     }
 
