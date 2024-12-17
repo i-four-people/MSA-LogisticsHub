@@ -4,9 +4,9 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "username": "user3",
+  "username": "user4",
   "password": "Qwer1234@",
-  "email": "user3@email.com",
+  "email": "user4@email.com",
   "tel": "010-1234-5678",
   "slackId": "slack-id",
   "role": "DELIVERY_MANAGER",
@@ -37,8 +37,8 @@ X-User-Id: 1
 X-User-Role: MASTER
 
 ### 유저 상세 조회 (MASTER)
-GET http://localhost:19093/api/users/3
-Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDM2MTg3MywiZXhwIjoxNzM0MzYyMjMzfQ.ixAJNxOmHtjW69xN1UlkY_3ciT5qkoNG0cdqLz5XGhZ3d2qiwzCC6flSQdoRcNQ5PYGChKTgcFKqu6n5oiep6w
+GET http://localhost:19093/api/users/4
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDQwMzI5NSwiZXhwIjoxNzM0NDAzNjU1fQ.S8KBqIcX7g6Sx1eK9qZp-d8jk0IDnCmRSZWHouduoKlC8RkLrERwHMNWKX9LDWzgUgfdbgzbmG31cpz_Oh4MKw
 Content-Type: application/json
 X-User-Id: 1
 X-User-Role: MASTER
