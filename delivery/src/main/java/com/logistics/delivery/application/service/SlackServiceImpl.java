@@ -68,43 +68,37 @@ public class SlackServiceImpl implements SlackService {
                 () -> new BusinessException(INVALID_INPUT)
         );
 
-        List<Delivery> deliveries = deliveryRepository.findByOrderId(delivery.getOrderId());
-        Map<UUID, DeliveryRoute> routeMap = new HashMap<>();
         int[] totalTime = {0};
 
-        deliveries.forEach(deli -> {
-            DeliveryRoute deliveryRoute = deliveryRouteRepository.findByDeliveryId(deli.getId()).orElseThrow(() ->
-                    new BusinessException(INVALID_INPUT));
-            routeMap.put(deli.getOriginHubId(), deliveryRoute);
+        // routes 불러오기
+        List<DeliveryRoute> deliveryRoutes = deliveryRouteRepository.findByDeliveryId(delivery.getId());
+
+        // 각 경로의 startHubId로 routeMap put, 토탈 시간++
+        deliveryRoutes.forEach(deliveryRoute -> {
             totalTime[0] += (int)deliveryRoute.getEstimatedDuration();
         });
 
-
+        // 이동 경로의 허브 id set에 저장
         Set<UUID> hubIds = new HashSet<>();
-        for(Delivery del : deliveries) {
-            hubIds.add(del.getOriginHubId());
-            hubIds.add(del.getDestinationHubId());
+        for(DeliveryRoute del : deliveryRoutes) {
+            hubIds.add(del.getStartHubId());
+            hubIds.add(del.getEndHubId());
         }
 
+        // 이동 경로 허브 id를 가지고 허브 client에서 받아와서 허브 map에 저장
         Map<UUID, HubResponse> hubMap = new HashMap<>();
-        hubClient.getHubsToHubIds(hubIds.stream().toList()).forEach(hubResponse -> hubMap.put(hubResponse.id(), hubResponse));
-
-        List<HubResponse> sortHubs = new ArrayList<>();
-        sortHubs.add(hubMap.get(slackCreateConsume.startHubId()));
-
-        while(sortHubs.size() < hubIds.size()) {
-            UUID nextHubId = routeMap.get(sortHubs.getLast().id()).getEndHubId();
-            sortHubs.add(hubMap.get(nextHubId));
-        }
+        hubClient.getHubsToHubIds(hubIds.stream().toList()).data().forEach(hubResponse -> hubMap.put(hubResponse.id(), hubResponse));
 
         OrderDetailResponse orderDetailResponse = orderClient.orderDetails(delivery.getOrderId()).data();
-        CompanyResponse companyResponse = companyClient.findCompanyById(orderDetailResponse.recipientCompanyId());
+        CompanyResponse companyResponse = companyClient.findCompanyById(orderDetailResponse.recipientCompanyId()).data();
 
         StringBuilder sb = new StringBuilder();
 
-        for(int i=0; i<sortHubs.size(); i++) {
-            sb.append(sortHubs.get(i).name()).append(" ");
+        for(DeliveryRoute del : deliveryRoutes) {
+            sb.append(hubMap.get(del.getStartHubId())).append(" ");
         }
+
+        sb.append(hubMap.get(deliveryRoutes.getLast().getEndHubId()));
 
         String stopover = sb.toString().trim();
 
@@ -124,7 +118,7 @@ public class SlackServiceImpl implements SlackService {
                 "주문자 정보 : " + companyResponse.companyName() + "\n" +
                 "상품 정보 : " + orderDetailResponse.productName() + orderDetailResponse.quantity() + "개\n" +
                 "요청 사항 : " + orderDetailResponse.requestNotes() + "\n" +
-                "발송지 : " + hubMap.get(sortHubs.getFirst().name()) + "\n" +
+                "발송지 : " + hubMap.get(deliveryRoutes.getFirst().getStartHubId()).name() + "\n" +
                 "경유지 : " + stopover + "\n" +
                 "도착지 : " + companyResponse.address() + "\n" +
                 "담당 배송 허브 : " + hubMap.get(slackCreateConsume.startHubId()).name() + " 에서 " +

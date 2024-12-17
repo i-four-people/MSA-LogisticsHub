@@ -29,6 +29,4 @@ public interface JpaDeliveryRepository extends JpaRepository<Delivery, UUID>, De
             "AND d.isDelete IS FALSE ")
     List<Delivery> findByCompanyDeliveryManagerIdIsNull(@Param("statusList") List<DeliveryStatus> statusList);
 
-    List<Delivery> findByOrderIdAndIsDeletedFalseOrderByCreatedAt(UUID orderId);
-
 }

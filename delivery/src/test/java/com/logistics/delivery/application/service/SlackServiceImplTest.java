@@ -103,41 +103,45 @@ class SlackServiceImplTest {
         Long deliveryManagerId = 1L;
         String deliveryManagerName = "John Doe";
         String deliveryManagerSlackId = "U1234567890"; // 수정된 부분
-        String productName = "Product X";
-        String companyName = "Company Y";
-        String companyAddress = "123 Main St";
-
-
+        String productName = "상품 명";
+        String companyName = "회사 명";
+        String companyAddress = "회사 주소";
+        UUID[] hubIds = new UUID[] {startHubId, UUID.randomUUID(), UUID.randomUUID(), endHubId};
+        String[] hubNames = new String[] {"서울특별시 센터", "경기 남부 센터", "대구광역시 센터", "부산광역시 센터"};
         Delivery delivery = Delivery.builder()
                 .orderId(orderId)
                 .build();
 
-        DeliveryRoute deliveryRoute = DeliveryRoute.builder()
-                .estimatedDuration(60)
-                .build();
+        List<DeliveryRoute> deliveryRoutes = new ArrayList<>();
+        Map<UUID, HubResponse> hubMap = new HashMap<>();
+
+        for(int i = 0; i < hubIds.length-1; i++) {
+            deliveryRoutes.add(
+                    DeliveryRoute.builder()
+                            .sequence(i+1)
+                            .estimatedDuration(30 * (i + 1))
+                            .deliveryId(deliveryId)
+                            .startHubId(hubIds[i])
+                            .endHubId(hubIds[i+1])
+                            .build()
+            );
+            hubMap.put(hubIds[i], new HubResponse(hubIds[i], hubNames[i]));
+        }
+
+        hubMap.put(hubIds[hubIds.length-1], new HubResponse(hubIds[hubIds.length-1], hubNames[hubNames.length-1]));
 
         // Mock behavior
         SlackCreateConsume slackCreateConsume = new SlackCreateConsume(null, deliveryId, deliveryManagerId, deliveryManagerName, deliveryManagerSlackId, startHubId, endHubId);
-        List<Delivery> deliveries = new ArrayList<>();
-        deliveries.add(delivery);
-        Map<UUID, DeliveryRoute> routeMap = new HashMap<>();
-        routeMap.put(startHubId, deliveryRoute);
-        HubResponse originHub = new HubResponse(startHubId,"Origin Hub");
-        Map<UUID, HubResponse> hubMap = new HashMap<>();
-        hubMap.put(startHubId, originHub);
         OrderDetailResponse orderDetailResponse = OrderDetailResponse.test(UUID.randomUUID(), deliveryId, companyName, productName, 5, "12월 30일 12시까지 도착해야합니다.");
         CompanyResponse companyResponse = new CompanyResponse(UUID.randomUUID(), companyName, null, companyAddress);
 
         when(deliveryRepository.findById(deliveryId)).thenReturn(Optional.of(delivery));
-        when(deliveryRepository.findByOrderId(orderId)).thenReturn(deliveries);
-        when(deliveryRouteRepository.findByDeliveryId(any())).thenReturn(Optional.ofNullable(deliveryRoute));
-        when(hubClient.getHubsToHubIds(anyList())).thenReturn(hubMap.values().stream().toList());
+        when(deliveryRouteRepository.findByDeliveryId(any())).thenReturn(deliveryRoutes);
+        when(hubClient.getHubsToHubIds(anyList())).thenReturn(ApiResponse.success(RETRIEVE,hubMap.values().stream().toList()));
         when(orderClient.orderDetails(any())).thenReturn(ApiResponse.success(RETRIEVE, orderDetailResponse));
-        when(companyClient.findCompanyById(any())).thenReturn(companyResponse);
+        when(companyClient.findCompanyById(any())).thenReturn(ApiResponse.success(RETRIEVE,companyResponse));
 
         String uri = geminiUrl + "?key=" + geminiApiKey;
-
-        RequestEntity<?> entity = new RequestEntity<>(HttpMethod.POST, URI.create(uri));
 
         GeminiResponseDTO.Part part = new GeminiResponseDTO.Part();
         part.setText("test");
@@ -149,28 +153,42 @@ class SlackServiceImplTest {
         GeminiResponseDTO geminiResponseDTO = new GeminiResponseDTO();
         geminiResponseDTO.setCandidates(List.of(candidate));
 
-        mockServer.expect(requestTo(uri)).andExpect(method(HttpMethod.POST)).andRespond(withSuccess("{\n" +
-                "    \"candidates\": [\n" +
-                "        {\n" +
-                "            \"content\": {\n" +
-                "                \"parts\": [\n" +
-                "                    {\n" +
-                "                        \"text\": \"주문 번호 : 1\\n주문자 정보 : 김말숙 / msk@seafood.world\\n상품 정보 : 마른 오징어 50박스\\n요청 사항 : 12월 12일 3시까지는 보내주세요!\\n발송지 : 경기 북부 센터\\n경유지 : 대전광역시 센터, 부산광역시 센터\\n도착지 : 부산시 사하구 낙동대로 1번길 1 해산물월드\\n배송담당자 : 고길동 / kdk@sparta.world\\n\\n최종 발송 시한 : 2023년 12월 11일 21시 00분\\n\"\n" +
-                "                    }\n" +
-                "                ],\n" +
-                "                \"role\": \"model\"\n" +
-                "            },\n" +
-                "            \"finishReason\": \"STOP\",\n" +
-                "            \"avgLogprobs\": -0.009802425191515968\n" +
-                "        }\n" +
-                "    ],\n" +
-                "    \"usageMetadata\": {\n" +
-                "        \"promptTokenCount\": 333,\n" +
-                "        \"candidatesTokenCount\": 168,\n" +
-                "        \"totalTokenCount\": 501\n" +
-                "    },\n" +
-                "    \"modelVersion\": \"gemini-1.5-flash\"\n" +
-                "}\n", MediaType.APPLICATION_JSON));
+        mockServer.expect(requestTo(uri))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess(
+                        "{\n" +
+                                "    \"candidates\": [\n" +
+                                "        {\n" +
+                                "            \"content\": {\n" +
+                                "                \"parts\": [\n" +
+                                "                    {\n" +
+                                "\"text\": \"주문 번호 : 1\\n" +
+                                "주문자 정보 : John Doe / U1234567890\\n" +
+                                "상품 정보 : 상품 명\\n" +
+                                "요청 사항 : 12월 30일 12시까지 도착해야합니다.\\n" +
+                                "발송지 : 서울특별시 센터\\n" +
+                                "경유지 : 경기 남부 센터, 대구광역시 센터, 부산광역시 센터\\n" +
+                                "도착지 : 회사 주소\\n" +
+                                "담당 경유지 : 경기 남부 센터 에서 대구광역시 센터 까지\\n" +
+                                "배송담당자 : John Doe / <@U1234567890>\\n\\n" +
+                                "최종 발송 시한 : 2023년 12월 29일 18시 00분\\n\"\n" +
+                                "                    }\n" +
+                                "                ],\n" +
+                                "                \"role\": \"model\"\n" +
+                                "            },\n" +
+                                "            \"finishReason\": \"STOP\",\n" +
+                                "            \"avgLogprobs\": -0.009802425191515968\n" +
+                                "        }\n" +
+                                "    ],\n" +
+                                "    \"usageMetadata\": {\n" +
+                                "        \"promptTokenCount\": 333,\n" +
+                                "        \"candidatesTokenCount\": 168,\n" +
+                                "        \"totalTokenCount\": 501\n" +
+                                "    },\n" +
+                                "    \"modelVersion\": \"gemini-1.5-flash\"\n" +
+                                "}\n",
+                        MediaType.APPLICATION_JSON
+                ));
 
         // Call the method
         slackService.createSlackMessage(slackCreateConsume);

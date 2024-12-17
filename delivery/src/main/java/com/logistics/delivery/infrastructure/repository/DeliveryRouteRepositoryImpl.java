@@ -55,8 +55,4 @@ public class DeliveryRouteRepositoryImpl implements DeliveryRouteRepository {
         return jpaDeliveryRouteRepository.findByDeliveryId(deliveryId);
     }
 
-    @Override
-    public Optional<DeliveryRoute> findByDeliveryId(UUID id) {
-        return jpaDeliveryRouteRepository.findByDeliveryId(id);
-    }
 }

@@ -26,6 +26,4 @@ public interface JpaDeliveryRouteRepository extends JpaRepository<DeliveryRoute,
             "AND dr.isDelete IS FALSE " +
             "ORDER BY dr.sequence")
     List<DeliveryRoute> findByDeliveryId(UUID deliveryId);
-
-    Optional<DeliveryRoute> findByDeliveryId(UUID id);
 }
