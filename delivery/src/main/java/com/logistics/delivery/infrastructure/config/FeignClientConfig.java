@@ -16,6 +16,8 @@ public class FeignClientConfig {
             if (authHeaderInfo != null) {
                 template.header("X-USER-ID", String.valueOf(authHeaderInfo.userId()));
                 template.header("X-USER-ROLE", authHeaderInfo.role());
+                template.header("X-User-Id", String.valueOf(authHeaderInfo.userId()));
+                template.header("X-User-Role", authHeaderInfo.role());
             }
         };
     }

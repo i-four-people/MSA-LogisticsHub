@@ -4,6 +4,7 @@ import com.logistics.delivery.application.dto.order.OrderResponse;
 import com.logistics.delivery.application.dto.order.OrderDetailResponse;
 import com.logistics.delivery.presentation.response.ApiResponse;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -13,8 +14,8 @@ import java.util.UUID;
 public interface OrderClient {
 
     @GetMapping("/api/orders/{orderId}")
-    OrderResponse getOrderById(@PathVariable("orderId") UUID orderId);
+    ResponseEntity<ApiResponse<OrderResponse>> getOrderById(@PathVariable("orderId") UUID orderId);
 
     @GetMapping("/api/orders/{id}")
-    ApiResponse<OrderDetailResponse> orderDetails(@PathVariable("id") UUID id);
+    ResponseEntity<ApiResponse<OrderDetailResponse>> orderDetails(@PathVariable("id") UUID id);
 }

@@ -5,6 +5,10 @@ import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.FanoutExchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.config.RetryInterceptorBuilder;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.retry.RejectAndDontRequeueRecoverer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -37,6 +41,17 @@ public class RabbitMQConfig {
     @Bean
     public Binding slackBinding(Queue slackQueue, FanoutExchange deliveryExchange) {
         return BindingBuilder.bind(slackQueue).to(deliveryExchange);
+    }
+
+    @Bean
+    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(ConnectionFactory connectionFactory) {
+        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+        factory.setConnectionFactory(connectionFactory);
+        factory.setAdviceChain(RetryInterceptorBuilder.stateless()
+                .maxAttempts(3) // 최대 재시도 횟수 설정
+                .recoverer(new RejectAndDontRequeueRecoverer()) // 실패 시 메시지 처리 중단
+                .build());
+        return factory;
     }
 
 }

@@ -36,3 +36,10 @@ slack:
 gemini:
   apiKey: ${GEMINI_API_KEY}
   url: ${GEMINI_URL}
+
+logging:
+  level:
+    feign: DEBUG
+    com:
+      logistics:
+        delivery: DEBUG

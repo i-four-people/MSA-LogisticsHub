@@ -4,6 +4,7 @@ import com.logistics.delivery.application.dto.hub.HubResponse;
 import com.logistics.delivery.application.dto.hub.HubToHubResponse;
 import com.logistics.delivery.presentation.response.ApiResponse;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,17 +16,13 @@ import java.util.UUID;
 @FeignClient(name = "hub-service")
 public interface HubClient {
 
-    @GetMapping("/api/hub-transfers/routes")
-    HubToHubResponse getHubToHubRoutes(@RequestParam("start") UUID startHubId,
-                                       @RequestParam("end") UUID endHubId);
+    @GetMapping("/api/hub-transfers/hub-to-hub")
+    ResponseEntity<ApiResponse<HubToHubResponse>> getHubToHubRoutes(@RequestParam("startHubId") UUID startHubId,
+                                                                    @RequestParam("endHubId") UUID endHubId);
 
     @GetMapping("/api/hubs/{hubId}")
-    HubResponse getHub(@PathVariable("hubId") UUID hubId);
-
-    @GetMapping("/api/hubs/batch")
-    List<HubResponse> findHubsByIds(@RequestBody List<UUID> hubIds);
-
+    ResponseEntity<ApiResponse<HubResponse>> getHub(@PathVariable("hubId") UUID hubId);
 
     @GetMapping("/api/hubs/list")
-    ApiResponse<List<HubResponse>> getHubsToHubIds(List<UUID> hubIds);
+    ResponseEntity<ApiResponse<List<HubResponse>>> getHubsToHubIds(@RequestBody List<UUID> hubIds);
 }

@@ -43,7 +43,6 @@ public class Order extends AuditingFields {
     private String requestNotes;
 
     @Comment("주문 상태")
-    @Column(columnDefinition = "VARCHAR(50) DEFAULT 'PENDING'")
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
