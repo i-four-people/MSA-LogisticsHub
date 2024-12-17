@@ -56,4 +56,9 @@ public class HubRepositoryImpl implements HubRepository {
     public List<HubResponseDto> findByIdInAndIsDeletedFalse(List<UUID> idList) {
         return jpaHubRepository.findByIdInAndIsDeletedFalse(idList);
     }
+
+    @Override
+    public List<Hub> findByIsDeletedFalse() {
+        return jpaHubRepository.findByIsDeletedFalse();
+    }
 }

@@ -358,7 +358,7 @@ public class HubTransferService {
     }
 
     private void validateRole(String role) {
-        if(role == null || !(role.equals("MASTER") || role.equals("HUB_MANAGER") || role.equals("COMPANY_MANAGER") || role.equals("DELIVERY_MANAGER"))) {
+        if(role == null || !((role.equals("MASTER") || role.equals("HUB_MANAGER") || role.equals("COMPANY_MANAGER") || role.equals("DELIVERY_MANAGER")))) {
             throw new RestApiException(FORBIDDEN);
         }
     }
