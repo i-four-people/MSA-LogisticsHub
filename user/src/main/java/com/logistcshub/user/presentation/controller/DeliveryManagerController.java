@@ -106,6 +106,6 @@ public class DeliveryManagerController {
     @PutMapping("/api/delivery-managers/{deliveryManagerId}/hub")
    public void updateHubForManager(@PathVariable("deliveryManagerId") Long deliveryManagerId,
                              @RequestBody DeliveryManagerUpdateRequest request) {
-        return deliveryManagerService.updateHubForManager(deliveryManagerId, request);
+        deliveryManagerService.updateHubForManager(deliveryManagerId, request);
     }
 }
