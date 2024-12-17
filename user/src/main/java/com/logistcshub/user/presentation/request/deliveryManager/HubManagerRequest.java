@@ -1,4 +1,4 @@
-package com.logistcshub.user.presentation.request;
+package com.logistcshub.user.presentation.request.deliveryManager;
 
 import java.util.UUID;
 

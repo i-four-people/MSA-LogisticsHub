@@ -1,11 +1,11 @@
-package com.logistcshub.user.presentation.response;
+package com.logistcshub.user.presentation.response.user;
 
 import com.logistcshub.user.domain.model.user.User;
 import com.logistcshub.user.domain.model.user.UserRoleEnum;
 import com.querydsl.core.annotations.QueryProjection;
 
-import java.time.LocalDateTime;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 public record UserDto(
         Long userId,

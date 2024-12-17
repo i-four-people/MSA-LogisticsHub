@@ -1,13 +1,13 @@
 package com.logistcshub.user.application.service;
 
-import com.logistcshub.user.presentation.response.TokenDto;
-import com.logistcshub.user.presentation.response.UserDto;
+import com.logistcshub.user.presentation.response.user.TokenDto;
+import com.logistcshub.user.presentation.response.user.UserDto;
 import com.logistcshub.user.common.jwt.JwtUtil;
 import com.logistcshub.user.domain.model.user.User;
 import com.logistcshub.user.domain.model.user.UserRoleEnum;
 import com.logistcshub.user.infrastructure.repository.UserRepository;
-import com.logistcshub.user.presentation.request.LoginRequest;
-import com.logistcshub.user.presentation.request.SignupRequest;
+import com.logistcshub.user.presentation.request.user.LoginRequest;
+import com.logistcshub.user.presentation.request.user.SignupRequest;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +46,7 @@ public class AuthService {
 
         // 유저 객체 생성
         User user = User.create(signupRequest.username(), encodedPassword, signupRequest.email(), signupRequest.tel(), signupRequest.slackId(), userRole);
+//        user.setCreatedBy(signupRequest.username());
         // 저장
         userRepository.save(user);
 

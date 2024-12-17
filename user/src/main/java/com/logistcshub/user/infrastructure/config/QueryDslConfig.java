@@ -1,4 +1,4 @@
-package com.logistcshub.user.infrastructure.configuration;
+package com.logistcshub.user.infrastructure.config;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

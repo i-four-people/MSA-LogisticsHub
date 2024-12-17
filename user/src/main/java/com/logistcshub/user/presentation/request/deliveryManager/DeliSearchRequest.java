@@ -1,4 +1,4 @@
-package com.logistcshub.user.presentation.request;
+package com.logistcshub.user.presentation.request.deliveryManager;
 
 import com.logistcshub.user.domain.model.deliveryManager.DeliveryManagerType;
 import com.logistcshub.user.domain.model.deliveryManager.DeliveryStatus;

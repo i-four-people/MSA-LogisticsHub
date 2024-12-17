@@ -1,13 +1,13 @@
 package com.logistcshub.user.infrastructure.repository;
 
-import com.logistcshub.user.presentation.response.DeliveryManagerDto;
-import com.logistcshub.user.presentation.response.QDeliveryManagerDto;
+import com.logistcshub.user.presentation.response.deliveryManager.DeliveryManagerDto;
+import com.logistcshub.user.presentation.response.deliveryManager.QDeliveryManagerDto;
 import com.logistcshub.user.domain.model.deliveryManager.DeliveryManagerType;
 import com.logistcshub.user.domain.model.deliveryManager.DeliveryStatus;
 import com.logistcshub.user.domain.model.user.UserRoleEnum;
 import com.logistcshub.user.domain.repository.DeliveryManagerRepositoryCustom;
-import com.logistcshub.user.presentation.request.DeliSearchRequest;
-import com.logistcshub.user.presentation.response.DeliSearchResponse;
+import com.logistcshub.user.presentation.request.deliveryManager.DeliSearchRequest;
+import com.logistcshub.user.presentation.response.deliveryManager.DeliSearchResponse;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;

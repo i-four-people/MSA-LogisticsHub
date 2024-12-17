@@ -4,6 +4,12 @@ server:
 spring:
   application:
     name: user-service
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      username: default
+      password: systempass
 
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -20,7 +26,6 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
         default_batch_fetch_size: 1000
-
 
 jwt:
   admin-token: admin-token-1234

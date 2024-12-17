@@ -15,14 +15,16 @@ import com.logistcshub.user.domain.model.user.UserRoleEnum;
 import com.logistcshub.user.infrastructure.repository.DeliveryManagerRepository;
 import com.logistcshub.user.infrastructure.repository.HubManagerRepository;
 import com.logistcshub.user.infrastructure.repository.UserRepository;
-import com.logistcshub.user.presentation.request.DeliSearchRequest;
-import com.logistcshub.user.presentation.request.DeliveryManagerCreate;
-import com.logistcshub.user.presentation.request.DeliveryManagerUpdate;
-import com.logistcshub.user.presentation.response.DeliSearchResponse;
-import com.logistcshub.user.presentation.response.DeliveryManagerDto;
-import com.logistcshub.user.presentation.response.DeliveryManagerResponse;
+import com.logistcshub.user.presentation.request.DeliveryManagerUpdateRequest;
+import com.logistcshub.user.presentation.request.deliveryManager.DeliSearchRequest;
+import com.logistcshub.user.presentation.request.deliveryManager.DeliveryManagerCreate;
+import com.logistcshub.user.presentation.request.deliveryManager.DeliveryManagerUpdate;
+import com.logistcshub.user.presentation.response.deliveryManager.DeliSearchResponse;
+import com.logistcshub.user.presentation.response.deliveryManager.DeliveryManagerDto;
+import com.logistcshub.user.presentation.response.deliveryManager.DeliveryManagerResponse;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -96,6 +98,7 @@ public class DeliveryManagerService {
         return deliveryManagerRepository.findAllDeliveryPerson(pageable, deliSearchRequest, userId, role);
     }
 
+    @Cacheable(cacheNames = "deliveryPersonInfo", key = "#role + ':' + #userId + ':' + #deliveryPersonId")
     public DeliveryManagerDto get(UserDetailsImpl userDetails, Long deliveryManagerId) {
         Long userId = userDetails.getUserId();
         UserRoleEnum role = userDetails.user().getRole();
@@ -223,5 +226,12 @@ public class DeliveryManagerService {
                     return DeliveryManagerResponse.from(deliveryManager, user);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public void updateHubForManager(Long deliveryManagerId, DeliveryManagerUpdateRequest request) {
+        DeliveryManager deliveryManager = deliveryManagerRepository.findById(deliveryManagerId)
+                .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
+
+        deliveryManager.update(request.hubId());
     }
 }
