@@ -201,8 +201,6 @@ public class DeliveryManagerService {
             throw new UserException(ExceptionMessage.HUB_NOT_FOUND);
         }
 
-        log.info(String.valueOf(hubManager.getHubId()));
-        log.info(String.valueOf(requestHubId));
         // 배송 담당자를 등록하려는 허브가 허브 매니저의 담당 허브인지 확인
         if (!hubManager.getHubId().equals(requestHubId)) {
             throw new UserException(ExceptionMessage.HUB_MANAGER_ACCESS_DENIED);
