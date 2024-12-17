@@ -1,4 +1,4 @@
-# MSA-LogisticsHub
+#  🏢 MSA-LogisticsHub 🏢
 MSA 기반 물류 관리 및 배송 시스템 플랫폼
 <br><br>
 
@@ -81,6 +81,14 @@ MSA 기반 물류 관리 및 배송 시스템 플랫폼
 > * GET /api/companies - 업체 전체 조회
 > * GET /api/companies/{id} - 업체 상세 조회
 > * GET /api/companies/search-by-name - 업체 이름으로 업체 조회
+
+### 🛒 상품
+- Product APIs
+> * POST /api/products - 상품 생성
+> * PUT /api/products/{id} - 상품 수정
+> * DELETE /api/products/{id} - 상품 삭제
+> * GET /api/products - 상품 전체 조회
+> * GET /api/products/{id} - 상품 상세 조회
 
 ### 🧾 주문
 - Order APIs
