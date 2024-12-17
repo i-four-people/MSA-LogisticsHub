@@ -1,8 +1,11 @@
 package com.logistics.delivery.infrastructure.repository;
 
+import com.logistics.delivery.application.dto.SearchParameter;
 import com.logistics.delivery.domain.model.Delivery;
+import com.logistics.delivery.domain.model.DeliveryStatus;
 import com.logistics.delivery.domain.repository.DeliveryRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,6 +17,11 @@ import java.util.UUID;
 public class DeliveryRepositoryImpl implements DeliveryRepository {
 
     private final JpaDeliveryRepository jpaDeliveryRepository;
+
+    @Override
+    public Page<Delivery> searchDeliveries(SearchParameter searchParameter) {
+        return jpaDeliveryRepository.searchDeliveries(searchParameter);
+    }
 
     @Override
     public Optional<Delivery> findById(UUID id) {
@@ -45,4 +53,13 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
         jpaDeliveryRepository.deleteById(id);
     }
 
+    @Override
+    public List<Delivery> findActiveDeliveriesByDestinationHubId(UUID destinationHubId, List<DeliveryStatus> statusList) {
+        return jpaDeliveryRepository.findActiveDeliveriesByDestinationHubId(destinationHubId, statusList);
+    }
+
+    @Override
+    public List<Delivery> findUnassignedDeliveries() {
+        return jpaDeliveryRepository.findByCompanyDeliveryManagerIdIsNull(List.of(DeliveryStatus.DELIVERED, DeliveryStatus.CANCELLED));
+    }
 }

@@ -115,4 +115,11 @@ public class Order extends AuditingFields {
     public void updateDelivery(UUID deliveryId) {
 
     }
+
+    /**
+     * 주문 삭제 (soft delete)
+     */
+    public void delete() {
+        this.isDelete = true;
+    }
 }

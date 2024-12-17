@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 
 @MappedSuperclass
 @Getter
+//@Setter
 @EntityListeners(AuditingEntityListener.class)
 public class AuditEntity {
     @CreatedDate
@@ -47,5 +49,4 @@ public class AuditEntity {
         deletedBy = username;
         isDelete = true;
     }
-
 }

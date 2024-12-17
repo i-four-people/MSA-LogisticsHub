@@ -19,6 +19,7 @@ public class DeliveryRoute extends AuditingFields {
 
     @Id
     @UuidGenerator(style = UuidGenerator.Style.TIME)
+    @Comment("배송 이동 경로 ID")
     private UUID id;
 
     @Comment("배송 ID")
@@ -88,5 +89,12 @@ public class DeliveryRoute extends AuditingFields {
     public void assignManager(Long assignedManagerId) {
         this.deliveryManagerId = assignedManagerId;
         this.status = RouteStatus.ASSIGNED;
+    }
+
+    /**
+     * 배송 경로 삭제 (soft delete)
+     */
+    public void delete() {
+        this.isDelete = true;
     }
 }

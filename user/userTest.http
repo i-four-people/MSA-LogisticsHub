@@ -4,12 +4,12 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "username": "user2",
+  "username": "user4",
   "password": "Qwer1234@",
-  "email": "user2@email.com",
+  "email": "user4@email.com",
   "tel": "010-1234-5678",
   "slackId": "slack-id",
-  "role": "COMPANY_MANAGER",
+  "role": "DELIVERY_MANAGER",
   "adminToken": null
 }
 
@@ -35,6 +35,14 @@ Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsI
 Content-Type: application/json
 X-User-Id: 1
 X-User-Role: MASTER
+
+### 유저 상세 조회 (MASTER)
+GET http://localhost:19093/api/users/4
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDQwMzI5NSwiZXhwIjoxNzM0NDAzNjU1fQ.S8KBqIcX7g6Sx1eK9qZp-d8jk0IDnCmRSZWHouduoKlC8RkLrERwHMNWKX9LDWzgUgfdbgzbmG31cpz_Oh4MKw
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: MASTER
+
 
 ### 유저 권한 수정 (MASTER)
 PATCH http://localhost:19093/api/users/5

@@ -1,4 +1,4 @@
-package com.logistcshub.user.infrastructure.configuration;
+package com.logistcshub.user.infrastructure.config;
 
 import com.logistcshub.user.common.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;

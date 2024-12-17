@@ -1,8 +1,10 @@
 package com.logistics.delivery.infrastructure.client;
 
-import com.logistics.delivery.application.dto.user.DeliveryManagerResponse;
+import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerResponse;
+import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerType;
+import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerUpdateRequest;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -10,5 +12,9 @@ import java.util.List;
 public interface DeliveryManagerClient {
 
     @GetMapping("/api/delivery-managers/available-manager")
-    List<DeliveryManagerResponse> findAvailableManagers();
+    List<DeliveryManagerResponse> findAvailableManagers(@RequestParam(defaultValue = "HUB_PIC") DeliveryManagerType type);
+
+    @PutMapping("/api/delivery-managers/{deliveryManagerId}/hub")
+    void updateHubForManager(@PathVariable("deliveryManagerId") Long deliveryManagerId,
+                             @RequestBody DeliveryManagerUpdateRequest request);
 }

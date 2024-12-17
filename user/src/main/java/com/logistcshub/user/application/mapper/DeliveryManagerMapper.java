@@ -1,7 +1,7 @@
 package com.logistcshub.user.application.mapper;
 
 import com.logistcshub.user.domain.model.deliveryManager.DeliveryManager;
-import com.logistcshub.user.presentation.request.DeliveryManagerCreate;
+import com.logistcshub.user.presentation.request.deliveryManager.DeliveryManagerCreate;
 import org.springframework.stereotype.Component;
 
 @Component

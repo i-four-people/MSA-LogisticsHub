@@ -2,6 +2,7 @@ package com.logistics.delivery.application.message;
 
 import com.logistics.delivery.application.dto.event.EventType;
 import com.logistics.delivery.application.dto.event.consume.OrderCreateConsume;
+import com.logistics.delivery.application.dto.event.consume.OrderDeleteConsume;
 import com.logistics.delivery.application.util.EventUtil;
 import com.logistics.delivery.domain.service.DeliveryService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,8 @@ public class DeliveryMessageListener {
                 deliveryService.createDelivery(orderCreateConsume);
             }
             case ORDER_DELETED -> {
-
+                OrderDeleteConsume orderDeleteConsume = EventUtil.deserializeEvent(message, OrderDeleteConsume.class);
+                deliveryService.deleteDeliveryById(orderDeleteConsume.deliveryId());
             }
         }
 

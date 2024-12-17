@@ -1,4 +1,4 @@
-package com.logistcshub.user.presentation.response;
+package com.logistcshub.user.presentation.response.user;
 
 import com.logistcshub.user.domain.model.user.User;
 import com.logistcshub.user.domain.model.user.UserRoleEnum;
