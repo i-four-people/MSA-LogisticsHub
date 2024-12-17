@@ -44,56 +44,46 @@ public class AreaController {
 
     @PostMapping
     public ResponseEntity<SuccessResponse<AddAreaResponseDto>> addArea(@RequestBody AddAreaRequestDto request,
-                                                                       @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                       @RequestHeader(value = "X-USER-ROLE") String role) {
-        userId = 1L;
-        role = "MASTER";
+                                                                       @RequestHeader(value = "X-User-Id") Long userId,
+                                                                       @RequestHeader(value = "X-User-Role") String role) {
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_CREATE_AREA, areaService.addArea(request, userId, role)));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<SuccessResponse<UpdateAreaResponseDto>> updateArea(@RequestBody UpdateAreaRequestDto request,
-                                                                             @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                             @RequestHeader(value = "X-USER-ROLE") String role,
+                                                                             @RequestHeader(value = "X-User-Id") Long userId,
+                                                                             @RequestHeader(value = "X-User-Role") String role,
                                                                              @PathVariable UUID id) {
-        userId = 1L;
-        role = "MASTER";
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_UPDATE_AREA, areaService.updateArea(id, request, userId, role)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<SuccessResponse<DeleteAreaResponseDto>> deleteArea(@RequestHeader(value = "X-USER-ID") Long userId,
-                                                                             @RequestHeader(value = "X-USER-ROLE") String role,
+    public ResponseEntity<SuccessResponse<DeleteAreaResponseDto>> deleteArea(@RequestHeader(value = "X-User-Id") Long userId,
+                                                                             @RequestHeader(value = "X-User-Role") String role,
                                                                              @PathVariable UUID id) {
-        userId = 1L;
-        role = "MASTER";
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_DELETE_AREA, areaService.deleteArea(id, userId, role)));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SuccessResponse<AreaResponseDto>> getArea(@RequestHeader(value = "X-USER-ID") Long userId,
-                                                                             @RequestHeader(value = "X-USER-ROLE") String role,
+    public ResponseEntity<SuccessResponse<AreaResponseDto>> getArea(@RequestHeader(value = "X-User-Id") Long userId,
+                                                                    @RequestHeader(value = "X-User-Role") String role,
                                                                              @PathVariable UUID id) {
-        userId = 1L;
-        role = "MASTER";
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_GET_AREA, areaService.getArea(id, userId, role)));
     }
 
     @GetMapping
     public ResponseEntity<SuccessResponse<PagedModel<AreaResponseDto>>> searchAreas(
-            @RequestHeader(value = "X-USER-ID") Long userId,
-            @RequestHeader(value = "X-USER-ROLE") String role,
+            @RequestHeader(value = "X-User-Id") Long userId,
+            @RequestHeader(value = "X-User-Role") String role,
             @RequestParam(name = "keyword", required = false) String keyword,
             @RequestParam(name = "type", defaultValue = "ALL") AreaSearchType type,
             @PageableDefault Pageable pageable,
             @RequestParam(name = "sortBy", defaultValue = "CREATEDAT") SortType sortBy,
             @RequestParam(name = "isAsc", defaultValue = "true") boolean isAsc) {
-        userId = 1L;
-        role = "MASTER";
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_SEARCH_AREA, areaService.searchAreas(userId, role, keyword, type, pageable, sortBy, isAsc))
         );

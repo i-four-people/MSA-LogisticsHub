@@ -7,25 +7,19 @@ import com.logistcshub.hub.hub.application.dtos.HubResponseDto;
 import com.logistcshub.hub.hub.application.dtos.UpdateHubResponseDto;
 import com.logistcshub.hub.hub.application.service.HubService;
 import com.logistcshub.hub.hub.presentation.request.AddHubRequestDto;
+import com.logistcshub.hub.hub.presentation.request.HubIdsDto;
 import com.logistcshub.hub.hub.presentation.request.UpdateHubRequestDto;
 import com.logistcshub.hub.hub.presentation.request.type.HubSearchType;
 import com.logistcshub.hub.hub.presentation.request.type.SortType;
+
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.logistcshub.hub.common.domain.model.type.ResponseMessage.*;
 
@@ -38,11 +32,8 @@ public class HubController {
 
     @PostMapping
     public ResponseEntity<SuccessResponse<AddHubResponseDto>> addHub(@RequestBody AddHubRequestDto request,
-                                                                        @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                        @RequestHeader(value = "X-USER-ROLE") String role) {
-        userId = 1L;
-        role = "MASTER";
-
+                                                                     @RequestHeader(value = "X-User-Id") Long userId,
+                                                                     @RequestHeader(value = "X-User-Role") String role) {
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_CREATE_HUB, hubService.addHub(userId, role, request))
         );
@@ -52,11 +43,8 @@ public class HubController {
     @PutMapping("/{id}")
     public ResponseEntity<SuccessResponse<UpdateHubResponseDto>> updateHub(@RequestBody UpdateHubRequestDto request,
                                                                            @PathVariable UUID id,
-                                                                           @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                           @RequestHeader(value = "X-USER-ROLE") String role) {
-        userId = 1L;
-        role = "MASTER";
-
+                                                                           @RequestHeader(value = "X-User-Id") Long userId,
+                                                                           @RequestHeader(value = "X-User-Role") String role) {
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_UPDATE_HUB, hubService.updateHub(id, userId, role, request))
         );
@@ -64,11 +52,8 @@ public class HubController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<SuccessResponse<DeleteHubResponseDto>> deleteHub(@PathVariable UUID id,
-                                                                           @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                           @RequestHeader(value = "X-USER-ROLE") String role) {
-        userId = 1L;
-        role = "MASTER";
-
+                                                                           @RequestHeader(value = "X-User-Id") Long userId,
+                                                                           @RequestHeader(value = "X-User-Role") String role) {
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_DELETE_HUB, hubService.deleteHub(id, userId, role))
         );
@@ -76,11 +61,8 @@ public class HubController {
 
     @GetMapping("/{id}")
     public ResponseEntity<SuccessResponse<HubResponseDto>> getHub(@PathVariable UUID id,
-                                                                  @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                  @RequestHeader(value = "X-USER-ROLE") String role) {
-        userId = 1L;
-        role = "MASTER";
-
+                                                                  @RequestHeader(value = "X-User-Id") Long userId,
+                                                                  @RequestHeader(value = "X-User-Role") String role) {
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_GET_HUB, hubService.getHub(id, userId, role))
         );
@@ -88,16 +70,13 @@ public class HubController {
 
     @GetMapping
     public ResponseEntity<SuccessResponse<PagedModel<HubResponseDto>>> searchHubs(
-                                                                             @RequestHeader(value = "X-USER-ID") Long userId,
-                                                                             @RequestHeader(value = "X-USER-ROLE") String role,
+                                                                            @RequestHeader(value = "X-User-Id") Long userId,
+                                                                            @RequestHeader(value = "X-User-Role") String role,
                                                                              @RequestParam(name = "keyword", required = false) String keyword,
                                                                              @RequestParam(name = "type", defaultValue = "ALL") HubSearchType type,
                                                                              @PageableDefault Pageable pageable,
                                                                              @RequestParam(name = "sortBy", defaultValue = "CREATEDAT") SortType sortBy,
                                                                              @RequestParam(name = "isAsc", defaultValue = "true") boolean isAsc) {
-        userId = 1L;
-        role = "MASTER";
-
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_GET_HUBS, hubService.searchHubs(userId, role, keyword, type, pageable, sortBy, isAsc))
         );
@@ -105,17 +84,21 @@ public class HubController {
 
     @GetMapping("/company-address")
     public ResponseEntity<SuccessResponse<HubResponseDto>> getHubFromCompanyAddress(
-            @RequestHeader(value = "X-USER-ID") Long userId,
-            @RequestHeader(value = "X-USER-ROLE") String role,
+            @RequestHeader(value = "X-User-Id") Long userId,
+            @RequestHeader(value = "X-User-Role") String role,
             @RequestParam(name = "address") String address,
             @RequestParam(name = "lat") double lat,
             @RequestParam(name = "lng") double lng
            ) {
-        userId = 1L;
-        role = "MASTER";
-
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_GET_HUB, hubService.getHubFromCompanyAddress(userId, role, address, lat, lng))
+        );
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<SuccessResponse<List<HubResponseDto>>> getHubsFromList(@RequestBody List<UUID> idList) {
+        return ResponseEntity.ok().body(
+                SuccessResponse.of(SUCCESS_GET_HUBS, hubService.getHubListFromIdList(idList))
         );
     }
 

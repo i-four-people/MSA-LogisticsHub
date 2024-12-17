@@ -2,6 +2,7 @@ package com.logistics.delivery.infrastructure.client;
 
 import com.logistics.delivery.application.dto.hub.HubResponse;
 import com.logistics.delivery.application.dto.hub.HubToHubResponse;
+import com.logistics.delivery.presentation.response.ApiResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,4 +25,7 @@ public interface HubClient {
     @GetMapping("/api/hubs/batch")
     List<HubResponse> findHubsByIds(@RequestBody List<UUID> hubIds);
 
+
+    @GetMapping("/api/hubs/list")
+    ApiResponse<List<HubResponse>> getHubsToHubIds(List<UUID> hubIds);
 }

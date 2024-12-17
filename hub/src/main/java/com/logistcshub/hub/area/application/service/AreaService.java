@@ -32,9 +32,7 @@ public class AreaService {
 
     @Transactional(readOnly = true)
     public PagedModel<AreaResponseDto> searchAreas(Long userId, String role, String keyword, AreaSearchType type, Pageable pageable, SortType sortBy, boolean isAsc) {
-        if(role == null || role.isEmpty()) {
-            throw new RestApiException(FORBIDDEN);
-        }
+        validateRole(role);
 
         return new PagedModel<>(areaFindRepository.findAll(keyword, type, pageable, sortBy, isAsc).map(AreaResponseDto::of));
     }
@@ -74,6 +72,12 @@ public class AreaService {
 
     private Area findById(UUID id) {
         return areaRepository.findById(id).orElseThrow(() -> new RestApiException(AREA_NOT_FOUND));
+    }
+
+    private void validateRole(String role) {
+        if(role == null || !(role.equals("MASTER") || role.equals("HUB_MANAGER") || role.equals("COMPANY_MANAGER") || role.equals("DELIVERY_MANAGER"))) {
+            throw new RestApiException(FORBIDDEN);
+        }
     }
 
     public AreaResponseDto getArea(UUID id, Long userId, String role) {

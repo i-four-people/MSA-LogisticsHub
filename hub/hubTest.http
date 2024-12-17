@@ -1,0 +1,107 @@
+### 지역 추가
+POST http://localhost:19091/api/areas
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDQxNDY2OSwiZXhwIjoxNzM0NDE1MDI5fQ.KrheuP2nKUNISb4lnfwHoKmsaRDm3ZAGhe-sg8hTGcxw8SXJMY3Wyb4VMf9Yf83BDxtoeHwITH1WXKXLgm4zNw
+Content-Type: application/json
+
+
+{
+  "state":"서울특별시",
+  "city":"강남구"
+}
+
+### 지역 수정
+PUT http://localhost:19091/api/areas/d30259ca-5d0e-401f-bd18-84412eed67d0
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDQxNDY2OSwiZXhwIjoxNzM0NDE1MDI5fQ.KrheuP2nKUNISb4lnfwHoKmsaRDm3ZAGhe-sg8hTGcxw8SXJMY3Wyb4VMf9Yf83BDxtoeHwITH1WXKXLgm4zNw
+Content-Type: application/json
+
+{
+  "state":"서울특별시",
+  "city":"서초구"
+}
+
+### 지역 삭제
+DELETE http://localhost:19091/api/areas/d30259ca-5d0e-401f-bd18-84412eed67d0
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDQxNDY2OSwiZXhwIjoxNzM0NDE1MDI5fQ.KrheuP2nKUNISb4lnfwHoKmsaRDm3ZAGhe-sg8hTGcxw8SXJMY3Wyb4VMf9Yf83BDxtoeHwITH1WXKXLgm4zNw
+Content-Type: application/json
+
+
+
+### 지역 조회
+GET http://localhost:19091/api/areas?page=1
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDQxNDY2OSwiZXhwIjoxNzM0NDE1MDI5fQ.KrheuP2nKUNISb4lnfwHoKmsaRDm3ZAGhe-sg8hTGcxw8SXJMY3Wyb4VMf9Yf83BDxtoeHwITH1WXKXLgm4zNw
+Content-Type: application/json
+
+
+
+
+### 허브 추가
+POST http://localhost:19091/api/hubs
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDQxNDY2OSwiZXhwIjoxNzM0NDE1MDI5fQ.KrheuP2nKUNISb4lnfwHoKmsaRDm3ZAGhe-sg8hTGcxw8SXJMY3Wyb4VMf9Yf83BDxtoeHwITH1WXKXLgm4zNw
+Content-Type: application/json
+
+{
+  "name":"서울특별시 강남구 센터",
+  "address":"서울특별시 강남구 학동로 426"
+}
+
+### 허브 수정
+PUT http://localhost:19091/api/hubs/e2dc370d-cfa9-48c1-b065-c69b00730c2c
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDQxNDY2OSwiZXhwIjoxNzM0NDE1MDI5fQ.KrheuP2nKUNISb4lnfwHoKmsaRDm3ZAGhe-sg8hTGcxw8SXJMY3Wyb4VMf9Yf83BDxtoeHwITH1WXKXLgm4zNw
+Content-Type: application/json
+
+{
+  "name":"서울특별시 강남구 센터",
+  "address":"서울특별시 강남구 학동로 425"
+}
+
+### 허브 삭제
+DELETE http://localhost:19091/api/hubs/e2dc370d-cfa9-48c1-b065-c69b00730c2c
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDQxNTA1MCwiZXhwIjoxNzM0NDE1NDEwfQ.gtfp0YcvJI2yvrWGbuM58pRPYiRGXd9NoFDSXId5NRnBofhjS82B55ULDLTExoF-bkZtKbRVDAlFfqjU9wA60A
+Content-Type: application/json
+
+
+### 허브 조회
+GET http://localhost:19091/api/hubs?keyword=서울&page=0&type=AREA&isAsc=false
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDQxNTA1MCwiZXhwIjoxNzM0NDE1NDEwfQ.gtfp0YcvJI2yvrWGbuM58pRPYiRGXd9NoFDSXId5NRnBofhjS82B55ULDLTExoF-bkZtKbRVDAlFfqjU9wA60A
+Content-Type: application/json
+
+
+### hub-transfer 추가
+POST http://localhost:19091/api/hub-transfers
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDM2OTA0NCwiZXhwIjoxNzM0MzY5NDA0fQ.CAKBW_2jeHQwT-Ys4B_uN905e5uc1BsdfQ4CDe0Dv5f0EDrmXYqf3MRo1dt3b115jkMvEJefXNHbNopFXkLRfw
+Content-Type: application/json
+
+{
+  "start-hub-id":"edcaab40-4d0d-4c01-b96d-f5c197a7e74c",
+  "end-hub-id":"a6591945-f7dc-4745-a7af-541a446c931d"
+}
+
+### hub-transfer 수정
+PUT http://localhost:19091/api/hub-transfers/ce11c21f-3d03-4932-ac13-a19d6c2f079b
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDM2OTA0NCwiZXhwIjoxNzM0MzY5NDA0fQ.CAKBW_2jeHQwT-Ys4B_uN905e5uc1BsdfQ4CDe0Dv5f0EDrmXYqf3MRo1dt3b115jkMvEJefXNHbNopFXkLRfw
+Content-Type: application/json
+
+{
+  "start-hub-id":"1c2ac6d4-277e-46d6-b7b3-f28a815e6f41",
+  "end-hub-id":"edcaab40-4d0d-4c01-b96d-f5c197a7e74c"
+}
+
+### hub-transfer 삭제
+DELETE http://localhost:19091/api/hub-transfers/ce11c21f-3d03-4932-ac13-a19d6c2f079b
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDM2OTA0NCwiZXhwIjoxNzM0MzY5NDA0fQ.CAKBW_2jeHQwT-Ys4B_uN905e5uc1BsdfQ4CDe0Dv5f0EDrmXYqf3MRo1dt3b115jkMvEJefXNHbNopFXkLRfw
+Content-Type: application/json
+
+### hub-transfer 조회
+GET http://localhost:19091/api/hub-transfers?distance[gte]=10&distance[lte]=100&timeTaken[gte]=30&timeTaken[lte]=120&page=0&size=10&sort=timeTaken,asc
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDM2OTA0NCwiZXhwIjoxNzM0MzY5NDA0fQ.CAKBW_2jeHQwT-Ys4B_uN905e5uc1BsdfQ4CDe0Dv5f0EDrmXYqf3MRo1dt3b115jkMvEJefXNHbNopFXkLRfw
+Content-Type: application/json
+
+### hub-transfer hub-to-hub 시작 허브와 도착 허브로 가는 이동 경로
+GET http://localhost:19091/api/hub-transfers/hub-to-hub?startHubId=edcaab40-4d0d-4c01-b96d-f5c197a7e74c&endHubId=55b4e704-0d13-49b0-9797-3de2a9c53c82
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDM2OTA0NCwiZXhwIjoxNzM0MzY5NDA0fQ.CAKBW_2jeHQwT-Ys4B_uN905e5uc1BsdfQ4CDe0Dv5f0EDrmXYqf3MRo1dt3b115jkMvEJefXNHbNopFXkLRfw
+Content-Type: application/json
+
+### Company 주소, 위도, 경도로 허브 찾기
+GET http://localhost:19091/api/hubs/company-address?address=경기도 성남시&lat=37.888888&lng=127.88888
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDM2OTA0NCwiZXhwIjoxNzM0MzY5NDA0fQ.CAKBW_2jeHQwT-Ys4B_uN905e5uc1BsdfQ4CDe0Dv5f0EDrmXYqf3MRo1dt3b115jkMvEJefXNHbNopFXkLRfw
+Content-Type: application/json

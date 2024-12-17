@@ -28,3 +28,11 @@ delivery:
 scheduler:
   delivery-assignment:
     interval: ${DELIVERY_ASSIGNMENT_SCHEDULER_INTERVAL}
+
+slack:
+  webhook:
+    url: ${SLACK_WEBHOOK_URL}
+
+gemini:
+  apiKey: ${GEMINI_API_KEY}
+  url: ${GEMINI_URL}
