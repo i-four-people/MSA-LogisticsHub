@@ -82,7 +82,7 @@ MSA 기반 물류 관리 및 배송 시스템 플랫폼
 > * GET /api/companies/{id} - 업체 상세 조회
 > * GET /api/companies/search-by-name - 업체 이름으로 업체 조회
 
-### 🚛 주문
+### 🧾 주문
 - Order APIs
 > * POST /api/orders - 주문 생성
 > * GET /api/orders - 주문 전체 조회
@@ -90,6 +90,18 @@ MSA 기반 물류 관리 및 배송 시스템 플랫폼
 > * PUT /api/orders/{orderId} - 주문 수정
 > * PATCH /api/orders/{orderId}/status - 주문 상태 변경
 > * DELETE /api/orders/{orderId} - 주문 삭제
+
+### 🚛 배달
+- Delivery APIs
+
+> * GET /api/deliveries/{deliveryId}/order-status - 주문 상태 변경 가능 여부 확인
+> * GET /api/deliveries - 배송 전체 조회
+> * GET /api/deliveries/{deliveryId} - 배송 상세 조회
+> * PATCH /api/deliveries/{deliveryId}/status - 배송 상태 수정
+> * DELETE /api/deliveries/{deliveryId} - 배송 삭제
+- Delivery Route APIs
+
+> * PATCH /api/delivery-routes/{routeId}/status - 배송 이동 경로 상태 수정
 
 
 
