@@ -46,7 +46,7 @@ public class AuthService {
 
         // 유저 객체 생성
         User user = User.create(signupRequest.username(), encodedPassword, signupRequest.email(), signupRequest.tel(), signupRequest.slackId(), userRole);
-//        user.setCreatedBy(signupRequest.username());
+        user.setCreatedBy(signupRequest.username());
         // 저장
         userRepository.save(user);
 
