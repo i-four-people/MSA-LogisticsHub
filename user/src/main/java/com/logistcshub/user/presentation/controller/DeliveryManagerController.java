@@ -5,6 +5,7 @@ import com.logistcshub.user.common.response.CommonResponse;
 import com.logistcshub.user.common.response.SuccessResponse;
 import com.logistcshub.user.common.security.UserDetailsImpl;
 import com.logistcshub.user.domain.model.deliveryManager.DeliveryManagerType;
+import com.logistcshub.user.presentation.request.DeliveryManagerUpdateRequest;
 import com.logistcshub.user.presentation.request.deliveryManager.DeliSearchRequest;
 import com.logistcshub.user.presentation.request.deliveryManager.DeliveryManagerCreate;
 import com.logistcshub.user.presentation.request.deliveryManager.DeliveryManagerUpdate;
@@ -100,5 +101,11 @@ public class DeliveryManagerController {
     public List<DeliveryManagerResponse> findAvailableManagers(
             @RequestParam(defaultValue = "HUB_PIC") DeliveryManagerType type) {
         return deliveryManagerService.findAvailableManagers(type);
+    }
+
+    @PutMapping("/api/delivery-managers/{deliveryManagerId}/hub")
+   public void updateHubForManager(@PathVariable("deliveryManagerId") Long deliveryManagerId,
+                             @RequestBody DeliveryManagerUpdateRequest request) {
+        return deliveryManagerService.updateHubForManager(deliveryManagerId, request);
     }
 }

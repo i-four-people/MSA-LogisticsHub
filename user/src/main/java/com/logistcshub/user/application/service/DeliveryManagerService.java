@@ -15,6 +15,7 @@ import com.logistcshub.user.domain.model.user.UserRoleEnum;
 import com.logistcshub.user.infrastructure.repository.DeliveryManagerRepository;
 import com.logistcshub.user.infrastructure.repository.HubManagerRepository;
 import com.logistcshub.user.infrastructure.repository.UserRepository;
+import com.logistcshub.user.presentation.request.DeliveryManagerUpdateRequest;
 import com.logistcshub.user.presentation.request.deliveryManager.DeliSearchRequest;
 import com.logistcshub.user.presentation.request.deliveryManager.DeliveryManagerCreate;
 import com.logistcshub.user.presentation.request.deliveryManager.DeliveryManagerUpdate;
@@ -225,5 +226,12 @@ public class DeliveryManagerService {
                     return DeliveryManagerResponse.from(deliveryManager, user);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public void updateHubForManager(Long deliveryManagerId, DeliveryManagerUpdateRequest request) {
+        DeliveryManager deliveryManager = deliveryManagerRepository.findById(deliveryManagerId)
+                .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
+
+        deliveryManager.update(request.hubId());
     }
 }
