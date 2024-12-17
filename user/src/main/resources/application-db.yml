@@ -1,14 +1,20 @@
 spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      username: default
+      password: systempass
   jpa:
     hibernate:
       ddl-auto: update
+    show-sql: true
     properties:
       hibernate:
-        show_sql: true
         format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        default_batch_fetch_size: 1000
-      open-in-view: false
+        highlight_sql: true
+        default_batch_fetch_size: 10
+    open-in-view: false
 
 ---
 # Local 환경
@@ -21,6 +27,13 @@ spring:
     username: ${SPRING_DATASOURCE_LOCAL_USERNAME}
     password: ${SPRING_DATASOURCE_LOCAL_PASSWORD}
     url: ${SPRING_DATASOURCE_LOCAL_URL}
+  rabbitmq:
+    host: localhost
+    port: 5672
+    stream:
+      username: guest
+      password: guest
+      virtual-host: /
 eureka:
   client:
     service-url:

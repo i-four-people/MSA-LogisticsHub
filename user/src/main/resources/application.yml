@@ -4,18 +4,17 @@ server:
 spring:
   application:
     name: ${SPRING_APPLICATION_NAME}
-  data:
-    redis:
-      host: ${REDIS_LOCAL_HOST_NAME}
-      port: ${REDIS_LOCAL_PORT}
-      username: ${REDIS_LOCAL_USERNAME}
-      password: ${REDIS_LOCAL_PASSWORD}
 
-  datasource:
-    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
-    url: ${SPRING_DATASOURCE_LOCAL_URL}
-    username: ${SPRING_DATASOURCE_LOCAL_USERNAME}
-    password: ${SPRING_DATASOURCE_LOCAL_PASSWORD}
+  profiles:
+    active:
+      - prod
+    group:
+      local:
+        - db-local
+      prod:
+        - db-prod
+    include:
+      - db
 
   jpa:
     hibernate:
@@ -26,14 +25,9 @@ spring:
         format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
         default_batch_fetch_size: 1000
+      open-in-view: false
 
 jwt:
   admin-token: ${ADMIN_TOKEN}
   access-expiration: 360000
-  secret-key: ${JWT_TOKEN}
-
-
-eureka:
-  client:
-    service-url:
-      defaultZone: ${EUREKA_SERVICE_URL}
+  secret-key: ${JWT_SECRET_KEY}
