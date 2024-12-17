@@ -1,0 +1,49 @@
+# default
+server:
+  port: ${SERVER_PORT}
+
+spring:
+  application:
+    name: ${SPRING_APPLICATION_NAME}
+  profiles:
+    active:
+      - prod
+    group:
+      local:
+        - db-local
+      prod:
+        - db-prod
+    include:
+      - db
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_batch_fetch_size: 1000
+      open-in-view: false
+
+management:
+  zipkin:
+    tracing:
+      endpoint: ${ZIPKIN_ENDPOINT}
+  tracing:
+    sampling:
+      probability: 1.0
+  endpoints:
+    web:
+      exposure:
+        include: refresh
+
+kakaomap:
+  admin-key: ${KAKAO_MAP_ADMIN_KEY}
+  map-url: ${KAKAO_MAP_URL}
+
+kakaoroad:
+  admin-key: ${KAKAO_ROAD_API_ADMIN_KEY}
+  road-url: ${KAKAO_ROAD_API_URL}
+
+message: "default message"

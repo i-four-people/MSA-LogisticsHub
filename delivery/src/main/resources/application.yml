@@ -1,0 +1,40 @@
+server:
+  port: ${SERVER_PORT}
+
+spring:
+  application:
+    name: ${SPRING_APPLICATION_NAME}
+  profiles:
+    active:
+      - prod
+    group:
+      local:
+        - db-local
+      prod:
+        - db-prod
+    include:
+      - db
+      - infra
+
+
+delivery:
+  max-waiting-time-minutes: ${DELIVERY_MAX_WAITING_TIME_MINUTES}
+
+scheduler:
+  delivery-assignment:
+    interval: ${DELIVERY_ASSIGNMENT_SCHEDULER_INTERVAL}
+
+slack:
+  webhook:
+    url: ${SLACK_WEBHOOK_URL}
+
+gemini:
+  apiKey: ${GEMINI_API_KEY}
+  url: ${GEMINI_URL}
+
+logging:
+  level:
+    feign: DEBUG
+    com:
+      logistics:
+        delivery: DEBUG

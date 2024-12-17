@@ -1,0 +1,33 @@
+server:
+  port: ${SERVER_PORT}
+
+spring:
+  application:
+    name: ${SPRING_APPLICATION_NAME}
+
+  profiles:
+    active:
+      - prod
+    group:
+      local:
+        - db-local
+      prod:
+        - db-prod
+    include:
+      - db
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_batch_fetch_size: 1000
+      open-in-view: false
+
+jwt:
+  admin-token: ${ADMIN_TOKEN}
+  access-expiration: 360000
+  secret-key: ${JWT_SECRET_KEY}

@@ -1,0 +1,64 @@
+### 허브 매니저 생성
+POST http://localhost:19093/api/hub-managers
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDI4NDE4MSwiZXhwIjoxNzM0Mjg0NTQxfQ.ZdT4zz4-6ORLasAVeKSKWiO-lTwkgyg28Cj8lARjOFbh_T3d-JnWredXNjhS_yl3MRIQPg8JFDMZJV1W7O38fg
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: MASTER
+
+{
+  "userId": 4,
+  "hubId": "f73b8ded-4b7c-4ca3-be88-32a84266672a"
+}
+
+### 배송 담당자 생성
+POST http://localhost:19093/api/delivery-managers
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDA5NjM3NiwiZXhwIjoxNzM0MDk2NzM2fQ.SZjtDJJxXq9JhEe1JGYLhTGgpjXiWsCIZLS7MxR8Gd23wvh9BSdzTj6wOEyAHi9zlk8flGHwb4kH-evsP6OEMA
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: MASTER
+
+{
+  "userId": 5,
+  "hubId": "f73b8ded-4b7c-4ca3-be88-32a84266672a",
+  "deliveryManagerType": "COMPANY_PIC"
+}
+
+### 배송 담당자 전체 조회
+GET http://localhost:19093/api/delivery-managers
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDA5NDYzNiwiZXhwIjoxNzM0MDk0OTk2fQ.R13NOdbs1e0H4mOeT4jykLHFhPDgB-kcbT9EOArwf8iZ2CAylHCdc8WCjhhWj36BGEtCB4orS-YSdVG5eOyxeg
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: MASTER
+
+### 배송 담당자 상세 조회
+GET http://localhost:19093/api/delivery-managers/5
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDA5NDYzNiwiZXhwIjoxNzM0MDk0OTk2fQ.R13NOdbs1e0H4mOeT4jykLHFhPDgB-kcbT9EOArwf8iZ2CAylHCdc8WCjhhWj36BGEtCB4orS-YSdVG5eOyxeg
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: MASTER
+
+### 배송 담당자 수정
+PATCH http://localhost:19093/api/delivery-managers/5
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDA5NDYzNiwiZXhwIjoxNzM0MDk0OTk2fQ.R13NOdbs1e0H4mOeT4jykLHFhPDgB-kcbT9EOArwf8iZ2CAylHCdc8WCjhhWj36BGEtCB4orS-YSdVG5eOyxeg
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: MASTER
+
+{
+  "deliveryManagerType": "COMPANY_PIC",
+  "hubId": "70a29f22-ade2-455c-a270-cedf635ef5ac"
+}
+
+### 배송 담당자 삭제
+DELETE http://localhost:19093/api/delivery-managers/5
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDA5NDYzNiwiZXhwIjoxNzM0MDk0OTk2fQ.R13NOdbs1e0H4mOeT4jykLHFhPDgB-kcbT9EOArwf8iZ2CAylHCdc8WCjhhWj36BGEtCB4orS-YSdVG5eOyxeg
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: MASTER
+
+### 배정 가능한 허브 배송 담당자 조회
+GET http://localhost:19093/api/delivery-managers/api/delivery-managers/available-manager
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDMzNDkxNywiZXhwIjoxNzM0MzM1Mjc3fQ.WNMz2BJKNVuCvwl4DFm34nUoXV16g_F3nngs6XrnV6Ma1r7t_yGuxntPJxhCczCaeZFpsTGJZjVv5jCLZ9kIOA
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: MASTER

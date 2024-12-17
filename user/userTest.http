@@ -1,0 +1,63 @@
+### 회원 가입
+POST http://localhost:19093/api/auth/signup
+Content-Type: application/json
+Accept: application/json
+
+{
+  "username": "master1",
+  "password": "Qwer1234@",
+  "email": "master1@email.com",
+  "tel": "010-1234-5678",
+  "slackId": "slack-id",
+  "role": "MASTER",
+  "adminToken": "admin-token-1234"
+}
+
+### 로그인
+POST http://localhost:19093/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "master1@email.com",
+  "password": "Qwer1234@"
+}
+
+### 내 정보 조회
+GET http://localhost:19093/api/users/user/3
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiI0Iiwicm9sZSI6IkhVQl9NQU5BR0VSIiwiaXNzIjoidXNlci1zZXJ2aWNlIiwiaWF0IjoxNzM0MjgzNzYyLCJleHAiOjE3MzQyODQxMjJ9.G3Zv2BohQJ7LsGCh_nTcJNKbVJLSGX_tjZKMcNQny9_P3uIIGRIf053eGXvnw8YFJa-JyUNZ_l61ZuuDAIP2PQ
+Content-Type: application/json
+X-User-Id: 3
+X-User-Role: HUB_MANAGER
+
+### 유저 전체 조회 (MASTER)
+GET http://localhost:19093/api/users
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczMzkxOTkzMiwiZXhwIjoxNzMzOTIwMjkyfQ.5_47UQCW9rhLFu_AsTMdSs4NN9Stz7gn829AmJMvxjVzTwNDtYwSzMmHr5VTa5Y_TFkMkNWrkh3xqzvQjHHzsg
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: MASTER
+
+### 유저 상세 조회 (MASTER)
+GET http://localhost:19093/api/users/2
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIyIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDQxMjUwMCwiZXhwIjoxNzM0NDEyODYwfQ.5Ai-6XtqYYyx4AOtc8CaYbrbfD8s2mmEmz4rw3venQ8yxH463In8u_z8AW6aFNOhFH3RAJsiKkU3JE8ITUEQTA
+Content-Type: application/json
+X-User-Id: 2
+X-User-Role: MASTER
+
+
+### 유저 권한 수정 (MASTER)
+PATCH http://localhost:19093/api/users/5
+Authorization: Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwicm9sZSI6Ik1BU1RFUiIsImlzcyI6InVzZXItc2VydmljZSIsImlhdCI6MTczNDI4NDE4MSwiZXhwIjoxNzM0Mjg0NTQxfQ.ZdT4zz4-6ORLasAVeKSKWiO-lTwkgyg28Cj8lARjOFbh_T3d-JnWredXNjhS_yl3MRIQPg8JFDMZJV1W7O38fg
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: MASTER
+
+{
+  "role": "HUB_MANAGER"
+}
+
+### 유저 탈퇴
+DELETE http://localhost:19093/api/user/2
+Authorization: Bearer
+Content-Type: application/json
+X-User-Id: 1
+X-User-Role: MASTER

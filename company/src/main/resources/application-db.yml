@@ -1,0 +1,44 @@
+# Default 설정
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        highlight_sql: true
+        default_batch_fetch_size: 10
+    open-in-view: false
+
+---
+# Local 환경
+spring:
+  config:
+    activate:
+      on-profile: "db-local"
+  datasource:
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
+    username: ${SPRING_DATASOURCE_LOCAL_USERNAME}
+    password: ${SPRING_DATASOURCE_LOCAL_PASSWORD}
+    url: ${SPRING_DATASOURCE_LOCAL_URL}
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVICE_URL}
+
+---
+# Production 환경
+spring:
+  config:
+    activate:
+      on-profile: "db-prod"
+  datasource:
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
+    username: ${SPRING_DATASOURCE_PROD_USERNAME}
+    password: ${SPRING_DATASOURCE_PROD_PASSWORD}
+    url: ${SPRING_DATASOURCE_PROD_URL}
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_PROD_SERVICE_URL}
