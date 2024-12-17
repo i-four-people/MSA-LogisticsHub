@@ -181,6 +181,8 @@ public class OrderServiceImpl implements OrderService {
             throw new BusinessException(ErrorCode.ORDER_ALREADY_COMPLETED);
         }
 
+        findOrder.delete();
+
         // 이벤트 생성
         OrderDeleteEvent event = OrderDeleteEvent.of(findOrder);
 

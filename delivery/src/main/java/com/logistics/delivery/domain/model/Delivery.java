@@ -49,6 +49,9 @@ public class Delivery extends AuditingFields {
     @Comment("수령자 Slack Id")
     private String recipientSlackId;
 
+    @Comment("업체 배송 담당자 ID")
+    private Long companyDeliveryManagerId;
+
     @Comment("삭제 여부")
     private boolean isDelete;
 
@@ -81,6 +84,15 @@ public class Delivery extends AuditingFields {
                 .recipientName(event.recipientName())
                 .recipientSlackId(event.recipientSlackId())
                 .build();
+    }
+
+    /**
+     * 업체 배송 담당자를 배정하는 메서드
+     *
+     * @param assignedManagerId 업체 배송 담당자 ID
+     */
+    public void assignDeliveryCompanyManager(Long assignedManagerId) {
+        this.companyDeliveryManagerId = assignedManagerId;
     }
 
 }

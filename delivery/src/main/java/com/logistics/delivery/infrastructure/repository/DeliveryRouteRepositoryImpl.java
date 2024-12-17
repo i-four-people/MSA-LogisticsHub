@@ -49,4 +49,9 @@ public class DeliveryRouteRepositoryImpl implements DeliveryRouteRepository {
     public List<Long> findAssignedManagerIds() {
         return jpaDeliveryRouteRepository.findAssignedManagerIds();
     }
+
+    @Override
+    public List<DeliveryRoute> findByDeliveryId(UUID deliveryId) {
+        return jpaDeliveryRouteRepository.findByDeliveryId(deliveryId);
+    }
 }

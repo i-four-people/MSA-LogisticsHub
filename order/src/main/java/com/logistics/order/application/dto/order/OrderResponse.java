@@ -9,6 +9,7 @@ import java.util.UUID;
 
 public record OrderResponse(
         UUID id,                  // 주문 ID
+        UUID deliveryId,          // 배송 ID
         UUID requesterCompanyId,  // 요청 업체 ID
         String requesterCompanyName, // 요청 업체명
         UUID recipientCompanyId,  // 수령 업체 ID
@@ -26,6 +27,7 @@ public record OrderResponse(
     public static OrderResponse from(Order order, CompanyResponse requesterCompany, CompanyResponse recipientCompany, ProductResponse product) {
         return new OrderResponse(
                 order.getId(),
+                order.getDeliveryId(),
                 order.getSupplyCompanyId(),
                 requesterCompany.companyName(),
                 order.getRecipientCompanyId(),
