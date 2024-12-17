@@ -144,6 +144,8 @@ docker-compose up -d
 
 - 주문 정보와 총 이동 경로와 시간을 받아와 Gemini를 통해 최종 배송 시안을 받아 해당 메세지 배송 담당자의 멘션과 함께 슬랙으로 전송 <br>
 
+- docker-compose를 통해 도커에 서비스를 실행
+
 <br><br>
 
 ## 🚨 Trouble Shooting
