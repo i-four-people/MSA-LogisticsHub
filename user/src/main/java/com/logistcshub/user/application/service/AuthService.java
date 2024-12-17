@@ -1,19 +1,19 @@
 package com.logistcshub.user.application.service;
 
-import com.logistcshub.user.presentation.response.user.TokenDto;
-import com.logistcshub.user.presentation.response.user.UserDto;
+import com.logistcshub.user.common.exception.UserException;
 import com.logistcshub.user.common.jwt.JwtUtil;
+import com.logistcshub.user.common.message.ExceptionMessage;
 import com.logistcshub.user.domain.model.user.User;
 import com.logistcshub.user.domain.model.user.UserRoleEnum;
 import com.logistcshub.user.infrastructure.repository.UserRepository;
 import com.logistcshub.user.presentation.request.user.LoginRequest;
 import com.logistcshub.user.presentation.request.user.SignupRequest;
-import jakarta.persistence.EntityNotFoundException;
+import com.logistcshub.user.presentation.response.user.TokenDto;
+import com.logistcshub.user.presentation.response.user.UserDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,7 +37,7 @@ public class AuthService {
         UserRoleEnum userRole = UserRoleEnum.valueOf(signupRequest.role());
         if (userRole.equals(UserRoleEnum.MASTER)) {
             if (!signupRequest.adminToken().equals(ADMIN_TOKEN)) {
-                throw new IllegalArgumentException("관리자 암호가 올바르지 않습니다.");
+                throw new UserException(ExceptionMessage.INVALID_ADMIN_TOKEN);
             }
         }
 
@@ -46,7 +46,7 @@ public class AuthService {
 
         // 유저 객체 생성
         User user = User.create(signupRequest.username(), encodedPassword, signupRequest.email(), signupRequest.tel(), signupRequest.slackId(), userRole);
-//        user.setCreatedBy(signupRequest.username());
+        user.setCreatedBy(signupRequest.username());
         // 저장
         userRepository.save(user);
 
@@ -55,12 +55,12 @@ public class AuthService {
 
     public TokenDto login(@Valid LoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.email())
-                .orElseThrow(() -> new EntityNotFoundException("등록되지 않은 유저입니다."));
+                .orElseThrow(() -> new UserException(ExceptionMessage.USER_NOT_FOUND));
         log.info("유저 검증 완료 #####");
 
         if (!passwordEncoder.matches(loginRequest.password(), user.getPassword())
         ) {
-            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+            throw new UserException(ExceptionMessage.INVALID_PASSWORD);
         }
         log.info("비밀번호 일치 확인 완료 #####");
 
