@@ -21,8 +21,8 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     }
 
     @Override
-    public Optional<Delivery> findByOrderId(UUID orderId) {
-        return jpaDeliveryRepository.findByOrderId(orderId);
+    public List<Delivery> findByOrderId(UUID orderId) {
+        return jpaDeliveryRepository.findByOrderIdAndIsDeletedFalseOrderByCreatedAt(orderId);
     }
 
     @Override

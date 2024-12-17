@@ -7,25 +7,19 @@ import com.logistcshub.hub.hub.application.dtos.HubResponseDto;
 import com.logistcshub.hub.hub.application.dtos.UpdateHubResponseDto;
 import com.logistcshub.hub.hub.application.service.HubService;
 import com.logistcshub.hub.hub.presentation.request.AddHubRequestDto;
+import com.logistcshub.hub.hub.presentation.request.HubIdsDto;
 import com.logistcshub.hub.hub.presentation.request.UpdateHubRequestDto;
 import com.logistcshub.hub.hub.presentation.request.type.HubSearchType;
 import com.logistcshub.hub.hub.presentation.request.type.SortType;
+
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.logistcshub.hub.common.domain.model.type.ResponseMessage.*;
 
@@ -116,6 +110,13 @@ public class HubController {
 
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_GET_HUB, hubService.getHubFromCompanyAddress(userId, role, address, lat, lng))
+        );
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<SuccessResponse<List<HubResponseDto>>> getHubsFromList(@RequestBody List<UUID> idList) {
+        return ResponseEntity.ok().body(
+                SuccessResponse.of(SUCCESS_GET_HUBS, hubService.getHubListFromIdList(idList))
         );
     }
 

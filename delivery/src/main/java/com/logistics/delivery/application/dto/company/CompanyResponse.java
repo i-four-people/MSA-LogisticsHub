@@ -5,6 +5,7 @@ import java.util.UUID;
 public record CompanyResponse(
         UUID companyId,
         String companyName,
-        UUID hubId
+        UUID hubId,
+        String address
 ) {
 }

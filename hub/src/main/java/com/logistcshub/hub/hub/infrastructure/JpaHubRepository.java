@@ -1,6 +1,7 @@
 package com.logistcshub.hub.hub.infrastructure;
 
 import com.logistcshub.hub.area.domain.model.Area;
+import com.logistcshub.hub.hub.application.dtos.HubResponseDto;
 import com.logistcshub.hub.hub.domain.mode.Hub;
 
 import java.util.List;
@@ -41,4 +42,6 @@ public interface JpaHubRepository extends JpaRepository<Hub, UUID> {
             "        ll_to_earth(:lat, :lng) " +
             ") limit 1", nativeQuery = true)
     Optional<Hub> findByAreaInAndIsDeletedFalse(List<UUID> areaList, double lat, double lng);
+
+    List<HubResponseDto> findByIdInAndIsDeletedFalse(List<UUID> idList);
 }

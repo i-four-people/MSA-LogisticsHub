@@ -23,6 +23,7 @@ import com.logistcshub.hub.hub.domain.mode.Hub;
 import com.logistcshub.hub.hub.domain.repository.HubRepository;
 import com.logistcshub.hub.hub.domain.repository.HubSearchRepository;
 import com.logistcshub.hub.hub.presentation.request.AddHubRequestDto;
+import com.logistcshub.hub.hub.presentation.request.HubIdsDto;
 import com.logistcshub.hub.hub.presentation.request.UpdateHubRequestDto;
 import com.logistcshub.hub.hub.presentation.request.type.HubSearchType;
 import com.logistcshub.hub.hub.presentation.request.type.SortType;
@@ -221,5 +222,9 @@ public class HubService {
         return HubResponseDto.of(hubRepository.findByAreaInAndIsDeletedFalse(areaList.stream().map(Area::getId).toList(), lat, lng)
                 .orElseThrow(() ->
                         new RestApiException(HUB_NOT_FOUND)));
+    }
+
+    public List<HubResponseDto> getHubListFromIdList(List<UUID> idList) {
+        return hubRepository.findByIdInAndIsDeletedFalse(idList);
     }
 }
