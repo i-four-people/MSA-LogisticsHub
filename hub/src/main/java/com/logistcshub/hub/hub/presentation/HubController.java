@@ -95,7 +95,7 @@ public class HubController {
         );
     }
 
-    @GetMapping("/list")
+    @PostMapping("/list")
     public ResponseEntity<SuccessResponse<List<HubResponseDto>>> getHubsFromList(@RequestBody List<UUID> idList) {
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_GET_HUBS, hubService.getHubListFromIdList(idList))

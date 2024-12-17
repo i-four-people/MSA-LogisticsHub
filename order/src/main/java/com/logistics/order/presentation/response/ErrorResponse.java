@@ -45,7 +45,7 @@ public record ErrorResponse(
         public static ErrorDetails of(ErrorCode errorCode, BindingResult bindingResult, String path) {
             return new ErrorDetails(
                     errorCode.getCode(),
-                    bindingResult.getFieldErrors().isEmpty() ? "Validation error" : bindingResult.getFieldErrors().getFirst().getDefaultMessage(),
+                    bindingResult.getFieldErrors().isEmpty() ? "Validation error" : bindingResult.getFieldErrors().get(0).getDefaultMessage(),
                     path
             );
         }

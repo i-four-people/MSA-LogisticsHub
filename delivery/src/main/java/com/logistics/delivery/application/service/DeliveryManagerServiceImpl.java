@@ -1,15 +1,17 @@
 package com.logistics.delivery.application.service;
 
+import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerResponse;
 import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerType;
 import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerUpdateRequest;
 import com.logistics.delivery.application.dto.event.SlackCreateEvent;
-import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerResponse;
+import com.logistics.delivery.application.util.EventUtil;
 import com.logistics.delivery.domain.model.DeliveryRoute;
 import com.logistics.delivery.domain.model.RouteStatus;
 import com.logistics.delivery.domain.repository.DeliveryRouteRepository;
 import com.logistics.delivery.domain.service.DeliveryManagerService;
 import com.logistics.delivery.infrastructure.client.DeliveryManagerClient;
 import com.logistics.delivery.infrastructure.config.RabbitMQProperties;
+import com.logistics.delivery.presentation.auth.AuthContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -17,8 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -56,11 +56,11 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
             boolean hasExcludedStatus = routes.stream()
                     .anyMatch(route -> route.getStatus() == RouteStatus.IN_TRANSIT || route.getStatus() == RouteStatus.AT_HUB);
 
-            if (assignedManagerId != null && !hasExceededWaitingTime(routes) && !hasExcludedStatus) {
-                // 담당자가 배정되어 있고 대기 시간이 초과되지 않은 경우, 아직 출발하지 않은 경우 기존 담당자를 배정
+            if (assignedManagerId != null && !hasExcludedStatus) {
+                // 담당자가 배정되어 있고 아직 출발하지 않은 경우 기존 담당자를 배정
                 assignExistingManagerToRoutes(routes, assignedManagerId);
             } else {
-                // 기존 담당자가 없거나 대기 시간이 초과된 경우, 이미 출발했을 경우는 새로운 담당자를 배정
+                // 기존 담당자가 없거나 이미 출발했을 경우는 새로운 담당자를 배정
                 assignManagerToGroupedRoutes(routeKey, routes);
             }
         });
@@ -76,14 +76,30 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
     private void assignExistingManagerToRoutes(List<DeliveryRoute> routes, Long assignedManagerId) {
         routes.forEach(route -> {
             route.assignManager(assignedManagerId); // 기존 담당자 배정
+
+            deliveryManagerClient.findAvailableManagers(DeliveryManagerType.HUB_PIC).stream()
+                    .filter(manager -> manager.id().equals(assignedManagerId))
+                    .findFirst()
+                    .ifPresent(assignedManager -> {
+
+                        // 이벤트 생성
+                        SlackCreateEvent event = SlackCreateEvent.of(route, assignedManager, AuthContext.get());
+
+                        // 슬랙 이벤트 발행
+                        rabbitTemplate.convertAndSend(
+                                rabbitProperties.getExchange().getDelivery(),
+                                "",
+                                EventUtil.serializeEvent(event)
+                        );
+                    });
         });
     }
 
-    private boolean hasExceededWaitingTime(List<DeliveryRoute> routes) {
+    /*private boolean hasExceededWaitingTime(List<DeliveryRoute> routes) {
         return routes.stream().anyMatch(route ->
                 Duration.between(route.getCreatedAt(), LocalDateTime.now()).toMinutes() >= maxWaitingTimeMinutes
         );
-    }
+    }*/
 
     private void assignManagerToGroupedRoutes(RouteKey routeKey, List<DeliveryRoute> routes) {
         UUID startHubId = routeKey.startHubId();
@@ -95,7 +111,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         // 스케줄러를 통해 주기적으로 PENDING 상태의 경로를 확인하고, 완료된 담당자가 있는지 확인.
         if (availableManagers == null || availableManagers.isEmpty()) {
             log.info("No available delivery managers at hub: {}. The route will remain in PENDING state.", startHubId);
-            return; // 배송 담당자 배정 생략
+            return;
         }
 
         // 이미 배정된 담당자 ID 가져오기
@@ -112,44 +128,51 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         }
 
         // 허브 ID가 startHubId와 일치하는 담당자를 먼저 필터링 (현재 허브에 위차한 배송 담당자 먼저 확인)
-        List<DeliveryManagerResponse> matchingHubManagers = availableManagers.stream()
+        Optional<DeliveryManagerResponse> matchingHubManagers = unassignedManagers.stream()
                 .filter(manager -> manager.hubId().equals(startHubId))
-                .toList();
+                .min(Comparator.comparing(DeliveryManagerResponse::sequence)); // sequence 기준으로 최소값 찾기
 
-        // 일치하는 담당자가 없으면 모든 담당자를 사용
-        List<DeliveryManagerResponse> managersToAssign = new ArrayList<>(matchingHubManagers.isEmpty()
-                ? availableManagers
-                : matchingHubManagers
+        DeliveryManagerResponse managerToAssign = matchingHubManagers.orElseGet(
+                () -> getDeliveryManagerResponse(routeKey, availableManagers) // 순번을 위한 인덱스 (라운드 로빈)
         );
 
-        // 순번 기준으로 정렬
-        managersToAssign.sort(Comparator.comparing(DeliveryManagerResponse::sequence));
-
-        // 순번 기준으로 라운드 로빈 방식 적용
-        AtomicInteger index = new AtomicInteger(0);
-
+        // 동일 그룹의 모든 routes에 같은 매니저 배정
         routes.forEach(route -> {
-            // 담당자 배정 (순번 기준으로 라운드 로빈)
-            DeliveryManagerResponse assignedManager = availableManagers.get(index.getAndIncrement() % availableManagers.size());
-            route.assignManager(assignedManager.id());
+            route.assignManager(managerToAssign.id());
 
             log.info("Assigned manager {} to route from {} to {}",
-                    assignedManager.id(), route.getStartHubId(), route.getEndHubId());
+                    managerToAssign.id(), route.getStartHubId(), route.getEndHubId());
 
             // 배송 담당자의 hubId를 출발지 허브로 업데이트
-            deliveryManagerClient.updateHubForManager(assignedManager.id(), new DeliveryManagerUpdateRequest(route.getStartHubId()));
+            deliveryManagerClient.updateHubForManager(managerToAssign.id(), new DeliveryManagerUpdateRequest(route.getStartHubId()));
 
             // 이벤트 생성
-            SlackCreateEvent event = SlackCreateEvent.of(route, assignedManager);
+            SlackCreateEvent event = SlackCreateEvent.of(route, managerToAssign, AuthContext.get());
 
             // 슬랙 이벤트 발행
             rabbitTemplate.convertAndSend(
                     rabbitProperties.getExchange().getDelivery(),
-                    event
+                    "",
+                    EventUtil.serializeEvent(event)
             );
-
         });
     }
+
+    private static DeliveryManagerResponse getDeliveryManagerResponse(RouteKey routeKey, List<DeliveryManagerResponse> availableManagers) {
+        AtomicInteger roundRobinIndex = new AtomicInteger(0);
+
+        // 이미 배정된 담당자 캐싱 (routeKey -> DeliveryManagerResponse)
+        Map<RouteKey, DeliveryManagerResponse> assignedManagerCache = new HashMap<>();
+
+        // 라운드 로빈 방식으로 매니저 선택
+        return assignedManagerCache.computeIfAbsent(routeKey, key -> {
+            // 새 매니저 선택
+            DeliveryManagerResponse assigned = availableManagers.get(roundRobinIndex.getAndIncrement() % availableManagers.size());
+            log.info("Selected manager {} for route group: {}", assigned.id(), routeKey);
+            return assigned;
+        });
+    }
+
 
     // 경로 키: 출발 허브와 도착 허브를 묶는 키
     private record RouteKey(UUID startHubId, UUID endHubId) {}
