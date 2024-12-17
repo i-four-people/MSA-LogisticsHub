@@ -29,6 +29,7 @@ MSA 기반 물류 관리 및 배송 시스템 플랫폼
 <br><br>
 
 ## 🚨 Trouble Shooting
+#### 허브 배송 담당자 배정 최적화 [WIKI보기](https://github.com/i-four-people/MSA-LogisticsHub/wiki/%5BTrouble-Shooting%5D-%ED%97%88%EB%B8%8C-%EB%B0%B0%EC%86%A1-%EB%8B%B4%EB%8B%B9%EC%9E%90-%EB%B0%B0%EC%A0%95-%EC%B5%9C%EC%A0%81%ED%99%94)
 
 <br><br>
 
