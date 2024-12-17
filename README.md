@@ -63,7 +63,7 @@ MSA 기반 물류 관리 및 배송 시스템 플랫폼
 > * DELETE /api/hub-transfers/{id} - Hub Transfer 삭제
 > * GET /api/hub-transfers/{id} - Hub Transfer 상세 조회
 > * GET /api/hub-transfers - Hub Transfer 검색
-> * GET /api/hub-transfers/hub-to-hub - 허브 간 Hub Transfer 조회
+> * GET /api/hub-transfers/hub-to-hub - 시작 허브에서 도착 허브의 총 이동 경로 조회
 
 - Area APIs
 > * POST /api/areas - Area 생성
