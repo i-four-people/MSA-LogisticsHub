@@ -167,8 +167,8 @@ public class DeliveryServiceImpl implements DeliveryService {
     public void createDelivery(OrderCreateConsume consume) {
 
         // 출발 허브, 도착 허브 조회
-        CompanyResponse recipientCompany = companyClient.findCompanyById(consume.recipientCompanyId()).data(); // 수령 업체
-        CompanyResponse supplyCompany = companyClient.findCompanyById(consume.supplyCompanyId()).data(); // 공급 업체
+        CompanyResponse recipientCompany = companyClient.findCompanyById(consume.recipientCompanyId()); // 수령 업체
+        CompanyResponse supplyCompany = companyClient.findCompanyById(consume.supplyCompanyId()); // 공급 업체
 
         // 주문의 배송이 이미 존재하는 경우
         boolean deliveryExists = deliveryRepository.existsByOrderId(consume.orderId());

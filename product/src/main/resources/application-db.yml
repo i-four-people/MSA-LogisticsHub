@@ -22,6 +22,10 @@ spring:
     username: ${SPRING_DATASOURCE_LOCAL_USERNAME}
     password: ${SPRING_DATASOURCE_LOCAL_PASSWORD}
     url: ${SPRING_DATASOURCE_LOCAL_URL}
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVICE_URL}
 
 ---
 # Production 환경
@@ -34,6 +38,10 @@ spring:
     username: ${SPRING_DATASOURCE_PROD_USERNAME}
     password: ${SPRING_DATASOURCE_PROD_PASSWORD}
     url: ${SPRING_DATASOURCE_PROD_URL}
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_PROD_SERVICE_URL}
 
 ---
 spring:
