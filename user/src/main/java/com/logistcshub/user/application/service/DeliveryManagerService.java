@@ -25,6 +25,7 @@ import com.logistcshub.user.presentation.response.deliveryManager.DeliSearchResp
 import com.logistcshub.user.presentation.response.deliveryManager.DeliveryManagerDto;
 import com.logistcshub.user.presentation.response.deliveryManager.DeliveryManagerResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,6 +39,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class DeliveryManagerService {
@@ -199,8 +201,10 @@ public class DeliveryManagerService {
             throw new UserException(ExceptionMessage.HUB_NOT_FOUND);
         }
 
+        log.info(String.valueOf(hubManager.getHubId()));
+        log.info(String.valueOf(requestHubId));
         // 배송 담당자를 등록하려는 허브가 허브 매니저의 담당 허브인지 확인
-        if (hubManager.getHubId().equals(requestHubId)) {
+        if (!hubManager.getHubId().equals(requestHubId)) {
             throw new UserException(ExceptionMessage.HUB_MANAGER_ACCESS_DENIED);
         }
     }
