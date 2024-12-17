@@ -124,6 +124,7 @@ docker-compose up -d
 <br><br>
 
 ## 🚗 프로젝트 기능
+- JWT 토큰 기반 로그인 시스템이 구현되어 있으며, Gateway에서 토큰을 검증하고 각 모듈에서 사용자 역할(role)을 기반으로 접근 권한을 제어
 
 - User, Area, Hub, HubTransfer에 각각 Inserter를 만들어 서버가 실행 시 지정된 유저 정보, 지역, 허브, 허브 간 연결 정보를 db에 넣음 <br>
 
