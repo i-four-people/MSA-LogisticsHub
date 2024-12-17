@@ -78,18 +78,18 @@ public class OrderServiceImpl implements OrderService {
 
         // 업체 정보 및 상품 정보 조회
         List<UUID> recipientCompanyIds = orders.map(Order::getRecipientCompanyId).stream().distinct().toList();
-        List<CompanyResponse> recipientCompanies = companyClient.findCompaniesByIds(recipientCompanyIds).getBody().data();
+        List<CompanyResponse> recipientCompanies = companyClient.findCompaniesByIds(recipientCompanyIds);
 
         List<UUID> requestCompanyIds = orders.map(Order::getSupplyCompanyId).stream().distinct().toList();
-        List<CompanyResponse> requestCompanies = companyClient.findCompaniesByIds(requestCompanyIds).getBody().data();
+        List<CompanyResponse> requestCompanies = companyClient.findCompaniesByIds(requestCompanyIds);
 
         List<UUID> productIds = orders.map(Order::getProductId).stream().distinct().toList();
-        List<ProductResponse> products = productClient.findProductsByIds(productIds).getBody().data();
+        List<ProductResponse> products = productClient.findProductsByIds(productIds);
 
         // 응답값 반환
         Map<UUID, CompanyResponse> recipientCompanyMap = recipientCompanies.stream().collect(Collectors.toMap(CompanyResponse::companyId, c -> c));
         Map<UUID, CompanyResponse> requestCompanyMap = requestCompanies.stream().collect(Collectors.toMap(CompanyResponse::companyId, c -> c));
-        Map<UUID, ProductResponse> productMap = products.stream().collect(Collectors.toMap(ProductResponse::id, p -> p));
+        Map<UUID, ProductResponse> productMap = products.stream().collect(Collectors.toMap(ProductResponse::productId, p -> p));
 
         Page<OrderResponse> results = orders.map(order -> {
             CompanyResponse recipientCompany = recipientCompanyMap.get(order.getRecipientCompanyId());

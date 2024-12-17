@@ -31,8 +31,6 @@ public class OrderApiController {
     @GetMapping("")
     public ApiResponse<?> getOrders(@ModelAttribute SearchParameter searchParameter,
                                     @AuthHeader AuthHeaderInfo auth) {
-        System.out.println("auth.role() = " + auth.role());
-        System.out.println("auth.userId() = " + auth.userId());
         PageResponse<OrderResponse> results = orderService.getOrders(searchParameter);
         return ApiResponse.success(MessageType.RETRIEVE, results);
     }
