@@ -134,6 +134,11 @@ docker-compose up -d
 
 <br><br>
 
+## ⚙️ Development Environment
+`Java 17` `SpringBoot 3.4.0` `QueryDSL 5.0.0`
+
+<br><br>
+
 ## 🌐 Architecture
 <img width="373" alt="스크린샷 2024-12-18 00 09 04" src="https://github.com/user-attachments/assets/f0582b2a-9942-4374-be75-e9372a420bab" />
 
