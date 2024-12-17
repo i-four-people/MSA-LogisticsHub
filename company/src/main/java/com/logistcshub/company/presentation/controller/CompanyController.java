@@ -8,9 +8,7 @@ import com.logistcshub.company.presentation.response.ApiResponse;
 import com.logistcshub.company.presentation.response.CompanyResponseDto;
 import com.logistcshub.company.presentation.response.MessageType;
 import com.querydsl.core.types.Predicate;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.querydsl.binding.QuerydslPredicate;
@@ -78,6 +76,14 @@ public class CompanyController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(ApiResponse.success(MessageType.RETRIEVE, companyService.getCompany(id)));
+    }
+//    이름을 통한 업체 조회
+    @GetMapping("/search-by-name")
+    ResponseEntity<ApiResponse<List<CompanyResponse>>> findCompanyByName(@RequestParam String companyName){
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponse.success(MessageType.RETRIEVE, companyService.findCompanyByName(companyName)));
+
     }
 
     @PostMapping("/batch")

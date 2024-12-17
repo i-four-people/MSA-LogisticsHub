@@ -8,6 +8,7 @@ import com.logistcshub.company.domain.model.Company;
 import com.logistcshub.company.domain.repository.CompanyRepository;
 import com.logistcshub.company.infrastructure.config.RestApiException;
 import com.logistcshub.company.presentation.request.CompanyRequestDto;
+import com.logistcshub.company.presentation.response.ApiResponse;
 import com.logistcshub.company.presentation.response.CompanyResponseDto;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Predicate;
@@ -182,4 +183,8 @@ public class CompanyService {
         return companiesResponse;
     }
 
+    public List<CompanyResponse> findCompanyByName(String companyName) {
+        Company company = companyRepository.findByName(companyName);
+        return List.of(CompanyResponse.toDto(company));
+    }
 }
