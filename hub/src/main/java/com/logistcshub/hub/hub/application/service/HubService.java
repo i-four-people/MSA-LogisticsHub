@@ -215,6 +215,13 @@ public class HubService {
 
     }
 
+    @Transactional(readOnly = true)
+    public List<HubResponseDto> findAllHubs(String role) {
+        validateRole(role);
+
+        return hubRepository.findByIsDeletedFalse().stream().map(HubResponseDto::of).toList();
+    }
+
     private HubResponseDto findByAreaIn(State state, double lat, double lng) {
         List<Area> areaList = areaRepository.findByStateAndIsDeletedFalse(state);
 
@@ -234,7 +241,7 @@ public class HubService {
     }
 
     private void validateRole(String role) {
-        if(role == null || !(role.equals("MASTER") || role.equals("HUB_MANAGER") || role.equals("COMPANY_MANAGER") || role.equals("DELIVERY_MANAGER"))) {
+        if(role == null || !((role.equals("MASTER") || role.equals("HUB_MANAGER") || role.equals("COMPANY_MANAGER") || role.equals("DELIVERY_MANAGER")))) {
             throw new RestApiException(FORBIDDEN);
         }
     }
