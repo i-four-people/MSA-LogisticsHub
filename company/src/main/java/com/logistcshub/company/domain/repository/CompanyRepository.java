@@ -11,4 +11,5 @@ import java.util.UUID;
 public interface CompanyRepository extends JpaRepository<Company, UUID>,
         CompanyRepositoryCustom ,
         QuerydslPredicateExecutor<Company> {
+    Company findByName(String companyName);
 }
