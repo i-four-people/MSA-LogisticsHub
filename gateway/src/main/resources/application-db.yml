@@ -1,0 +1,23 @@
+---
+# Production 환경
+spring:
+  config:
+    activate:
+      on-profile: "db-local"
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:19090/eureka/  # Eureka 서버의 URL을 지정
+
+
+---
+# Production 환경
+spring:
+  config:
+    activate:
+      on-profile: "db-prod"
+eureka:
+  client:
+    service-url:
+      defaultZone: http://server-service:19090/eureka/  # Eureka 서버의 URL을 지정

@@ -90,7 +90,7 @@ public class SlackServiceImpl implements SlackService {
         hubClient.getHubsToHubIds(hubIds.stream().toList()).data().forEach(hubResponse -> hubMap.put(hubResponse.id(), hubResponse));
 
         OrderDetailResponse orderDetailResponse = orderClient.orderDetails(delivery.getOrderId()).data();
-        CompanyResponse companyResponse = companyClient.findCompanyById(orderDetailResponse.recipientCompanyId()).data();
+        CompanyResponse companyResponse = companyClient.findCompanyById(orderDetailResponse.recipientCompanyId());
 
         StringBuilder sb = new StringBuilder();
 

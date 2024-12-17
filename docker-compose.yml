@@ -8,3 +8,240 @@ services:
     ports:
       - 6379:6379
       - 8001:8001
+    networks:
+      - hub-network
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"  # AMQP 프로토콜 포트
+      - "15672:15672"  # RabbitMQ 관리 콘솔 포트
+    environment:
+      RABBITMQ_DEFAULT_USER: user  # 기본 사용자
+      RABBITMQ_DEFAULT_PASS: password  # 기본 비밀번호
+    networks:
+      - hub-network
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 30s
+      retries: 3
+
+  server-service:
+    container_name: server-service
+    image: openjdk:17-jdk-slim
+    volumes:
+      - ./server/build/libs/service-server.jar:/app/service-server.jar
+    command: ["java", "-jar", "/app/service-server.jar", "--spring.config.location=classpath:/application.properties"]
+    ports:
+      - "19090:19090"  # Eureka 서비스 포트
+    networks:
+      - hub-network
+
+  gateway-service:
+    container_name: gateway
+    image: openjdk:17-jdk-slim
+    command: ["java", "-jar", "/app/service-gateway.jar", "--spring.config.location=classpath:/application.yml"]
+    volumes:
+      - ./gateway/build/libs/service-gateway.jar:/app/service-gateway.jar
+    depends_on:
+      - server-service
+    ports:
+      - "19091:19091"  # Gateway 서비스 포트
+    networks:
+      - hub-network
+
+  user-db:
+    image: postgres
+    container_name: user-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: p_users
+    networks:
+      - hub-network
+    restart: always
+
+  user-service:
+    container_name: user
+    image: openjdk:17-jdk-slim
+    env_file:
+      - ./user/.env
+    command: ["java", "-jar", "/app/service-user.jar", "--spring.config.location=classpath:/application.yml,classpath:/application-db.yml"]
+    volumes:
+      - ./user/build/libs/service-user.jar:/app/service-user.jar
+    depends_on:
+      - server-service
+      - gateway-service
+      - redis-stack
+      - user-db
+    ports:
+      - "19093:19093"  # User 서비스 포트
+    networks:
+      - hub-network
+
+  company-db:
+    image: postgres
+    container_name: company-db
+    ports:
+      - "5433:5433"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: p_companies
+    networks:
+      - hub-network
+    restart: always
+
+  company-service:
+    container_name: company
+    image: openjdk:17-jdk-slim
+    env_file:
+      - ./company/.env
+    command: ["java", "-jar", "/app/service-company.jar", "--spring.config.location=classpath:/application.yml,classpath:/application-db.yml"]
+    volumes:
+      - ./company/build/libs/service-company.jar:/app/service-company.jar
+    depends_on:
+      - company-db
+      - user-service
+      - gateway-service
+      - server-service
+    ports:
+      - "19094:19094"  # Company 서비스 포트
+    networks:
+      - hub-network
+
+  hub-db:
+    image: postgres
+    container_name: hub-db
+    ports:
+      - "5434:5434"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: p_hubs
+    networks:
+      - hub-network
+    restart: always
+
+  hub-service:
+    container_name: hub
+    image: openjdk:17-jdk-slim
+    env_file:
+      - ./hub/.env
+    command: ["java", "-jar", "/app/service-hub.jar", "--spring.config.location=classpath:/application.yml,classpath:/application-db.yml"]
+    volumes:
+      - ./hub/build/libs/service-hub.jar:/app/service-hub.jar
+    depends_on:
+      - hub-db
+      - gateway-service
+      - server-service
+      - user-service
+      - redis-stack
+    ports:
+      - "19092:19092"  # Hub 서비스 포트
+    networks:
+      - hub-network
+
+  product-db:
+    image: postgres
+    container_name: product-db
+    ports:
+      - "5435:5435"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: p_products
+    networks:
+      - hub-network
+    restart: always
+
+  product-service:
+    container_name: product
+    image: openjdk:17-jdk-slim
+    env_file:
+      - ./product/.env
+    command: ["java", "-jar", "/app/service-product.jar", "--spring.config.location=classpath:/application.yml,classpath:/application-db.yml"]
+    volumes:
+      - ./product/build/libs/service-product.jar:/app/service-product.jar
+    depends_on:
+      - product-db
+      - hub-service
+      - gateway-service
+      - server-service
+    ports:
+      - "19095:19095"  # Product 서비스 포트
+    networks:
+      - hub-network
+
+  order-db:
+    image: postgres
+    container_name: order-db
+    ports:
+      - "5436:5436"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: p_orders
+    networks:
+      - hub-network
+    restart: always
+
+  order-service:
+    container_name: order
+    image: openjdk:21-jdk-slim
+    env_file:
+      - ./order/.env
+    command: ["java", "-jar", "/app/service-order.jar", "--spring.config.location=classpath:/application.yml,classpath:/application-db.yml"]
+    volumes:
+      - ./order/build/libs/service-order.jar:/app/service-order.jar
+    depends_on:
+      - order-db
+      - product-service
+      - hub-service
+      - gateway-service
+      - server-service
+    ports:
+      - "19097:19097"  # Order 서비스 포트
+    networks:
+      - hub-network
+
+  delivery-db:
+    image: postgres
+    container_name: delivery-db
+    ports:
+      - "5437:5437"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: p_deliveries
+    networks:
+      - hub-network
+    restart: always
+
+  delivery-service:
+    container_name: delivery
+    image: openjdk:21-jdk-slim
+    env_file:
+      - ./delivery/.env
+    command: ["java", "-jar", "/app/service-delivery.jar", "--spring.config.location=classpath:/application.yml,classpath:/application-db.yml"]
+    volumes:
+      - ./delivery/build/libs/service-delivery.jar:/app/service-delivery.jar
+    depends_on:
+      - delivery-db
+      - order-service
+      - product-service
+      - hub-service
+      - gateway-service
+      - server-service
+    ports:
+      - "19099:19099"  # Delivery 서비스 포트
+    networks:
+      - hub-network
+
+networks:
+  hub-network:
+    driver: bridge
