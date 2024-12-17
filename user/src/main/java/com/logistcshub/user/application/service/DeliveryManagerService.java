@@ -6,6 +6,8 @@ import com.google.gson.reflect.TypeToken;
 import com.logistcshub.user.application.client.HubClient;
 import com.logistcshub.user.application.dtos.HubDto;
 import com.logistcshub.user.application.mapper.DeliveryManagerMapper;
+import com.logistcshub.user.common.exception.UserException;
+import com.logistcshub.user.common.message.ExceptionMessage;
 import com.logistcshub.user.common.security.UserDetailsImpl;
 import com.logistcshub.user.domain.model.deliveryManager.DeliveryManager;
 import com.logistcshub.user.domain.model.deliveryManager.DeliveryManagerType;
@@ -57,11 +59,11 @@ public class DeliveryManagerService {
         UserRoleEnum role = userDetails.user().getRole();
 
         User user = userRepository.findById(deliveryManagerCreate.userId())
-                .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
+                .orElseThrow(() -> new UserException(ExceptionMessage.USER_NOT_FOUND));
 
         // 등록하려는 유저의 권한이 DELIVERY_MANAGER 인지 확인
         if (!user.getRole().equals(UserRoleEnum.DELIVERY_MANAGER)) {
-            throw new AccessDeniedException("배송 담당자가 아닙니다.");
+            throw new UserException(ExceptionMessage.INVALID_DELIVERY_MANAGER);
         }
 
         // 허브 찾아오기
@@ -77,7 +79,7 @@ public class DeliveryManagerService {
         // 배송담당자 타입이 업체 배송 담당자인 경우 -> 허브 여부 확인
         if (deliveryManagerCreate.deliveryManagerType().equals(DeliveryManagerType.COMPANY_PIC)) {
             if (deliveryManagerCreate.hubId() == null) {
-                throw new EntityNotFoundException("배송 담당자는 담당 허브를 지정해주어야합니다.");
+                throw new UserException(ExceptionMessage.HUB_NOT_ASSIGNED);
             }
         }
 
@@ -104,7 +106,7 @@ public class DeliveryManagerService {
         UserRoleEnum role = userDetails.user().getRole();
 
         DeliveryManager deliveryManager = deliveryManagerRepository.findById(deliveryManagerId)
-                .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
+                .orElseThrow(() -> new UserException(ExceptionMessage.USER_NOT_FOUND));
 
         // 허브 객체 가져오기
         HubDto hub = findHub(userId, role, deliveryManager.getHubId());
@@ -119,7 +121,7 @@ public class DeliveryManagerService {
         if (role.equals(UserRoleEnum.DELIVERY_MANAGER)) {
             // 본인 정보만 조회 가능
             if (!userId.equals(deliveryManager.getUserId())) {
-                throw new AccessDeniedException("본인 정보만 확인 가능합니다.");
+                throw new UserException(ExceptionMessage.ACCESS_DENIED_OWN_INFO);
             }
         }
 
@@ -134,7 +136,7 @@ public class DeliveryManagerService {
         UserRoleEnum role = userDetails.user().getRole();
 
         DeliveryManager deliveryManager = deliveryManagerRepository.findById(deliveryManagerId)
-                .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
+                .orElseThrow(() -> new UserException(ExceptionMessage.USER_NOT_FOUND));
 
         // 허브 객체 가져오기
         HubDto hub = findHub(userId, role, deliveryManagerUpdate.hubId());
@@ -157,7 +159,7 @@ public class DeliveryManagerService {
         UserRoleEnum role = userDetails.user().getRole();
 
         DeliveryManager deliveryManager = deliveryManagerRepository.findById(deliveryManagerId)
-                .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
+                .orElseThrow(() -> new UserException(ExceptionMessage.USER_NOT_FOUND));
 
         HubDto hub = findHub(userId, role, deliveryManager.getHubId());
 
@@ -192,16 +194,16 @@ public class DeliveryManagerService {
     private void checkHub (HubDto hub, UUID requestHubId, Long userId) {
         // 등록하려는 허브매니저 객체
         HubManager hubManager = hubManagerRepository.findByUserId(userId)
-                .orElseThrow(() -> new EntityNotFoundException("등록되지 않은 허브 매니저입니다."));
+                .orElseThrow(() -> new UserException(ExceptionMessage.INVALID_HUB_MANAGER));
 
         // 허브 존재 여부
         if (hub == null) {
-            throw new EntityNotFoundException("존재하지 않는 허브입니다.");
+            throw new UserException(ExceptionMessage.HUB_NOT_FOUND);
         }
 
         // 배송 담당자를 등록하려는 허브가 허브 매니저의 담당 허브인지 확인
         if (hubManager.getHubId().equals(requestHubId)) {
-            throw new AccessDeniedException("매니저님의 담당 허브가 아닙니다.");
+            throw new UserException(ExceptionMessage.HUB_MANAGER_ACCESS_DENIED);
         }
     }
 
@@ -230,7 +232,7 @@ public class DeliveryManagerService {
 
     public void updateHubForManager(Long deliveryManagerId, DeliveryManagerUpdateRequest request) {
         DeliveryManager deliveryManager = deliveryManagerRepository.findById(deliveryManagerId)
-                .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
+                .orElseThrow(() -> new UserException(ExceptionMessage.USER_NOT_FOUND));
 
         deliveryManager.update(request.hubId());
     }

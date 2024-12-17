@@ -1,5 +1,7 @@
 package com.logistcshub.user.application.service;
 
+import com.logistcshub.user.common.exception.UserException;
+import com.logistcshub.user.common.message.ExceptionMessage;
 import com.logistcshub.user.presentation.response.user.TokenDto;
 import com.logistcshub.user.presentation.response.user.UserDto;
 import com.logistcshub.user.common.jwt.JwtUtil;
@@ -37,7 +39,7 @@ public class AuthService {
         UserRoleEnum userRole = UserRoleEnum.valueOf(signupRequest.role());
         if (userRole.equals(UserRoleEnum.MASTER)) {
             if (!signupRequest.adminToken().equals(ADMIN_TOKEN)) {
-                throw new IllegalArgumentException("관리자 암호가 올바르지 않습니다.");
+                throw new UserException(ExceptionMessage.INVALID_ADMIN_TOKEN);
             }
         }
 
@@ -55,12 +57,12 @@ public class AuthService {
 
     public TokenDto login(@Valid LoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.email())
-                .orElseThrow(() -> new EntityNotFoundException("등록되지 않은 유저입니다."));
+                .orElseThrow(() -> new UserException(ExceptionMessage.USER_NOT_FOUND));
         log.info("유저 검증 완료 #####");
 
         if (!passwordEncoder.matches(loginRequest.password(), user.getPassword())
         ) {
-            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
+            throw new UserException(ExceptionMessage.INVALID_PASSWORD);
         }
         log.info("비밀번호 일치 확인 완료 #####");
 
