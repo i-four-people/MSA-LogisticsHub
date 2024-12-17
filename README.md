@@ -23,6 +23,63 @@ MSA 기반 물류 관리 및 배송 시스템 플랫폼
 
 <br><br>
 
+## 📑 서비스 구성 및 실행방법
+### 🙋🏻‍ 회원 (CRUD)
+- Auth APIs
+
+> * POST /api/auth/signup - 회원 가입
+> * POST /api/auth/login - 로그인
+
+- User APIs
+> * GET /api/users/user/{userId} - 내 정보 조회
+> * GET /api/users - 유저 전체 조회 (MASTER 권한)
+> * GET /api/users/{userId} - 유저 상세 조회 (MASTER 권한)
+> * PATCH /api/users/{userId} - 유저 권한 수정 (MASTER 권한)
+> * DELETE /api/user/{userId} - 유저 탈퇴
+
+- Hub Manager APIs
+> * POST /api/hub-managers - 허브 매니저 생성
+- Delivery Manager APIs
+> * POST /api/delivery-managers - 배송 담당자 생성
+> * GET /api/delivery-managers - 배송 담당자 전체 조회
+> * GET /api/delivery-managers/{deliveryManagerId} - 배송 담당자 상세 조회
+> * PATCH /api/delivery-managers/{deliveryManagerId} - 배송 담당자 수정
+> * DELETE /api/delivery-managers/{deliveryManagerId} - 배송 담당자 삭제
+> * GET /api/delivery-managers/available-manager - 배정 가능한 허브 배송 담당자 조회
+
+### 🏭 허브
+- Hub APIs
+> * POST /api/hubs - 허브 생성
+
+> * PUT /api/hubs/{id} - 허브 수정
+> * DELETE /api/hubs/{id} - 허브 삭제
+> * GET /api/hubs/{id} - 허브 상세 조회
+> * GET /api/hubs - 허브 검색
+> * GET /api/hubs/company-address - 업체 주소 기반 Hub 조회
+> * GET /api/hubs/list - 허브 전체 조회
+
+- Hub Transfer APIs
+> * POST /api/hub-transfers - Hub Transfer 생성
+> * PUT /api/hub-transfers/{id} - Hub Transfer 수정
+> * DELETE /api/hub-transfers/{id} - Hub Transfer 삭제
+> * GET /api/hub-transfers/{id} - Hub Transfer 상세 조회
+> * GET /api/hub-transfers - Hub Transfer 검색
+> * GET /api/hub-transfers/hub-to-hub - 허브 간 Hub Transfer 조회
+
+- Area APIs
+> * POST /api/areas - Area 생성
+> * PUT /api/areas/{id} - Area 수정
+> * DELETE /api/areas/{id} - Area 삭제
+> * GET /api/areas/{id} - Area 상세 조회
+> * GET /api/areas - Area 검색
+
+### 🏢 업체
+
+### 🚛 주문
+
+
+<br><br>
+
 ## 🚗 프로젝트 기능
 
 
