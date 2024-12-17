@@ -29,11 +29,6 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     }
 
     @Override
-    public Optional<Delivery> findByOrderId(UUID orderId) {
-        return jpaDeliveryRepository.findByOrderId(orderId);
-    }
-
-    @Override
     public boolean existsByOrderId(UUID orderId) {
         return jpaDeliveryRepository.existsByOrderId(orderId);
     }

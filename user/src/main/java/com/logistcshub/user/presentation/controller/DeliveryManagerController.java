@@ -5,12 +5,13 @@ import com.logistcshub.user.common.response.CommonResponse;
 import com.logistcshub.user.common.response.SuccessResponse;
 import com.logistcshub.user.common.security.UserDetailsImpl;
 import com.logistcshub.user.domain.model.deliveryManager.DeliveryManagerType;
-import com.logistcshub.user.presentation.request.DeliSearchRequest;
-import com.logistcshub.user.presentation.request.DeliveryManagerCreate;
-import com.logistcshub.user.presentation.request.DeliveryManagerUpdate;
-import com.logistcshub.user.presentation.response.DeliSearchResponse;
-import com.logistcshub.user.presentation.response.DeliveryManagerDto;
-import com.logistcshub.user.presentation.response.DeliveryManagerResponse;
+import com.logistcshub.user.presentation.request.DeliveryManagerUpdateRequest;
+import com.logistcshub.user.presentation.request.deliveryManager.DeliSearchRequest;
+import com.logistcshub.user.presentation.request.deliveryManager.DeliveryManagerCreate;
+import com.logistcshub.user.presentation.request.deliveryManager.DeliveryManagerUpdate;
+import com.logistcshub.user.presentation.response.deliveryManager.DeliSearchResponse;
+import com.logistcshub.user.presentation.response.deliveryManager.DeliveryManagerDto;
+import com.logistcshub.user.presentation.response.deliveryManager.DeliveryManagerResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -100,5 +101,11 @@ public class DeliveryManagerController {
     public List<DeliveryManagerResponse> findAvailableManagers(
             @RequestParam(defaultValue = "HUB_PIC") DeliveryManagerType type) {
         return deliveryManagerService.findAvailableManagers(type);
+    }
+
+    @PutMapping("/api/delivery-managers/{deliveryManagerId}/hub")
+   public void updateHubForManager(@PathVariable("deliveryManagerId") Long deliveryManagerId,
+                             @RequestBody DeliveryManagerUpdateRequest request) {
+        deliveryManagerService.updateHubForManager(deliveryManagerId, request);
     }
 }

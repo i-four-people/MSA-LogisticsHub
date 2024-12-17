@@ -1,6 +1,7 @@
 package com.logistcshub.hub.hub.infrastructure;
 
 import com.logistcshub.hub.area.domain.model.Area;
+import com.logistcshub.hub.hub.application.dtos.HubResponseDto;
 import com.logistcshub.hub.hub.domain.mode.Hub;
 import com.logistcshub.hub.hub.domain.repository.HubRepository;
 
@@ -49,5 +50,10 @@ public class HubRepositoryImpl implements HubRepository {
     @Override
     public Optional<Hub> findByAreaInAndIsDeletedFalse(List<UUID> areaList, double lat, double lng) {
         return jpaHubRepository.findByAreaInAndIsDeletedFalse(areaList, lat, lng);
+    }
+
+    @Override
+    public List<HubResponseDto> findByIdInAndIsDeletedFalse(List<UUID> idList) {
+        return jpaHubRepository.findByIdInAndIsDeletedFalse(idList);
     }
 }

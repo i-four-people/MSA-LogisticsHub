@@ -1,4 +1,4 @@
-package com.logistcshub.user.presentation.request;
+package com.logistcshub.user.presentation.request.user;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

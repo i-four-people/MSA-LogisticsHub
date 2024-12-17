@@ -1,4 +1,4 @@
-package com.logistcshub.user.presentation.response;
+package com.logistcshub.user.presentation.response.deliveryManager;
 
 import java.io.Serializable;
 import java.util.List;

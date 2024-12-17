@@ -52,4 +52,8 @@ public class DeliveryManager extends AuditEntity {
         this.deliveryManagerType = deliveryManagerType;
         this.hubId = hubId;
     }
+
+    public void update(UUID hubId) {
+        this.hubId = hubId;
+    }
 }

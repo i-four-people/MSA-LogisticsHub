@@ -11,6 +11,7 @@ import lombok.Getter;
 public enum City {
     // 서울특별시
     SONGPA("송파구", State.SEOUL),
+    GANGNAM("강남구", State.SEOUL),
 
     // 경기도
     ICHON("이천시", State.GYEONGGI),
