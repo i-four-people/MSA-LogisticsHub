@@ -74,6 +74,7 @@ services:
     volumes:
       - ./user/build/libs/service-user.jar:/app/service-user.jar
     depends_on:
+      - hub-service
       - server-service
       - gateway-service
       - redis-stack
@@ -139,7 +140,6 @@ services:
       - hub-db
       - gateway-service
       - server-service
-      - user-service
       - redis-stack
     ports:
       - "19092:19092"  # Hub 서비스 포트
