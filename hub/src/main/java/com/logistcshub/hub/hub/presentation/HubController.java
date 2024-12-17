@@ -102,4 +102,11 @@ public class HubController {
         );
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<SuccessResponse<List<HubResponseDto>>> getAllHubs(@RequestHeader String role) {
+        return ResponseEntity.ok().body(
+                SuccessResponse.of(SUCCESS_GET_HUBS, hubService.findAllHubs(role))
+        );
+    }
+
 }
