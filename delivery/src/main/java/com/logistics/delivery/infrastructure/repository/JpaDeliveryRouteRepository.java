@@ -18,7 +18,9 @@ public interface JpaDeliveryRouteRepository extends JpaRepository<DeliveryRoute,
             "AND dr.status = 'ASSIGNED'")
     Optional<Long> findAssignedManagerByRoute(UUID startHubId, UUID endHubId);
 
-    @Query("SELECT DISTINCT dr.deliveryManagerId FROM DeliveryRoute dr WHERE dr.status = 'ASSIGNED'")
+    @Query("SELECT DISTINCT dr.deliveryManagerId FROM DeliveryRoute dr " +
+            "WHERE dr.status = 'ASSIGNED' " +
+            "OR dr.status = 'IN_TRANSIT'")
     List<Long> findAssignedManagerIds();
 
     @Query("SELECT dr FROM DeliveryRoute dr " +

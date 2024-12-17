@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
@@ -31,7 +32,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.logistics.delivery.presentation.exception.ErrorCode.INTERNAL_ERROR;
 import static com.logistics.delivery.presentation.exception.ErrorCode.INVALID_INPUT;
@@ -62,6 +65,7 @@ public class SlackServiceImpl implements SlackService {
     private final Slack slack = Slack.getInstance();
 
     @Override
+    @Transactional
     public void createSlackMessage(SlackCreateConsume slackCreateConsume) {
         Delivery delivery = deliveryRepository.findById(slackCreateConsume.deliveryId()).orElseThrow(
                 () -> new BusinessException(INVALID_INPUT)
@@ -92,18 +96,19 @@ public class SlackServiceImpl implements SlackService {
         OrderDetailResponse orderDetailResponse = orderClient.orderDetails(delivery.getOrderId()).getBody().data();
         CompanyResponse companyResponse = companyClient.findCompanyById(orderDetailResponse.recipientCompanyId()).getBody().data();
 
-        StringBuilder sb = new StringBuilder();
-
-        for(DeliveryRoute del : deliveryRoutes) {
-            sb.append(hubMap.get(del.getStartHubId())).append(" ");
-        }
-
-        sb.append(hubMap.get(deliveryRoutes.getLast().getEndHubId()));
-
-        String stopover = sb.toString().trim();
+        // 중간 경유지명 추출
+        String stopover = deliveryRoutes.stream()
+                .skip(1)
+                .map(route -> hubMap.get(route.getStartHubId()).name())
+                .collect(Collectors.joining(", "));
+        stopover += ", " + hubMap.get(deliveryRoutes.getLast().getEndHubId()).name();
 
         String text = """
                     다음 주문을 보고 최종 발송 시한을 알려줘. 몇 월 며칠 몇 시 까지 보내면 되는지.
+                    요청사항에 배송 원하는 시점이 있는 경우 해당 시점에 맞춰서 계산하고, 없다면 오늘 날짜 기준으로 5일 이후의 날짜와 12시로 써줘. 현재 날짜는 
+                    """ + LocalDate.now() +
+                    """ 
+                    시간이야
                     만약 경유지가 있는 경우 하나의 경유지 당 3시간의 대기 시간이 있어.
                     대기 시간을 제외한 예상 이동 시간은 
                     """ + totalTime[0] +
@@ -122,7 +127,7 @@ public class SlackServiceImpl implements SlackService {
                 "경유지 : " + stopover + "\n" +
                 "도착지 : " + companyResponse.address() + "\n" +
                 "담당 배송 허브 : " + hubMap.get(slackCreateConsume.startHubId()).name() + " 에서 " +
-                hubMap.get(slackCreateConsume.startHubId()).name() + " 까지\n" +
+                hubMap.get(slackCreateConsume.endHubId()).name() + " 까지\n" +
                 "배송담당자 : " + slackCreateConsume.deliveryManagerName() + " / <@" + slackCreateConsume.deliveryManagerSlackId() + ">";
 
 
@@ -141,8 +146,6 @@ public class SlackServiceImpl implements SlackService {
             part.put("text", text);
             content.put("parts", new Object[]{part});
             requestBody.put("contents", new Object[]{content});
-
-            System.out.println(requestBody.toString());
 
             // HttpEntity 생성
             HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
