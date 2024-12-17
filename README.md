@@ -50,7 +50,6 @@ MSA 기반 물류 관리 및 배송 시스템 플랫폼
 ### 🏭 허브
 - Hub APIs
 > * POST /api/hubs - 허브 생성
-
 > * PUT /api/hubs/{id} - 허브 수정
 > * DELETE /api/hubs/{id} - 허브 삭제
 > * GET /api/hubs/{id} - 허브 상세 조회
@@ -74,8 +73,29 @@ MSA 기반 물류 관리 및 배송 시스템 플랫폼
 > * GET /api/areas - Area 검색
 
 ### 🏢 업체
+- Company APIs
+
+> * POST /api/companies - 업체 생성
+> * PUT /api/companies/{id} - 업체 수정
+> * DELETE /api/companies/{id} - 업체 삭제
+> * GET /api/companies - 업체 전체 조회
+> * GET /api/companies/{id} - 업체 상세 조회
+> * GET /api/companies/search-by-name - 업체 이름으로 업체 조회
 
 ### 🚛 주문
+- Order APIs
+> * POST /api/orders - 주문 생성
+> * GET /api/orders - 주문 전체 조회
+> * GET /api/orders/{orderId} - 주문 상세 조회
+> * PUT /api/orders/{orderId} - 주문 수정
+> * PATCH /api/orders/{orderId}/status - 주문 상태 변경
+> * DELETE /api/orders/{orderId} - 주문 삭제
+
+
+
+
+
+
 
 <br>
 
