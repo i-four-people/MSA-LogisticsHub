@@ -1,6 +1,7 @@
 package com.logistcshub.user.infrastructure.config;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
@@ -42,32 +43,32 @@ public class RedisConfig {
         return new LettuceConnectionFactory(serverConfig, clientConfig);
     }
 
-    @Bean
-    public ObjectMapper objectMapper() {
-        PolymorphicTypeValidator typeValidator = BasicPolymorphicTypeValidator
-                .builder()
-                .allowIfSubType(Object.class)
-                .build();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule()); // Java 8 날짜/시간 지원
-        objectMapper.activateDefaultTyping(typeValidator, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.WRAPPER_OBJECT); // 모든 객체와 비구현체에 대해 타입을 추가
-        objectMapper.findAndRegisterModules(); // 다른 필요한 모듈 자동 등록
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // 날짜를 타임스탬프로 직렬화하지 않도록 설정
-        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")); // 날짜 형식 설정 (ISO-8601 형식)
-
-        return objectMapper;
-    }
+//    @Bean
+//    public ObjectMapper objectMapper() {
+//        PolymorphicTypeValidator typeValidator = BasicPolymorphicTypeValidator
+//                .builder()
+//                .allowIfSubType("com.logistcshub")
+//                .build();
+//
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        objectMapper.activateDefaultTyping(typeValidator, ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY); // 모든 객체와 비구현체에 대해 타입을 추가
+//        objectMapper.findAndRegisterModules(); // 다른 필요한 모듈 자동 등록
+//        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); // 날짜를 타임스탬프로 직렬화하지 않도록 설정
+//        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//        objectMapper.registerModule(new JavaTimeModule()); // Java 8 날짜/시간 지원
+//        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")); // 날짜 형식 설정 (ISO-8601 형식)
+//
+//        return objectMapper;
+//    }
 
     @Bean
     public RedisTemplate<String, Object> redisTemplate() {
         RedisTemplate<String, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory());
-//        template.setKeySerializer(new StringRedisSerializer());
-//        template.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper()));
-        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer(objectMapper());
-        template.setValueSerializer(serializer);
         template.setKeySerializer(new StringRedisSerializer());
+//        template.setValueSerializer(new GenericJackson2JsonRedisSerializer(objectMapper()));
+        template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+
 
         return template;
     }

@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.logistcshub.user.application.client.HubClient;
 import com.logistcshub.user.application.dtos.HubDto;
+import com.logistcshub.user.common.exception.UserException;
+import com.logistcshub.user.common.message.ExceptionMessage;
 import com.logistcshub.user.common.security.UserDetailsImpl;
 import com.logistcshub.user.domain.model.deliveryManager.HubManager;
 import com.logistcshub.user.domain.model.user.User;
@@ -32,10 +34,10 @@ public class HubManagerService {
     public HubManagerResponse createHubManager(UserDetailsImpl userDetails, HubManagerRequest hubManagerRequest) throws AccessDeniedException {
 
         User user = userRepository.findById(hubManagerRequest.userId())
-                .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
+                .orElseThrow(() -> new UserException(ExceptionMessage.USER_NOT_FOUND));
 
         if (!user.getRole().equals(UserRoleEnum.HUB_MANAGER)) {
-            throw new AccessDeniedException("해당 유저의 권한이 허브 매니저가 아닙니다.");
+            throw new UserException(ExceptionMessage.INVALID_HUB_MANAGER);
         }
 
         Long userId = userDetails.getUserId();
