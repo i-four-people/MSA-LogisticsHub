@@ -41,7 +41,6 @@ public class DeliveryRouteServiceImpl implements DeliveryRouteService {
     public void createRoutesForDelivery(Delivery delivery) {
 
         // 출발 허브 -> 도착 허브 이동 경로 조회
-        HubToHubResponse hubToHubResponse = hubClient.getHubToHubRoutes(delivery.getOriginHubId(), delivery.getDestinationHubId());
         HubToHubResponse hubToHubResponse = hubClient.getHubToHubRoutes(delivery.getOriginHubId(), delivery.getDestinationHubId()).getBody().data();
 
         // 경유지 포함 경로 생성
