@@ -8,6 +8,7 @@ import com.logistics.order.application.dto.event.OrderDeleteEvent;
 import com.logistics.order.application.dto.event.consume.DeliveryCreateConsume;
 import com.logistics.order.application.dto.order.*;
 import com.logistics.order.application.dto.product.ProductResponse;
+import com.logistics.order.application.util.EventUtil;
 import com.logistics.order.domain.model.Order;
 import com.logistics.order.domain.model.OrderStatus;
 import com.logistics.order.domain.repository.OrderRepository;
@@ -19,6 +20,7 @@ import com.logistics.order.infrastructure.config.RabbitMQProperties;
 import com.logistics.order.presentation.exception.BusinessException;
 import com.logistics.order.presentation.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -46,7 +49,7 @@ public class OrderServiceImpl implements OrderService {
     public void createOrder(OrderCreateRequest request) {
 
         // 상품 수량 확인
-        ProductResponse product = productClient.findProductById(request.productId());
+        ProductResponse product = productClient.findProductById(request.productId()).getBody().data();
         if (product.stock() < request.quantity()) {
             throw new BusinessException(ErrorCode.OUT_OF_STOCK);
         }
@@ -60,8 +63,11 @@ public class OrderServiceImpl implements OrderService {
         // 이벤트 발행
         rabbitTemplate.convertAndSend(
                 rabbitProperties.getExchange().getOrder(),
-                event
+                "",
+                EventUtil.serializeEvent(event)
         );
+
+        log.info("주문 생성 이벤트 발행 orderId: {}", event.orderId());
     }
 
     @Override
@@ -71,18 +77,18 @@ public class OrderServiceImpl implements OrderService {
 
         // 업체 정보 및 상품 정보 조회
         List<UUID> recipientCompanyIds = orders.map(Order::getRecipientCompanyId).stream().distinct().toList();
-        List<CompanyResponse> recipientCompanies = companyClient.findCompaniesByIds(recipientCompanyIds);
+        List<CompanyResponse> recipientCompanies = companyClient.findCompaniesByIds(recipientCompanyIds).getBody().data();
 
         List<UUID> requestCompanyIds = orders.map(Order::getSupplyCompanyId).stream().distinct().toList();
-        List<CompanyResponse> requestCompanies = companyClient.findCompaniesByIds(requestCompanyIds);
+        List<CompanyResponse> requestCompanies = companyClient.findCompaniesByIds(requestCompanyIds).getBody().data();
 
         List<UUID> productIds = orders.map(Order::getProductId).stream().distinct().toList();
-        List<ProductResponse> products = productClient.findProductsByIds(productIds);
+        List<ProductResponse> products = productClient.findProductsByIds(productIds).getBody().data();
 
         // 응답값 반환
         Map<UUID, CompanyResponse> recipientCompanyMap = recipientCompanies.stream().collect(Collectors.toMap(CompanyResponse::companyId, c -> c));
         Map<UUID, CompanyResponse> requestCompanyMap = requestCompanies.stream().collect(Collectors.toMap(CompanyResponse::companyId, c -> c));
-        Map<UUID, ProductResponse> productMap = products.stream().collect(Collectors.toMap(ProductResponse::productId, p -> p));
+        Map<UUID, ProductResponse> productMap = products.stream().collect(Collectors.toMap(ProductResponse::id, p -> p));
 
         Page<OrderResponse> results = orders.map(order -> {
             CompanyResponse recipientCompany = recipientCompanyMap.get(order.getRecipientCompanyId());
@@ -97,7 +103,7 @@ public class OrderServiceImpl implements OrderService {
     private Page<Order> findOrders(SearchParameter searchParameter) {
         if ("RECIPIENT_NAME".equals(searchParameter.getSearchType()) || "SUPPLIER_NAME".equals(searchParameter.getSearchType())) {
             // FeignClient로 업체 ID 리스트 조회
-            List<CompanyResponse> findCompanies = companyClient.findCompaniesByName(searchParameter.getSearchValue());
+            List<CompanyResponse> findCompanies = companyClient.findCompaniesByName(searchParameter.getSearchValue()).getBody().data();
             List<UUID> companyIds = findCompanies.stream().map(CompanyResponse::companyId).toList();
 
             // 업체 ID 리스트를 조건으로 필터링
@@ -115,9 +121,9 @@ public class OrderServiceImpl implements OrderService {
         );
 
         // 업체 정보 및 상품 정보 조회
-        CompanyResponse recipientCompany = companyClient.findCompanyById(findOrder.getRecipientCompanyId());
-        CompanyResponse requestCompany = companyClient.findCompanyById(findOrder.getSupplyCompanyId());
-        ProductResponse product = productClient.findProductById(findOrder.getProductId());
+        CompanyResponse recipientCompany = companyClient.findCompanyById(findOrder.getRecipientCompanyId()).getBody().data();
+        CompanyResponse requestCompany = companyClient.findCompanyById(findOrder.getSupplyCompanyId()).getBody().data();
+        ProductResponse product = productClient.findProductById(findOrder.getProductId()).getBody().data();
 
         return OrderDetailResponse.from(findOrder, recipientCompany, requestCompany, product);
     }
@@ -129,8 +135,8 @@ public class OrderServiceImpl implements OrderService {
                 () -> new BusinessException(ErrorCode.RESOURCE_NOT_FOUND)
         );
 
-        // 상품 수량 확인 및 감소
-        ProductResponse product = productClient.findProductById(findOrder.getProductId());
+        // 상품 수량 확인
+        ProductResponse product = productClient.findProductById(findOrder.getProductId()).getBody().data();
         if (findOrder.getQuantity() != request.quantity() && product.stock() < request.quantity()) {
             throw new BusinessException(ErrorCode.OUT_OF_STOCK);
         }
@@ -138,8 +144,8 @@ public class OrderServiceImpl implements OrderService {
         findOrder.update(request);
 
         // 업체 정보 및 상품 정보 조회
-        CompanyResponse recipientCompany = companyClient.findCompanyById(findOrder.getRecipientCompanyId());
-        CompanyResponse requestCompany = companyClient.findCompanyById(findOrder.getSupplyCompanyId());
+        CompanyResponse recipientCompany = companyClient.findCompanyById(findOrder.getRecipientCompanyId()).getBody().data();
+        CompanyResponse requestCompany = companyClient.findCompanyById(findOrder.getSupplyCompanyId()).getBody().data();
 
         return OrderDetailResponse.from(findOrder, recipientCompany, requestCompany, product);
     }
@@ -156,7 +162,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 배송 상태에 따른 주문 상태 변경 가능 여부확인
-        boolean orderStatusChangeAllowed = deliveryClient.isOrderStatusChangeAllowed(findOrder.getDeliveryId(), status.toString());
+        boolean orderStatusChangeAllowed = deliveryClient.isOrderStatusChangeAllowed(findOrder.getDeliveryId(), status.toString()).data();
         if (!orderStatusChangeAllowed) {
             throw new BusinessException(ErrorCode.INVALID_STATUS_CHANGE);
         }
@@ -189,8 +195,11 @@ public class OrderServiceImpl implements OrderService {
         // 이벤트 발행
         rabbitTemplate.convertAndSend(
                 rabbitProperties.getExchange().getOrder(),
-                event
+                "",
+                EventUtil.serializeEvent(event)
         );
+
+        log.info("주문 삭제 이벤트 발행 orderId: {}", event.orderId());
 
         return OrderDeleteResponse.from(findOrder);
     }
