@@ -23,7 +23,7 @@ MSA 기반 물류 관리 및 배송 시스템 플랫폼
 
 <br><br>
 
-## 📑 서비스 구성 및 실행방법
+## 📑 서비스 구성
 ### 🙋🏻‍ 회원 (CRUD)
 - Auth APIs
 
@@ -32,9 +32,9 @@ MSA 기반 물류 관리 및 배송 시스템 플랫폼
 
 - User APIs
 > * GET /api/users/user/{userId} - 내 정보 조회
-> * GET /api/users - 유저 전체 조회 (MASTER 권한)
-> * GET /api/users/{userId} - 유저 상세 조회 (MASTER 권한)
-> * PATCH /api/users/{userId} - 유저 권한 수정 (MASTER 권한)
+> * GET /api/users - 유저 전체 조회
+> * GET /api/users/{userId} - 유저 상세 조회 
+> * PATCH /api/users/{userId} - 유저 권한 수정
 > * DELETE /api/user/{userId} - 유저 탈퇴
 
 - Hub Manager APIs
@@ -77,6 +77,10 @@ MSA 기반 물류 관리 및 배송 시스템 플랫폼
 
 ### 🚛 주문
 
+<br>
+
+
+## 📜 실행방법
 
 <br><br>
 
