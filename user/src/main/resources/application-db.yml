@@ -5,6 +5,7 @@ spring:
       port: ${REDIS_LOCAL_PORT}
       username: ${REDIS_LOCAL_USERNAME}
       password: ${REDIS_LOCAL_PASSWORD}
+
   jpa:
     hibernate:
       ddl-auto: update
