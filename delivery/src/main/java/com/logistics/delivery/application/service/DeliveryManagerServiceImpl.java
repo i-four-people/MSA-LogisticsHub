@@ -93,7 +93,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
 
         // 배정 가능한 담당자가 없으면 새로운 배송 경로를 PENDING 상태로 유지
         // 스케줄러를 통해 주기적으로 PENDING 상태의 경로를 확인하고, 완료된 담당자가 있는지 확인.
-        if (availableManagers.isEmpty()) {
+        if (availableManagers == null || availableManagers.isEmpty()) {
             log.info("No available delivery managers at hub: {}. The route will remain in PENDING state.", startHubId);
             return; // 배송 담당자 배정 생략
         }

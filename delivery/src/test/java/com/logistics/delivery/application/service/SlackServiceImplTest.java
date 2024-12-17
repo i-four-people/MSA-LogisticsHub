@@ -137,9 +137,9 @@ class SlackServiceImplTest {
 
         when(deliveryRepository.findById(deliveryId)).thenReturn(Optional.of(delivery));
         when(deliveryRouteRepository.findByDeliveryId(any())).thenReturn(deliveryRoutes);
-        when(hubClient.getHubsToHubIds(anyList())).thenReturn(ApiResponse.success(RETRIEVE,hubMap.values().stream().toList()));
-        when(orderClient.orderDetails(any())).thenReturn(ApiResponse.success(RETRIEVE, orderDetailResponse));
-        when(companyClient.findCompanyById(any())).thenReturn(ApiResponse.success(RETRIEVE,companyResponse));
+        when(hubClient.getHubsToHubIds(anyList())).thenReturn(ResponseEntity.ok(ApiResponse.success(RETRIEVE,hubMap.values().stream().toList())));
+        when(orderClient.orderDetails(any())).thenReturn(ResponseEntity.ok(ApiResponse.success(RETRIEVE, orderDetailResponse)));
+        when(companyClient.findCompanyById(any())).thenReturn(ResponseEntity.ok(ApiResponse.success(RETRIEVE,companyResponse)));
 
         String uri = geminiUrl + "?key=" + geminiApiKey;
 

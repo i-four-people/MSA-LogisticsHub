@@ -9,6 +9,8 @@ import com.logistics.order.infrastructure.client.ProductClient;
 import com.logistics.order.infrastructure.config.RabbitMQProperties;
 import com.logistics.order.presentation.exception.BusinessException;
 import com.logistics.order.presentation.exception.ErrorCode;
+import com.logistics.order.presentation.response.ApiResponse;
+import com.logistics.order.presentation.response.MessageType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.http.ResponseEntity;
 
 import java.lang.reflect.Field;
 import java.util.Optional;
@@ -85,7 +88,8 @@ class OrderServiceImplTest {
         OrderCreateRequest request = new OrderCreateRequest(recipientId, productId, quantity, price, null, "배송지", "수령자", "슬랙ID");
 
         // Mock productClient response
-        when(productClient.findProductById(productId)).thenReturn(new ProductResponse(productId, "Product Name", 10, companyId)); // Mock ProductResponse
+        ApiResponse<ProductResponse> result = ApiResponse.success(MessageType.RETRIEVE, new ProductResponse(productId, "Product Name", 10, companyId));
+        when(productClient.findProductById(productId)).thenReturn(ResponseEntity.ok(result)); // Mock ProductResponse
 
         // Mock orderRepository save response
         Order mockOrder = Order.create(request, companyId);
@@ -127,8 +131,9 @@ class OrderServiceImplTest {
         OrderCreateRequest request = new OrderCreateRequest(recipientId, productId, quantity, price, null, "배송지", "수령자", "슬랙ID");
 
         // Mock productClient response with insufficient stock
+        ApiResponse<ProductResponse> result = ApiResponse.success(MessageType.RETRIEVE, new ProductResponse(productId, "Product Name", 3, companyId));
         when(productClient.findProductById(productId))
-                .thenReturn(new ProductResponse(productId, "Product Name", 3, companyId)); // Mock ProductResponse
+                .thenReturn(ResponseEntity.ok(result)); // Mock ProductResponse
 
         // When & Then
         BusinessException exception = assertThrows(BusinessException.class, () -> orderService.createOrder(request));

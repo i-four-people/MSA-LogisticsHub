@@ -1,7 +1,9 @@
 package com.logistics.order.infrastructure.client;
 
 import com.logistics.order.application.dto.product.ProductResponse;
+import com.logistics.order.presentation.response.ApiResponse;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,9 +13,9 @@ import java.util.UUID;
 public interface ProductClient {
 
     @PostMapping("/api/products/batch")
-    List<ProductResponse> findProductsByIds(@RequestBody List<UUID> ids);
+    ResponseEntity<ApiResponse<List<ProductResponse>>> findProductsByIds(@RequestBody List<UUID> ids);
 
     @GetMapping("/api/products/{productId}")
-    ProductResponse findProductById(@PathVariable("productId") UUID productId);
+    ResponseEntity<ApiResponse<ProductResponse>> findProductById(@PathVariable("productId") UUID productId);
 
 }

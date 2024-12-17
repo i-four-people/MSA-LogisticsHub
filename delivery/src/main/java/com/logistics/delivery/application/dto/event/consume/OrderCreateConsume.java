@@ -14,6 +14,9 @@ public record OrderCreateConsume(
         String requestNote, // 요청 사항
         String deliveryAddress, // 배송지 주소
         String recipientName, // 수령자명
-        String recipientSlackId // 수령자 Slack ID
+        String recipientSlackId, // 수령자 Slack ID
+
+        Long userId,
+        String role
 ) {
 }

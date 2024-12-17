@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.logistics.delivery.presentation.exception.ErrorCode.INTERNAL_ERROR;
 import static com.logistics.delivery.presentation.exception.ErrorCode.INVALID_INPUT;
@@ -87,10 +86,11 @@ public class SlackServiceImpl implements SlackService {
 
         // 이동 경로 허브 id를 가지고 허브 client에서 받아와서 허브 map에 저장
         Map<UUID, HubResponse> hubMap = new HashMap<>();
-        hubClient.getHubsToHubIds(hubIds.stream().toList()).data().forEach(hubResponse -> hubMap.put(hubResponse.id(), hubResponse));
+        hubClient.getHubsToHubIds(hubIds.stream().toList()).getBody().data()
+                .forEach(hubResponse -> hubMap.put(hubResponse.id(), hubResponse));
 
-        OrderDetailResponse orderDetailResponse = orderClient.orderDetails(delivery.getOrderId()).data();
-        CompanyResponse companyResponse = companyClient.findCompanyById(orderDetailResponse.recipientCompanyId());
+        OrderDetailResponse orderDetailResponse = orderClient.orderDetails(delivery.getOrderId()).getBody().data();
+        CompanyResponse companyResponse = companyClient.findCompanyById(orderDetailResponse.recipientCompanyId()).getBody().data();
 
         StringBuilder sb = new StringBuilder();
 
@@ -115,7 +115,7 @@ public class SlackServiceImpl implements SlackService {
                 
                 주문 번호 : """
                 + orderDetailResponse.id() + "\n" +
-                "주문자 정보 : " + companyResponse.companyName() + "\n" +
+                "주문자 정보 : " + companyResponse.name() + "\n" +
                 "상품 정보 : " + orderDetailResponse.productName() + orderDetailResponse.quantity() + "개\n" +
                 "요청 사항 : " + orderDetailResponse.requestNotes() + "\n" +
                 "발송지 : " + hubMap.get(deliveryRoutes.getFirst().getStartHubId()).name() + "\n" +

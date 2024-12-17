@@ -49,7 +49,6 @@ public class DeliveryRoute extends AuditingFields {
     @Setter private float actualDuration;
 
     @Comment("경로 상태")
-    @Column(columnDefinition = "VARCHAR(50) DEFAULT 'PENDING'")
     @Enumerated(EnumType.STRING)
     private RouteStatus status;
 
