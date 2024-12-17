@@ -1,21 +1,19 @@
 package com.logistcshub.user.application.service;
 
 import com.logistcshub.user.common.exception.UserException;
-import com.logistcshub.user.common.message.ExceptionMessage;
-import com.logistcshub.user.presentation.response.user.TokenDto;
-import com.logistcshub.user.presentation.response.user.UserDto;
 import com.logistcshub.user.common.jwt.JwtUtil;
+import com.logistcshub.user.common.message.ExceptionMessage;
 import com.logistcshub.user.domain.model.user.User;
 import com.logistcshub.user.domain.model.user.UserRoleEnum;
 import com.logistcshub.user.infrastructure.repository.UserRepository;
 import com.logistcshub.user.presentation.request.user.LoginRequest;
 import com.logistcshub.user.presentation.request.user.SignupRequest;
-import jakarta.persistence.EntityNotFoundException;
+import com.logistcshub.user.presentation.response.user.TokenDto;
+import com.logistcshub.user.presentation.response.user.UserDto;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
