@@ -8,5 +8,5 @@ import java.util.UUID;
 
 public interface JpaOrderRepository extends JpaRepository<Order, UUID>, OrderRepositoryCustom {
 
-    Optional<Order> findByIdAndDeleteFalse(UUID id);
+    Optional<Order> findByIdAndIsDeleteFalse(UUID id);
 }

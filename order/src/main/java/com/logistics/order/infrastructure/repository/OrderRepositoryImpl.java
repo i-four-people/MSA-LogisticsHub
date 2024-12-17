@@ -5,7 +5,6 @@ import com.logistics.order.domain.model.Order;
 import com.logistics.order.domain.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -20,7 +19,7 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Optional<Order> findById(UUID id) {
-        return jpaOrderRepository.findByIdAndDeleteFalse(id);
+        return jpaOrderRepository.findByIdAndIsDeleteFalse(id);
     }
 
     @Override
