@@ -1,21 +1,21 @@
 server:
-  port: 19093
+  port: ${SERVER_PORT}
 
 spring:
   application:
-    name: user-service
+    name: ${SPRING_APPLICATION_NAME}
   data:
     redis:
-      host: localhost
-      port: 6379
-      username: default
-      password: systempass
+      host: ${REDIS_LOCAL_HOST_NAME}
+      port: ${REDIS_LOCAL_PORT}
+      username: ${REDIS_LOCAL_USERNAME}
+      password: ${REDIS_LOCAL_PASSWORD}
 
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/users
-    username: afoisl
-    password: 1234qwer
+    driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
+    url: ${SPRING_DATASOURCE_LOCAL_URL}
+    username: ${SPRING_DATASOURCE_LOCAL_USERNAME}
+    password: ${SPRING_DATASOURCE_LOCAL_PASSWORD}
 
   jpa:
     hibernate:
@@ -28,12 +28,12 @@ spring:
         default_batch_fetch_size: 1000
 
 jwt:
-  admin-token: admin-token-1234
+  admin-token: ${ADMIN_TOKEN}
   access-expiration: 360000
-  secret-key: "401b09eab3c013d4ca54922bb802bec8fd5318192b0a75f201d8b3727429080fb337591abd3e44453b954555b7a0812e1081c39b740293f765eae731f5a65ed1"
+  secret-key: ${JWT_TOKEN}
 
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:19090/eureka/
+      defaultZone: ${EUREKA_SERVICE_URL}
