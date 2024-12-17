@@ -27,7 +27,6 @@ public class Delivery extends AuditingFields {
     private UUID orderId;
 
     @Comment("배송 상태")
-    @Column(columnDefinition = "VARCHAR(50) DEFAULT 'PENDING'")
     @Enumerated(EnumType.STRING)
     private DeliveryStatus status;
 

@@ -42,6 +42,7 @@ public class DeliveryRouteServiceImpl implements DeliveryRouteService {
 
         // 출발 허브 -> 도착 허브 이동 경로 조회
         HubToHubResponse hubToHubResponse = hubClient.getHubToHubRoutes(delivery.getOriginHubId(), delivery.getDestinationHubId());
+        HubToHubResponse hubToHubResponse = hubClient.getHubToHubRoutes(delivery.getOriginHubId(), delivery.getDestinationHubId()).getBody().data();
 
         // 경유지 포함 경로 생성
         List<DeliveryRoute> deliveryRoutes = buildRoutes(delivery, hubToHubResponse);
@@ -119,8 +120,8 @@ public class DeliveryRouteServiceImpl implements DeliveryRouteService {
         }
 
         // 출발 허브, 도착 허브 조회
-        HubResponse startHub = hubClient.getHub(findDeliveryRoute.getStartHubId());
-        HubResponse endHub = hubClient.getHub(findDeliveryRoute.getEndHubId());
+        HubResponse startHub = hubClient.getHub(findDeliveryRoute.getStartHubId()).getBody().data();
+        HubResponse endHub = hubClient.getHub(findDeliveryRoute.getEndHubId()).getBody().data();
 
         return DeliveryRouteResponse.from(findDeliveryRoute, startHub, endHub);
     }

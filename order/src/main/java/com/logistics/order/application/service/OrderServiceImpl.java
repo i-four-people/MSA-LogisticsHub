@@ -17,6 +17,7 @@ import com.logistics.order.infrastructure.client.CompanyClient;
 import com.logistics.order.infrastructure.client.DeliveryClient;
 import com.logistics.order.infrastructure.client.ProductClient;
 import com.logistics.order.infrastructure.config.RabbitMQProperties;
+import com.logistics.order.presentation.auth.AuthContext;
 import com.logistics.order.presentation.exception.BusinessException;
 import com.logistics.order.presentation.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -58,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
         Order savedOrder = orderRepository.save(Order.create(request, product.companyId()));
 
         // 이벤트 생성
-        OrderCreateEvent event = OrderCreateEvent.of(savedOrder, request);
+        OrderCreateEvent event = OrderCreateEvent.of(savedOrder, request, AuthContext.get());
 
         // 이벤트 발행
         rabbitTemplate.convertAndSend(
@@ -190,7 +191,7 @@ public class OrderServiceImpl implements OrderService {
         findOrder.delete();
 
         // 이벤트 생성
-        OrderDeleteEvent event = OrderDeleteEvent.of(findOrder);
+        OrderDeleteEvent event = OrderDeleteEvent.of(findOrder, AuthContext.get());
 
         // 이벤트 발행
         rabbitTemplate.convertAndSend(
