@@ -95,4 +95,12 @@ public class Delivery extends AuditingFields {
         this.companyDeliveryManagerId = assignedManagerId;
     }
 
+    /**
+     * 배송 상태를 변경하는 메서드
+     *
+     * @param deliveryStatus 배송 상태
+     */
+    public void updateStatus(DeliveryStatus deliveryStatus) {
+        this.status = deliveryStatus;
+    }
 }

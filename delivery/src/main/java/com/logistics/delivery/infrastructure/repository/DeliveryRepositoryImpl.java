@@ -57,4 +57,9 @@ public class DeliveryRepositoryImpl implements DeliveryRepository {
     public List<Delivery> findUnassignedDeliveries() {
         return jpaDeliveryRepository.findByCompanyDeliveryManagerIdIsNull(List.of(DeliveryStatus.DELIVERED, DeliveryStatus.CANCELLED));
     }
+
+    @Override
+    public List<Delivery> findAllByStatusNotIn(List<DeliveryStatus> statusList) {
+        return jpaDeliveryRepository.findAllByStatusNotIn(statusList);
+    }
 }

@@ -26,4 +26,6 @@ public interface DeliveryRepository {
     List<Delivery> findUnassignedDeliveries();
 
     Page<Delivery> searchDeliveries(SearchParameter searchParameter);
+
+    List<Delivery> findAllByStatusNotIn(List<DeliveryStatus> statusList);
 }

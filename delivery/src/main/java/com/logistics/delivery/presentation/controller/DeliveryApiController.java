@@ -5,6 +5,7 @@ import com.logistics.delivery.application.dto.SearchParameter;
 import com.logistics.delivery.application.dto.delivery.DeliveryDeleteResponse;
 import com.logistics.delivery.application.dto.delivery.DeliveryDetailResponse;
 import com.logistics.delivery.application.dto.delivery.DeliveryResponse;
+import com.logistics.delivery.application.dto.delivery.DeliveryStatusUpdateRequest;
 import com.logistics.delivery.application.dto.order.OrderStatusRequest;
 import com.logistics.delivery.domain.service.DeliveryService;
 import com.logistics.delivery.presentation.response.ApiResponse;
@@ -40,6 +41,14 @@ public class DeliveryApiController {
     public ApiResponse<?> getDeliveryById(@PathVariable("deliveryId") UUID deliveryId) {
         DeliveryDetailResponse result = deliveryService.getDeliveryById(deliveryId);
         return ApiResponse.success(MessageType.RETRIEVE, result);
+    }
+
+    // 배송 상태 수정
+    @PatchMapping("/{deliveryId}/status")
+    public ApiResponse<?> updateDeliveryStatus(@PathVariable("deliveryId") UUID deliveryId,
+                                               @RequestBody DeliveryStatusUpdateRequest request) {
+        DeliveryDetailResponse result = deliveryService.updateDeliveryStatus(deliveryId, request.status());
+        return ApiResponse.success(MessageType.UPDATE, result);
     }
 
     // 배송 삭제

@@ -27,14 +27,14 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
     public Page<Order> searchOrders(SearchParameter searchParameter) {
 
         // 페이징 처리
-        int skip = (searchParameter.page() - 1) * searchParameter.limit();
+        int skip = (searchParameter.getPage() - 1) * searchParameter.getLimit();
 
         List<Order> results = queryFactory.selectFrom(order)
                 .where(filterOrders(searchParameter)
                         .and(order.isDelete.isFalse()))
                 .orderBy(getOrderSpecifier(searchParameter))
                 .offset(skip)
-                .limit(searchParameter.limit())
+                .limit(searchParameter.getLimit())
                 .fetch();
 
         long totalCount = getOrdersTotalCount(searchParameter);
@@ -52,8 +52,8 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
 
     private BooleanBuilder filterOrders(SearchParameter searchParameter) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-        if (StringUtils.hasText(searchParameter.searchValue())) {
-            booleanBuilder.and(order.id.eq(UUID.fromString(searchParameter.searchValue())));
+        if (StringUtils.hasText(searchParameter.getSearchValue())) {
+            booleanBuilder.and(order.id.eq(UUID.fromString(searchParameter.getSearchValue())));
         }
         return booleanBuilder;
     }
@@ -62,14 +62,14 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
     public Page<Order> searchOrdersByCompanyIds(SearchParameter searchParameter, List<UUID> companyIds) {
 
         // 페이징 처리
-        int skip = (searchParameter.page() - 1) * searchParameter.limit();
+        int skip = (searchParameter.getPage() - 1) * searchParameter.getLimit();
 
         List<Order> results = queryFactory.selectFrom(order)
                 .where(filterOrdersByCompanyIds(searchParameter, companyIds)
                         .and(order.isDelete.isFalse()))
                 .orderBy(getOrderSpecifier(searchParameter))
                 .offset(skip)
-                .limit(searchParameter.limit())
+                .limit(searchParameter.getLimit())
                 .fetch();
 
         long totalCount = getOrdersByCompanyIdsTotalCount(searchParameter, companyIds);
@@ -87,17 +87,17 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
 
     private BooleanBuilder filterOrdersByCompanyIds(SearchParameter searchParameter, List<UUID> companyIds) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-        if ("RECIPIENT_NAME".equals(searchParameter.searchType())) {
+        if ("RECIPIENT_NAME".equals(searchParameter.getSearchType())) {
             booleanBuilder.and(order.recipientCompanyId.in(companyIds));
-        } else if ("SUPPLIER_NAME".equals(searchParameter.searchType())) {
+        } else if ("SUPPLIER_NAME".equals(searchParameter.getSearchType())) {
             booleanBuilder.and(order.supplyCompanyId.in(companyIds));
         }
         return booleanBuilder;
     }
 
     private OrderSpecifier<?> getOrderSpecifier(SearchParameter searchParameter) {
-        PathBuilder<Order> orderByExpression = new PathBuilder<>(Order.class, searchParameter.orderBy());
-        com.querydsl.core.types.Order direction = searchParameter.sort().equals(Sort.Direction.DESC) ? com.querydsl.core.types.Order.DESC : com.querydsl.core.types.Order.ASC;
+        PathBuilder<Order> orderByExpression = new PathBuilder<>(Order.class, searchParameter.getOrderBy());
+        com.querydsl.core.types.Order direction = searchParameter.getSort().equals(Sort.Direction.DESC) ? com.querydsl.core.types.Order.DESC : com.querydsl.core.types.Order.ASC;
         return new OrderSpecifier(direction, orderByExpression);
     }
 

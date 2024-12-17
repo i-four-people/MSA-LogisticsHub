@@ -95,9 +95,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     private Page<Order> findOrders(SearchParameter searchParameter) {
-        if ("RECIPIENT_NAME".equals(searchParameter.searchType()) || "SUPPLIER_NAME".equals(searchParameter.searchType())) {
+        if ("RECIPIENT_NAME".equals(searchParameter.getSearchType()) || "SUPPLIER_NAME".equals(searchParameter.getSearchType())) {
             // FeignClient로 업체 ID 리스트 조회
-            List<CompanyResponse> findCompanies = companyClient.findCompaniesByName(searchParameter.searchValue());
+            List<CompanyResponse> findCompanies = companyClient.findCompaniesByName(searchParameter.getSearchValue());
             List<UUID> companyIds = findCompanies.stream().map(CompanyResponse::companyId).toList();
 
             // 업체 ID 리스트를 조건으로 필터링

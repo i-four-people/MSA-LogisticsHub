@@ -5,6 +5,7 @@ import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerUpd
 import com.logistics.delivery.application.dto.event.SlackCreateEvent;
 import com.logistics.delivery.application.dto.deliverymanager.DeliveryManagerResponse;
 import com.logistics.delivery.domain.model.DeliveryRoute;
+import com.logistics.delivery.domain.model.RouteStatus;
 import com.logistics.delivery.domain.repository.DeliveryRouteRepository;
 import com.logistics.delivery.domain.service.DeliveryManagerService;
 import com.logistics.delivery.infrastructure.client.DeliveryManagerClient;
@@ -51,11 +52,15 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
             // 동일 경로에서 이미 배정된 배송 담당자가 있는지 확인
             Long assignedManagerId = findAssignedManagerForRoute(routeKey);
 
-            if (assignedManagerId != null && !hasExceededWaitingTime(routes)) {
-                // 담당자가 배정되어 있고 대기 시간이 초과되지 않은 경우, 기존 담당자를 배정
+            // 상태 확인: IN_TRANSIT, AT_HUB 제외
+            boolean hasExcludedStatus = routes.stream()
+                    .anyMatch(route -> route.getStatus() == RouteStatus.IN_TRANSIT || route.getStatus() == RouteStatus.AT_HUB);
+
+            if (assignedManagerId != null && !hasExceededWaitingTime(routes) && !hasExcludedStatus) {
+                // 담당자가 배정되어 있고 대기 시간이 초과되지 않은 경우, 아직 출발하지 않은 경우 기존 담당자를 배정
                 assignExistingManagerToRoutes(routes, assignedManagerId);
             } else {
-                // 기존 담당자가 없거나 대기 시간이 초과된 경우, 새로운 담당자를 배정
+                // 기존 담당자가 없거나 대기 시간이 초과된 경우, 이미 출발했을 경우는 새로운 담당자를 배정
                 assignManagerToGroupedRoutes(routeKey, routes);
             }
         });
