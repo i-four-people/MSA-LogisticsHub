@@ -1,5 +1,7 @@
 package com.logistcshub.user.application.service;
 
+import com.logistcshub.user.common.exception.UserException;
+import com.logistcshub.user.common.message.ExceptionMessage;
 import com.logistcshub.user.domain.model.user.User;
 import com.logistcshub.user.domain.model.user.UserRoleEnum;
 import com.logistcshub.user.infrastructure.repository.UserRepository;
@@ -39,7 +41,7 @@ public class UserService {
     @Cacheable(cacheNames = "user_info", key = "#role + ':' + #id")
     public UserDto get(UserRoleEnum role, Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
+                .orElseThrow(() -> new UserException(ExceptionMessage.USER_NOT_FOUND));
 
         return UserDto.of(user);
     }
@@ -47,7 +49,7 @@ public class UserService {
     @Transactional
     public UserDto update(Long id, UserUpdateRequest userUpdateRequest) {
         User user =  userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
+                .orElseThrow(() -> new UserException(ExceptionMessage.USER_NOT_FOUND));
 
         user.updateUserRole(UserRoleEnum.valueOf(userUpdateRequest.role()));
         return UserDto.of(user);
@@ -56,7 +58,7 @@ public class UserService {
     @Transactional
     public String delete(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("등록하지 않은 유저입니다."));
+                .orElseThrow(() -> new UserException(ExceptionMessage.USER_NOT_FOUND));
 
         // 논리적 삭제
         user.delete(user.getUsername());

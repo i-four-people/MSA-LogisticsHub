@@ -7,7 +7,7 @@ spring:
     name: ${SPRING_APPLICATION_NAME}
   profiles:
     active:
-      - local
+      - prod
     group:
       local:
         - db-local
@@ -16,10 +16,7 @@ spring:
     include:
       - db
 
-eureka:
-  client:
-    service-url:
-      defaultZone: ${EUREKA_SERVICE_URL}
+
 
 api:
   key:

@@ -1,15 +1,14 @@
-# Default 설정
 spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
     properties:
       hibernate:
+        show_sql: true
         format_sql: true
-        highlight_sql: true
-        default_batch_fetch_size: 10
-    open-in-view: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_batch_fetch_size: 1000
+      open-in-view: false
 
 ---
 # Local 환경
@@ -22,13 +21,10 @@ spring:
     username: ${SPRING_DATASOURCE_LOCAL_USERNAME}
     password: ${SPRING_DATASOURCE_LOCAL_PASSWORD}
     url: ${SPRING_DATASOURCE_LOCAL_URL}
-  rabbitmq:
-    host: localhost
-    port: 5672
-    stream:
-      username: guest
-      password: guest
-      virtual-host: /
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVICE_URL}
 
 ---
 # Production 환경
@@ -41,3 +37,7 @@ spring:
     username: ${SPRING_DATASOURCE_PROD_USERNAME}
     password: ${SPRING_DATASOURCE_PROD_PASSWORD}
     url: ${SPRING_DATASOURCE_PROD_URL}
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_PROD_SERVICE_URL}

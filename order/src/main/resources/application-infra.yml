@@ -1,8 +1,10 @@
 message:
   exchange:
     order: ${MESSAGE_EXCHANGE_ORDER}
+    dead: ${MESSAGE_EXCHANGE_DEAD}
   queues:
     product: ${MESSAGE_QUEUE_PRODUCT}
     delivery: ${MESSAGE_QUEUE_DELIVERY}
+    dead-letter: ${MESSAGE_QUEUE_DEAD}
   receive:
     order: ${MESSAGE_RECEIVE_QUEUE_ORDER}

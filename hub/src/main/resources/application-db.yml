@@ -1,19 +1,4 @@
-# Default 설정
-spring:
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
-        highlight_sql: true
-        default_batch_fetch_size: 10
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-    open-in-view: false
 
-
----
 # Local 환경
 spring:
   config:
@@ -30,6 +15,10 @@ spring:
       port: ${REDIS_LOCAL_PORT}
       username: ${REDIS_LOCAL_USERNAME}
       password: ${REDIS_LOCAL_PASSWORD}
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVICE_URL}
 
 ---
 # Production 환경
@@ -48,3 +37,7 @@ spring:
       port: ${REDIS_PROD_PORT}
       username: ${REDIS_PROD_USERNAME}
       password: ${REDIS_PROD_PASSWORD}
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_PROD_SERVICE_URL}

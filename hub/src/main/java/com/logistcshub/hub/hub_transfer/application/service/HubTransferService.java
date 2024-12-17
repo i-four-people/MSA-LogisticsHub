@@ -22,6 +22,7 @@ import com.logistcshub.hub.hub_transfer.presentation.request.AddHubTransferReque
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.querydsl.core.types.Predicate;
 
@@ -204,101 +205,151 @@ public class HubTransferService {
     @Cacheable(cacheNames = "hubToHub", key = "#startHubId + ':' + #endHubId")
     public HubToHubResponseDto getHubToHub(UUID startHubId, UUID endHubId, String role, Long userId) {
         validateRole(role);
+
         HubTransfer startToEnd = hubTransferRepository.findByStartHubIdAndEndHubIdAndIsDeletedFalse(startHubId, endHubId).orElse(null);
         Hub startHub = getHubById(startHubId);
         Hub endHub = getHubById(endHubId);
 
-        if(startToEnd != null) {
+        if (startToEnd != null) {
             return HubToHubResponseDto.of(startToEnd, startHub, endHub);
         }
 
-        List<Hub> hubList = hubRepository.findAll();
+        List<Hub> hubs = hubRepository.findAll();
+        Map<UUID, Integer> hubIndexMap = new HashMap<>();
+        Map<UUID, List<HubTransfer>> hubTransfers = new HashMap<>();
 
-        int[] timeTaken = new int[hubList.size()];
-        int[] totalDistance = new int[hubList.size()];
-
-        Arrays.fill(timeTaken, Integer.MAX_VALUE);
-
-        Map<UUID, Integer> hubMap = new HashMap<>();
-        Map<UUID, List<HubTransfer>> hubTransferMap = new HashMap<>();
-
-        for(int i = 0; i < hubList.size(); i++) {
-            hubMap.put(hubList.get(i).getId(), i);
-            hubTransferMap.put(hubList.get(i).getId(), new ArrayList<>());
+        for (int i = 0; i < hubs.size(); i++) {
+            hubIndexMap.put(hubs.get(i).getId(), i);
         }
 
-        timeTaken[hubMap.get(startHubId)] = 0;
-
-        List<HubTransfer> hubTransferList = hubTransferRepository.findByIsDeletedFalse();
-
-        Map<UUID, HubTransfer> uuidHubTransferMap = new HashMap<>();
-
-        hubTransferList.forEach(hubTransfer -> {
-            hubTransferMap.get(hubTransfer.getStartHub().getId()).add(hubTransfer);
-            uuidHubTransferMap.put(hubTransfer.getId(), hubTransfer);
+        hubTransferRepository.findByIsDeletedFalse().forEach(transfer -> {
+            hubTransfers.computeIfAbsent(transfer.getStartHub().getId(), k -> new ArrayList<>()).add(transfer);
         });
 
-        Queue<List<List<UUID>>> queue = new LinkedList<>();
+        int[] timeTaken = new int[hubs.size()];
+        int[] totalDistance = new int[hubs.size()];
+        Arrays.fill(timeTaken, Integer.MAX_VALUE);
+        timeTaken[hubIndexMap.get(startHubId)] = 0;
 
-        List<List<UUID>> list = new ArrayList<>();
+        PriorityQueue<HubPath> pq = new PriorityQueue<>(Comparator.comparingInt(HubPath::getEstimatedCost));
+        pq.add(new HubPath(startHubId, List.of(startHubId), new ArrayList<>(), 0, 0, heuristic(startHub, endHub)));
 
-        List<List<UUID>> startList = new ArrayList<>();
-        List<UUID> start = new ArrayList<>();
-        start.add(startHubId);
-        startList.add(start);
-        startList.add(new ArrayList<>());
+        HubPath shortestPath = null;
 
-        queue.add(startList);
+        while (!pq.isEmpty()) {
+            HubPath currentPath = pq.poll();
 
-        while(!queue.isEmpty()) {
-            List<List<UUID>> uuids = queue.poll();
-            List<UUID> hubUUids = uuids.get(0);
-            List<UUID> transferUUids = uuids.get(1);
+            UUID currentHubId = currentPath.getHubId();
+            int currentTime = currentPath.getTime();
 
-            for(HubTransfer hubTransfer : hubTransferMap.get(hubUUids.get(hubUUids.size()-1))) {
-                if(hubTransfer.getTimeTaken() + timeTaken[hubMap.get(hubUUids.get(hubUUids.size()-1))] < timeTaken[hubMap.get(hubTransfer.getEndHub().getId())]) {
-                    timeTaken[hubMap.get(hubTransfer.getEndHub().getId())] = hubTransfer.getTimeTaken() + timeTaken[hubMap.get(hubUUids.get(hubUUids.size()-1))];
-                    totalDistance[hubMap.get(hubTransfer.getEndHub().getId())] = hubTransfer.getDistance() + totalDistance[hubMap.get(hubUUids.get(hubUUids.size()-1))];
-                    List<UUID> newHubList = new ArrayList<>(hubUUids);
-                    newHubList.add(hubTransfer.getEndHub().getId());
-                    List<UUID> newHubTransferList = new ArrayList<>(transferUUids);
-                    newHubTransferList.add(hubTransfer.getId());
-                    List<List<UUID>> newUUIDs = new ArrayList<>();
-                    newUUIDs.add(newHubList);
-                    newUUIDs.add(newHubTransferList);
+            if (currentHubId.equals(endHubId)) {
+                shortestPath = currentPath;
+                break;
+            }
 
-                    if(hubTransfer.getEndHub().getId().equals(endHubId)) {
-                        list = new ArrayList<>(newUUIDs);
-                    }
+            for (HubTransfer transfer : hubTransfers.getOrDefault(currentHubId, Collections.emptyList())) {
+                UUID nextHubId = transfer.getEndHub().getId();
+                int nextTime = currentTime + transfer.getTimeTaken();
 
-                    queue.add(newUUIDs);
+                if (nextTime < timeTaken[hubIndexMap.get(nextHubId)]) {
+                    timeTaken[hubIndexMap.get(nextHubId)] = nextTime;
+                    totalDistance[hubIndexMap.get(nextHubId)] = currentPath.getDistance() + transfer.getDistance();
+
+                    List<UUID> newHubPath = new ArrayList<>(currentPath.getHubPath());
+                    newHubPath.add(nextHubId);
+
+                    List<UUID> newTransferPath = new ArrayList<>(currentPath.getTransferPath());
+                    newTransferPath.add(transfer.getId());
+
+                    pq.add(new HubPath(nextHubId, newHubPath, newTransferPath, nextTime, totalDistance[hubIndexMap.get(nextHubId)], heuristic(hubs.get(hubIndexMap.get(nextHubId)), endHub)));
                 }
             }
         }
 
-        List<HubToHubResponseDto.HubToHub> hubToHubResponseDtoList = new ArrayList<>();
-
-        for(int i=1; i < list.get(0).size() - 1; i++) {
-            hubToHubResponseDtoList.add(
-                    HubToHubResponseDto.HubToHub.of(hubList.get(hubMap.get(list.get(0).get(i))))
-            );
+        if (shortestPath == null) {
+            throw new RuntimeException("No path found between the hubs.");
         }
 
-        List<HubToHubResponseDto.HubToHubInfo> hubToHubInfoList = new ArrayList<>();
+        List<HubToHubResponseDto.HubToHub> hubToHubResponseDtoList = shortestPath.getHubPath().stream()
+                .skip(1)
+                .filter(hubId -> !hubId.equals(endHubId))
+                .map(hubId -> HubToHubResponseDto.HubToHub.of(hubs.get(hubIndexMap.get(hubId))))
+                .collect(Collectors.toList());
 
-        for(int i=0; i < list.get(1).size(); i++) {
-            hubToHubInfoList.add(HubToHubResponseDto.HubToHubInfo.of(uuidHubTransferMap.get(list.get(1).get(i))));
-        }
+        List<HubToHubResponseDto.HubToHubInfo> hubToHubInfoList = shortestPath.getTransferPath().stream()
+                .map(uuid -> HubToHubResponseDto.HubToHubInfo.of(hubTransferRepository.findByIdAndIsDeletedFalse(uuid).orElseThrow()))
+                .collect(Collectors.toList());
 
         return new HubToHubResponseDto(
-                HubToHubResponseDto.HubToHub.of(hubList.get(hubMap.get(startHubId))),
-                HubToHubResponseDto.HubToHub.of(hubList.get(hubMap.get(endHubId))),
+                HubToHubResponseDto.HubToHub.of(hubs.get(hubIndexMap.get(shortestPath.getHubPath().get(0)))),
+                HubToHubResponseDto.HubToHub.of(hubs.get(hubIndexMap.get(shortestPath.getHubPath().get(shortestPath.getHubPath().size() - 1)))),
                 hubToHubResponseDtoList,
-                timeTaken[hubMap.get(endHubId)],
-                totalDistance[hubMap.get(endHubId)],
+                timeTaken[hubIndexMap.get(endHubId)],
+                totalDistance[hubIndexMap.get(endHubId)],
                 hubToHubInfoList
         );
     }
+
+    private int heuristic(Hub currentHub, Hub endHub) {
+        double lat1 = Math.toRadians(currentHub.getLat());
+        double lng1 = Math.toRadians(currentHub.getLng());
+        double lat2 = Math.toRadians(endHub.getLat());
+        double lng2 = Math.toRadians(endHub.getLng());
+
+        double dLat = lat2 - lat1;
+        double dLng = lng2 - lng1;
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1) * Math.cos(lat2) *
+                        Math.sin(dLng / 2) * Math.sin(dLng / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double earthRadius = 6371; // Earth's radius in kilometers
+
+        return (int) (earthRadius * c);
+    }
+
+    private static class HubPath {
+        private final UUID hubId;
+        private final List<UUID> hubPath;
+        private final List<UUID> transferPath;
+        private final int time;
+        private final int distance;
+        private final int estimatedCost;
+
+        public HubPath(UUID hubId, List<UUID> hubPath, List<UUID> transferPath, int time, int distance, int estimatedCost) {
+            this.hubId = hubId;
+            this.hubPath = hubPath;
+            this.transferPath = transferPath;
+            this.time = time;
+            this.distance = distance;
+            this.estimatedCost = estimatedCost;
+        }
+
+        public UUID getHubId() {
+            return hubId;
+        }
+
+        public List<UUID> getHubPath() {
+            return hubPath;
+        }
+
+        public List<UUID> getTransferPath() {
+            return transferPath;
+        }
+
+        public int getTime() {
+            return time;
+        }
+
+        public int getDistance() {
+            return distance;
+        }
+
+        public int getEstimatedCost() {
+            return estimatedCost;
+        }
+    }
+
 
     private void validateMasterOrHubManager(String role) {
         if(role == null || !role.equals("MASTER")) {

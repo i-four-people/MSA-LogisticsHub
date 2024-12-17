@@ -26,14 +26,14 @@ public class DeliveryRepositoryCustomImpl implements DeliveryRepositoryCustom {
     public Page<Delivery> searchDeliveries(SearchParameter searchParameter) {
 
         // 페이징 처리
-        int skip = (searchParameter.page() - 1) * searchParameter.limit();
+        int skip = (searchParameter.getPage() - 1) * searchParameter.getLimit();
 
         List<Delivery> results = queryFactory.selectFrom(delivery)
                 .where(filterDeliveries(searchParameter)
                         .and(delivery.isDelete.isFalse()))
                 .orderBy(getOrderSpecifier(searchParameter))
                 .offset(skip)
-                .limit(searchParameter.limit())
+                .limit(searchParameter.getLimit())
                 .fetch();
 
         long totalCount = getDeliveriesTotalCount(searchParameter);
@@ -51,17 +51,17 @@ public class DeliveryRepositoryCustomImpl implements DeliveryRepositoryCustom {
 
     private BooleanBuilder filterDeliveries(SearchParameter searchParameter) {
         BooleanBuilder builder = new BooleanBuilder();
-        if ("ORDER_ID".equals(searchParameter.searchType())) {
-            builder.and(delivery.orderId.eq(UUID.fromString(searchParameter.searchValue())));
-        } else if ("DELIVERY_ID".equals(searchParameter.searchType())) {
-            builder.and(delivery.id.eq(UUID.fromString(searchParameter.searchValue())));
+        if ("ORDER_ID".equals(searchParameter.getSearchType())) {
+            builder.and(delivery.orderId.eq(UUID.fromString(searchParameter.getSearchValue())));
+        } else if ("DELIVERY_ID".equals(searchParameter.getSearchType())) {
+            builder.and(delivery.id.eq(UUID.fromString(searchParameter.getSearchValue())));
         }
         return builder;
     }
 
     private OrderSpecifier<?> getOrderSpecifier(SearchParameter searchParameter) {
-        PathBuilder<Delivery> orderByExpression = new PathBuilder<>(Delivery.class, searchParameter.orderBy());
-        com.querydsl.core.types.Order direction = searchParameter.sort().equals(Sort.Direction.DESC) ? com.querydsl.core.types.Order.DESC : com.querydsl.core.types.Order.ASC;
+        PathBuilder<Delivery> orderByExpression = new PathBuilder<>(Delivery.class, searchParameter.getOrderBy());
+        com.querydsl.core.types.Order direction = searchParameter.getSort().equals(Sort.Direction.DESC) ? com.querydsl.core.types.Order.DESC : com.querydsl.core.types.Order.ASC;
         return new OrderSpecifier(direction, orderByExpression);
     }
 

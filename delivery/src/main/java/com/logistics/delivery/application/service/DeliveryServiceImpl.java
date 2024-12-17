@@ -15,6 +15,7 @@ import com.logistics.delivery.application.dto.event.consume.OrderCreateConsume;
 import com.logistics.delivery.application.dto.hub.HubResponse;
 import com.logistics.delivery.application.dto.order.OrderResponse;
 import com.logistics.delivery.application.dto.order.OrderStatusRequest;
+import com.logistics.delivery.application.util.EventUtil;
 import com.logistics.delivery.domain.model.Delivery;
 import com.logistics.delivery.domain.model.DeliveryRoute;
 import com.logistics.delivery.domain.model.DeliveryStatus;
@@ -85,10 +86,10 @@ public class DeliveryServiceImpl implements DeliveryService {
 
         // 출발 허브, 도착 허브 정보 조회
         List<UUID> originHubIds = deliveries.map(Delivery::getOriginHubId).stream().distinct().toList();
-        List<HubResponse> originHubs = hubClient.findHubsByIds(originHubIds);
+        List<HubResponse> originHubs = hubClient.getHubsToHubIds(originHubIds).getBody().data();
 
         List<UUID> destinationHubIds = deliveries.map(Delivery::getDestinationHubId).stream().distinct().toList();
-        List<HubResponse> destinationHubs = hubClient.findHubsByIds(destinationHubIds);
+        List<HubResponse> destinationHubs = hubClient.getHubsToHubIds(destinationHubIds).getBody().data();
 
         // 응답값 반환
         Map<UUID, HubResponse> originHubMap = originHubs.stream().collect(Collectors.toMap(HubResponse::id, h -> h));
@@ -137,17 +138,17 @@ public class DeliveryServiceImpl implements DeliveryService {
     private DeliveryDetailResponse getDeliveryDetailResponse(Delivery findDelivery) {
 
         // 출발 허브, 도착 허브 정보 조회
-        HubResponse originHub = hubClient.getHub(findDelivery.getOriginHubId());
-        HubResponse destinationHub = hubClient.getHub(findDelivery.getDestinationHubId());
+        HubResponse originHub = hubClient.getHub(findDelivery.getOriginHubId()).getBody().data();
+        HubResponse destinationHub = hubClient.getHub(findDelivery.getDestinationHubId()).getBody().data();
 
         // 배송 이동 경로 조회
         List<DeliveryRoute> deliveryRoutes = deliveryRouteService.getRoutesByDeliveryId(findDelivery.getId());
 
         List<UUID> startHubIds = deliveryRoutes.stream().map(DeliveryRoute::getStartHubId).distinct().toList();
-        List<HubResponse> startHubs = hubClient.findHubsByIds(startHubIds);
+        List<HubResponse> startHubs = hubClient.getHubsToHubIds(startHubIds).getBody().data();
 
         List<UUID> endHubIds = deliveryRoutes.stream().map(DeliveryRoute::getEndHubId).distinct().toList();
-        List<HubResponse> endHubs = hubClient.findHubsByIds(endHubIds);
+        List<HubResponse> endHubs = hubClient.getHubsToHubIds(endHubIds).getBody().data();
 
         // 응답값 반환
         Map<UUID, HubResponse> startHubMap = startHubs.stream().collect(Collectors.toMap(HubResponse::id, h -> h));
@@ -167,8 +168,8 @@ public class DeliveryServiceImpl implements DeliveryService {
     public void createDelivery(OrderCreateConsume consume) {
 
         // 출발 허브, 도착 허브 조회
-        CompanyResponse recipientCompany = companyClient.findCompanyById(consume.recipientCompanyId()).data(); // 수령 업체
-        CompanyResponse supplyCompany = companyClient.findCompanyById(consume.supplyCompanyId()).data(); // 공급 업체
+        CompanyResponse recipientCompany = companyClient.findCompanyById(consume.recipientCompanyId()).getBody().data(); // 수령 업체
+        CompanyResponse supplyCompany = companyClient.findCompanyById(consume.supplyCompanyId()).getBody().data(); // 공급 업체
 
         // 주문의 배송이 이미 존재하는 경우
         boolean deliveryExists = deliveryRepository.existsByOrderId(consume.orderId());
@@ -191,7 +192,8 @@ public class DeliveryServiceImpl implements DeliveryService {
         // 이벤트 발행
         rabbitTemplate.convertAndSend(
                 rabbitProperties.getExchange().getDelivery(),
-                event
+                "",
+                EventUtil.serializeEvent(event)
         );
 
     }
@@ -280,7 +282,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                 () -> new BusinessException(ErrorCode.DELIVERY_NOT_FOUND)
         );
 
-        OrderResponse findOrder = orderClient.getOrderById(findDelivery.getOrderId());
+        OrderResponse findOrder = orderClient.getOrderById(findDelivery.getOrderId()).getBody().data();
         if (findOrder != null) {
             throw new BusinessException(ErrorCode.DELIVERY_DEPENDENT_ORDER_EXISTS);
         }

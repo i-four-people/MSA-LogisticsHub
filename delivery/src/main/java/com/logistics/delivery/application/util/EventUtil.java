@@ -27,4 +27,12 @@ public class EventUtil {
         }
     }
 
+    public static String serializeEvent(Object event) {
+        try {
+            return objectMapper.writeValueAsString(event);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to serialize event: " + event.getClass().getSimpleName(), e);
+        }
+    }
+
 }

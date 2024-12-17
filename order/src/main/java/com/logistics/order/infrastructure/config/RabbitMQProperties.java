@@ -18,6 +18,7 @@ public class RabbitMQProperties {
     @Setter
     public static class Exchange {
         private String order;
+        private String dead;
     }
 
     @Getter
@@ -25,6 +26,7 @@ public class RabbitMQProperties {
     public static class Queues {
         private String product;
         private String delivery;
+        private String deadLetter;
     }
 
 }

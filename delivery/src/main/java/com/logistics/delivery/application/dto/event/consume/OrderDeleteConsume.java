@@ -7,6 +7,9 @@ import java.util.UUID;
 public record OrderDeleteConsume(
         EventType eventType,
         UUID orderId,
-        UUID deliveryId
+        UUID deliveryId,
+
+        Long userId,
+        String role
 ) {
 }
