@@ -80,6 +80,7 @@ public class Delivery extends AuditingFields {
                 .status(DeliveryStatus.PENDING)
                 .originHubId(supplyCompany.hubId())
                 .destinationHubId(recipientCompany.hubId())
+                .deliveryAddress(event.deliveryAddress())
                 .recipientName(event.recipientName())
                 .recipientSlackId(event.recipientSlackId())
                 .build();

@@ -3,8 +3,8 @@ package com.logistics.order.application.dto.product;
 import java.util.UUID;
 
 public record ProductResponse(
-        UUID id,
-        String name,
+        UUID productId,
+        String productName,
         int stock,
         UUID companyId
 ) {

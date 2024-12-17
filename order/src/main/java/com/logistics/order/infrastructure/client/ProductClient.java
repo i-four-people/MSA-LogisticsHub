@@ -13,7 +13,7 @@ import java.util.UUID;
 public interface ProductClient {
 
     @PostMapping("/api/products/batch")
-    ResponseEntity<ApiResponse<List<ProductResponse>>> findProductsByIds(@RequestBody List<UUID> ids);
+    List<ProductResponse> findProductsByIds(@RequestBody List<UUID> ids);
 
     @GetMapping("/api/products/{productId}")
     ResponseEntity<ApiResponse<ProductResponse>> findProductById(@PathVariable("productId") UUID productId);
