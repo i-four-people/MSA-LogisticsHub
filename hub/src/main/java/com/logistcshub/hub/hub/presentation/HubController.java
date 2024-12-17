@@ -34,9 +34,6 @@ public class HubController {
     public ResponseEntity<SuccessResponse<AddHubResponseDto>> addHub(@RequestBody AddHubRequestDto request,
                                                                      @RequestHeader(value = "X-User-Id") Long userId,
                                                                      @RequestHeader(value = "X-User-Role") String role) {
-        userId = 1L;
-        role = "MASTER";
-
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_CREATE_HUB, hubService.addHub(userId, role, request))
         );
@@ -48,9 +45,6 @@ public class HubController {
                                                                            @PathVariable UUID id,
                                                                            @RequestHeader(value = "X-User-Id") Long userId,
                                                                            @RequestHeader(value = "X-User-Role") String role) {
-        userId = 1L;
-        role = "MASTER";
-
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_UPDATE_HUB, hubService.updateHub(id, userId, role, request))
         );
@@ -60,9 +54,6 @@ public class HubController {
     public ResponseEntity<SuccessResponse<DeleteHubResponseDto>> deleteHub(@PathVariable UUID id,
                                                                            @RequestHeader(value = "X-User-Id") Long userId,
                                                                            @RequestHeader(value = "X-User-Role") String role) {
-        userId = 1L;
-        role = "MASTER";
-
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_DELETE_HUB, hubService.deleteHub(id, userId, role))
         );
@@ -72,9 +63,6 @@ public class HubController {
     public ResponseEntity<SuccessResponse<HubResponseDto>> getHub(@PathVariable UUID id,
                                                                   @RequestHeader(value = "X-User-Id") Long userId,
                                                                   @RequestHeader(value = "X-User-Role") String role) {
-        userId = 1L;
-        role = "MASTER";
-
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_GET_HUB, hubService.getHub(id, userId, role))
         );
@@ -89,9 +77,6 @@ public class HubController {
                                                                              @PageableDefault Pageable pageable,
                                                                              @RequestParam(name = "sortBy", defaultValue = "CREATEDAT") SortType sortBy,
                                                                              @RequestParam(name = "isAsc", defaultValue = "true") boolean isAsc) {
-        userId = 1L;
-        role = "MASTER";
-
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_GET_HUBS, hubService.searchHubs(userId, role, keyword, type, pageable, sortBy, isAsc))
         );
@@ -105,9 +90,6 @@ public class HubController {
             @RequestParam(name = "lat") double lat,
             @RequestParam(name = "lng") double lng
            ) {
-        userId = 1L;
-        role = "MASTER";
-
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_GET_HUB, hubService.getHubFromCompanyAddress(userId, role, address, lat, lng))
         );

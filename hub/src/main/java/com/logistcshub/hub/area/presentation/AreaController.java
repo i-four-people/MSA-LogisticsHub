@@ -46,8 +46,6 @@ public class AreaController {
     public ResponseEntity<SuccessResponse<AddAreaResponseDto>> addArea(@RequestBody AddAreaRequestDto request,
                                                                        @RequestHeader(value = "X-User-Id") Long userId,
                                                                        @RequestHeader(value = "X-User-Role") String role) {
-        userId = 1L;
-        role = "MASTER";
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_CREATE_AREA, areaService.addArea(request, userId, role)));
     }
@@ -57,8 +55,6 @@ public class AreaController {
                                                                              @RequestHeader(value = "X-User-Id") Long userId,
                                                                              @RequestHeader(value = "X-User-Role") String role,
                                                                              @PathVariable UUID id) {
-        userId = 1L;
-        role = "MASTER";
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_UPDATE_AREA, areaService.updateArea(id, request, userId, role)));
     }
@@ -67,8 +63,6 @@ public class AreaController {
     public ResponseEntity<SuccessResponse<DeleteAreaResponseDto>> deleteArea(@RequestHeader(value = "X-User-Id") Long userId,
                                                                              @RequestHeader(value = "X-User-Role") String role,
                                                                              @PathVariable UUID id) {
-        userId = 1L;
-        role = "MASTER";
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_DELETE_AREA, areaService.deleteArea(id, userId, role)));
     }
@@ -77,8 +71,6 @@ public class AreaController {
     public ResponseEntity<SuccessResponse<AreaResponseDto>> getArea(@RequestHeader(value = "X-User-Id") Long userId,
                                                                     @RequestHeader(value = "X-User-Role") String role,
                                                                              @PathVariable UUID id) {
-        userId = 1L;
-        role = "MASTER";
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_GET_AREA, areaService.getArea(id, userId, role)));
     }
@@ -92,8 +84,6 @@ public class AreaController {
             @PageableDefault Pageable pageable,
             @RequestParam(name = "sortBy", defaultValue = "CREATEDAT") SortType sortBy,
             @RequestParam(name = "isAsc", defaultValue = "true") boolean isAsc) {
-        userId = 1L;
-        role = "MASTER";
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_SEARCH_AREA, areaService.searchAreas(userId, role, keyword, type, pageable, sortBy, isAsc))
         );

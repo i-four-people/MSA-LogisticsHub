@@ -56,6 +56,7 @@ public class HubTransferService {
 
     @Transactional
     public List<AddHubTransferResponseDto> addHubTransfer(AddHubTransferRequestDto request, String role, Long userId) {
+        validateMasterOrHubManager(role);
 
         Hub startHub = getHubById(request.startHubId());
 
@@ -92,6 +93,7 @@ public class HubTransferService {
 
 
     public UpdateHubTransferResponseDto updateTransfer(UUID id, UpdateTransferRequestDto request, String role, Long userId) {
+        validateMasterOrHubManager(role);
         HubTransfer hubTransfer = getHubTransferById(id);
 
         Hub startHub = getHubById(request.startHubId());
@@ -111,9 +113,11 @@ public class HubTransferService {
 
     @Transactional
     public DeleteHubTransferResponseDto deleteHubTransfer(UUID id, String role, Long userId) {
+        validateMasterOrHubManager(role);
         HubTransfer hubTransfer = getHubTransferById(id);
 
-        hubTransferRepository.delete(hubTransfer);
+        hubTransfer.delete(userId);
+        hubTransfer = hubTransferRepository.save(hubTransfer);
 
         return new DeleteHubTransferResponseDto(hubTransfer.getStartHub().getName() + "에서 " + hubTransfer.getEndHub().getName() + "로 연결된 노선은 삭제되었습니다.");
 
@@ -121,6 +125,7 @@ public class HubTransferService {
 
     @Transactional(readOnly = true)
     public HubTransferResponseDto getHubTransfer(UUID id, String role, Long userId) {
+        validateMasterOrHubManager(role);
         return HubTransferResponseDto.of(getHubTransferById(id));
     }
 
@@ -191,13 +196,14 @@ public class HubTransferService {
 
     @Transactional(readOnly = true)
     public HubTransferPageDto searchHubTransfer(List<UUID> idList, Predicate predicate, Pageable pageable, String role, Long userId) {
-
+        validateRole(role);
         return hubTransferRepository.findAll(idList, predicate, pageable);
 
     }
 
     @Cacheable(cacheNames = "hubToHub", key = "#startHubId + ':' + #endHubId")
     public HubToHubResponseDto getHubToHub(UUID startHubId, UUID endHubId, String role, Long userId) {
+        validateRole(role);
         HubTransfer startToEnd = hubTransferRepository.findByStartHubIdAndEndHubIdAndIsDeletedFalse(startHubId, endHubId).orElse(null);
         Hub startHub = getHubById(startHubId);
         Hub endHub = getHubById(endHubId);
@@ -292,6 +298,18 @@ public class HubTransferService {
                 totalDistance[hubMap.get(endHubId)],
                 hubToHubInfoList
         );
+    }
+
+    private void validateMasterOrHubManager(String role) {
+        if(role == null || !role.equals("MASTER")) {
+            throw new RestApiException(FORBIDDEN);
+        }
+    }
+
+    private void validateRole(String role) {
+        if(role == null || !(role.equals("MASTER") || role.equals("HUB_MANAGER") || role.equals("COMPANY_MANAGER") || role.equals("DELIVERY_MANAGER"))) {
+            throw new RestApiException(FORBIDDEN);
+        }
     }
 
 }

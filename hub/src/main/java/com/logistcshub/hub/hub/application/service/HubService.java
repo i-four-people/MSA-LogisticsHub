@@ -1,13 +1,5 @@
 package com.logistcshub.hub.hub.application.service;
 
-import static com.logistcshub.hub.common.exception.application.type.ErrorCode.ALREADY_EXISTS_HUB;
-import static com.logistcshub.hub.common.exception.application.type.ErrorCode.AREA_NOT_FOUND;
-import static com.logistcshub.hub.common.exception.application.type.ErrorCode.HUB_NOT_FOUND;
-import static com.logistcshub.hub.common.exception.application.type.ErrorCode.INTERNAL_SERVER_ERROR;
-import static com.logistcshub.hub.common.exception.application.type.ErrorCode.KAKAO_MAP_CLIENT_ERROR;
-import static com.logistcshub.hub.common.exception.application.type.ErrorCode.KAKAO_MAP_SERVER_ERROR;
-import static com.logistcshub.hub.common.exception.application.type.ErrorCode.KAKAO_MAP_TIME_OUT;
-
 import com.logistcshub.hub.area.domain.model.Area;
 import com.logistcshub.hub.area.domain.model.type.City;
 import com.logistcshub.hub.area.domain.model.type.State;
@@ -50,6 +42,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import static com.logistcshub.hub.common.exception.application.type.ErrorCode.*;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -61,6 +55,7 @@ public class HubService {
     private final HubSearchRepository hubSearchRepository;
 
     public AddHubResponseDto addHub(Long userId, String role, AddHubRequestDto request) {
+        validateMaster(role);
         String[] addresses = request.address().split(" ");
 
         Area area = findAreaToAddress(addresses);
@@ -79,6 +74,7 @@ public class HubService {
 
     @Transactional
     public UpdateHubResponseDto updateHub(UUID id, Long userId, String role, UpdateHubRequestDto request) {
+        validateMaster(role);
         Hub hub = hubRepository.findByIdWithAreaAndDeletedFalse(id).orElseThrow(() ->
                 new RestApiException(HUB_NOT_FOUND));
         String[] addresses = request.address().split(" ");
@@ -98,6 +94,7 @@ public class HubService {
 
     @Transactional
     public DeleteHubResponseDto deleteHub(UUID id, Long userId, String role) {
+        validateMaster(role);
         Hub hub = hubRepository.findByIdAndDeletedFalse(id).orElseThrow(() ->
                 new RestApiException(HUB_NOT_FOUND));
 
@@ -185,11 +182,13 @@ public class HubService {
 
 
     public PagedModel<HubResponseDto> searchHubs(Long userId, String role, String keyword, HubSearchType type, Pageable pageable, SortType sortBy, boolean isAsc) {
+        validateRole(role);
         return new PagedModel<>(hubSearchRepository.findAllHubResponseDto(keyword, type, pageable, sortBy, isAsc));
     }
 
     @Transactional(readOnly = true)
     public HubResponseDto getHubFromCompanyAddress(Long userId, String role, String address, double lat, double lng) {
+        validateRole(role);
         String[] addresses = address.split(" ");
 
         State state = State.findState(addresses[0]);
@@ -226,5 +225,17 @@ public class HubService {
 
     public List<HubResponseDto> getHubListFromIdList(List<UUID> idList) {
         return hubRepository.findByIdInAndIsDeletedFalse(idList);
+    }
+
+    private void validateMaster(String role) {
+        if(role == null || !role.equals("MASTER")) {
+            throw new RestApiException(FORBIDDEN);
+        }
+    }
+
+    private void validateRole(String role) {
+        if(role == null || !(role.equals("MASTER") || role.equals("HUB_MANAGER") || role.equals("COMPANY_MANAGER") || role.equals("DELIVERY_MANAGER"))) {
+            throw new RestApiException(FORBIDDEN);
+        }
     }
 }

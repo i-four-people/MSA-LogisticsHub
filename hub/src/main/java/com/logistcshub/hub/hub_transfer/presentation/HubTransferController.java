@@ -36,9 +36,6 @@ public class HubTransferController {
     public ResponseEntity<SuccessResponse<List<AddHubTransferResponseDto>>> addHubTransfer(@RequestBody AddHubTransferRequestDto request,
                                                                                            @RequestHeader(value = "X-User-Id") Long userId,
                                                                                            @RequestHeader(value = "X-User-Role") String role) {
-        userId = 1L;
-        role = "MASTER";
-
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_CREATE_HUB_TRANSFER, hubTransferService.addHubTransfer(request, role, userId))
         );
@@ -49,9 +46,6 @@ public class HubTransferController {
                                                                                             @RequestBody UpdateTransferRequestDto request,
                                                                                            @RequestHeader(value = "X-User-Id") Long userId,
                                                                                            @RequestHeader(value = "X-User-Role") String role) {
-        userId = 1L;
-        role = "MASTER";
-
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_UPDATE_HUB_TRANSFER, hubTransferService.updateTransfer(id, request, role, userId))
         );
@@ -61,9 +55,6 @@ public class HubTransferController {
     public ResponseEntity<SuccessResponse<DeleteHubTransferResponseDto>> deleteHubTransfer(@PathVariable UUID id,
                                                                                            @RequestHeader(value = "X-User-Id") Long userId,
                                                                                            @RequestHeader(value = "X-User-Role") String role) {
-        userId = 1L;
-        role = "MASTER";
-
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_DELETE_HUB_TRANSFER, hubTransferService.deleteHubTransfer(id, role, userId))
         );
@@ -73,9 +64,6 @@ public class HubTransferController {
     public ResponseEntity<SuccessResponse<HubTransferResponseDto>> getHubTransfer(@PathVariable UUID id,
                                                                                   @RequestHeader(value = "X-User-Id") Long userId,
                                                                                   @RequestHeader(value = "X-User-Role") String role) {
-        userId = 1L;
-        role = "MASTER";
-
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_GET_HUB_TRANSFER, hubTransferService.getHubTransfer(id, role, userId))
         );
@@ -87,9 +75,6 @@ public class HubTransferController {
                                                                                  @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
                                                                                  @RequestHeader(value = "X-User-Id") Long userId,
                                                                                  @RequestHeader(value = "X-User-Role") String role) {
-        userId = 1L;
-        role = "MASTER";
-
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_SEARCH_HUB_TRANSFERS, hubTransferService.searchHubTransfer(idList, predicate, pageable, role, userId))
         );
@@ -100,9 +85,6 @@ public class HubTransferController {
                                                                                    @RequestParam(required = true) UUID endHubId,
                                                                                    @RequestHeader(value = "X-User-Id") Long userId,
                                                                                    @RequestHeader(value = "X-User-Role") String role) {
-
-        userId = 1L;
-        role = "MASTER";
 
         return ResponseEntity.ok().body(
                 SuccessResponse.of(SUCCESS_SEARCH_HUB_TRANSFER, hubTransferService.getHubToHub(startHubId,endHubId, role, userId))
