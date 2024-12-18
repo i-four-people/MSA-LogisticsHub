@@ -1,6 +1,7 @@
 package com.logistics.order.application.dto.order;
 
 import com.logistics.order.application.dto.company.CompanyResponse;
+import com.logistics.order.application.dto.product.ProductIdsResponse;
 import com.logistics.order.application.dto.product.ProductResponse;
 import com.logistics.order.domain.model.Order;
 
@@ -24,7 +25,7 @@ public record OrderResponse(
         LocalDateTime updatedAt   // 수정일
 ) {
 
-    public static OrderResponse from(Order order, CompanyResponse requesterCompany, CompanyResponse recipientCompany, ProductResponse product) {
+    public static OrderResponse from(Order order, CompanyResponse requesterCompany, CompanyResponse recipientCompany, ProductIdsResponse product) {
         return new OrderResponse(
                 order.getId(),
                 order.getDeliveryId(),

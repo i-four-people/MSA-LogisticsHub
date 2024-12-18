@@ -10,6 +10,7 @@ public record OrderCreateConsume(
         UUID productId,
         UUID supplyCompanyId,
         UUID recipientCompanyId,
+        String productName,
         int quantity,
         String requestNote, // 요청 사항
         String deliveryAddress, // 배송지 주소
