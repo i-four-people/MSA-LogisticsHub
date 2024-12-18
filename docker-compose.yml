@@ -19,14 +19,18 @@ services:
       - "5672:5672"  # AMQP 프로토콜 포트
       - "15672:15672"  # RabbitMQ 관리 콘솔 포트
     environment:
-      RABBITMQ_DEFAULT_USER: user  # 기본 사용자
-      RABBITMQ_DEFAULT_PASS: password  # 기본 비밀번호
+      RABBITMQ_DEFAULT_USER: guest  # 기본 사용자
+      RABBITMQ_DEFAULT_PASS: guest  # 기본 비밀번호
     networks:
       - hub-network
     healthcheck:
       test: [ "CMD", "rabbitmqctl", "status" ]
       interval: 30s
       retries: 3
+    command:
+      # guest 계정의 로컬 호스트 제한 해제
+      - rabbitmq-server
+      - --loopback-users "none"
 
   server-service:
     container_name: server-service
@@ -84,18 +88,18 @@ services:
     networks:
       - hub-network
 
-  company-db:
-    image: postgres
-    container_name: company-db
-    ports:
-      - "5433:5433"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: p_companies
-    networks:
-      - hub-network
-    restart: always
+#  company-db:
+#    image: postgres
+#    container_name: company-db
+#    ports:
+#      - "5433:5433"
+#    environment:
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: 1234
+#      POSTGRES_DB: p_companies
+#    networks:
+#      - hub-network
+#    restart: always
 
   company-service:
     container_name: company
@@ -106,7 +110,7 @@ services:
     volumes:
       - ./company/build/libs/service-company.jar:/app/service-company.jar
     depends_on:
-      - company-db
+#      - company-db
       - user-service
       - gateway-service
       - server-service
@@ -115,18 +119,18 @@ services:
     networks:
       - hub-network
 
-  hub-db:
-    image: postgres
-    container_name: hub-db
-    ports:
-      - "5434:5434"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: p_hubs
-    networks:
-      - hub-network
-    restart: always
+#  hub-db:
+#    image: postgres
+#    container_name: hub-db
+#    ports:
+#      - "5434:5434"
+#    environment:
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: 1234
+#      POSTGRES_DB: p_hubs
+#    networks:
+#      - hub-network
+#    restart: always
 
   hub-service:
     container_name: hub
@@ -137,7 +141,7 @@ services:
     volumes:
       - ./hub/build/libs/service-hub.jar:/app/service-hub.jar
     depends_on:
-      - hub-db
+#      - hub-db
       - gateway-service
       - server-service
       - redis-stack
@@ -146,18 +150,18 @@ services:
     networks:
       - hub-network
 
-  product-db:
-    image: postgres
-    container_name: product-db
-    ports:
-      - "5435:5435"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: p_products
-    networks:
-      - hub-network
-    restart: always
+#  product-db:
+#    image: postgres
+#    container_name: product-db
+#    ports:
+#      - "5435:5435"
+#    environment:
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: 1234
+#      POSTGRES_DB: p_products
+#    networks:
+#      - hub-network
+#    restart: always
 
   product-service:
     container_name: product
@@ -168,7 +172,7 @@ services:
     volumes:
       - ./product/build/libs/service-product.jar:/app/service-product.jar
     depends_on:
-      - product-db
+#      - product-db
       - hub-service
       - gateway-service
       - server-service
@@ -177,18 +181,18 @@ services:
     networks:
       - hub-network
 
-  order-db:
-    image: postgres
-    container_name: order-db
-    ports:
-      - "5436:5436"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: p_orders
-    networks:
-      - hub-network
-    restart: always
+#  order-db:
+#    image: postgres
+#    container_name: order-db
+#    ports:
+#      - "5436:5436"
+#    environment:
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: 1234
+#      POSTGRES_DB: p_orders
+#    networks:
+#      - hub-network
+#    restart: always
 
   order-service:
     container_name: order
@@ -199,7 +203,7 @@ services:
     volumes:
       - ./order/build/libs/service-order.jar:/app/service-order.jar
     depends_on:
-      - order-db
+#      - order-db
       - product-service
       - hub-service
       - gateway-service
@@ -209,18 +213,18 @@ services:
     networks:
       - hub-network
 
-  delivery-db:
-    image: postgres
-    container_name: delivery-db
-    ports:
-      - "5437:5437"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: p_deliveries
-    networks:
-      - hub-network
-    restart: always
+#  delivery-db:
+#    image: postgres
+#    container_name: delivery-db
+#    ports:
+#      - "5437:5437"
+#    environment:
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: 1234
+#      POSTGRES_DB: p_deliveries
+#    networks:
+#      - hub-network
+#    restart: always
 
   delivery-service:
     container_name: delivery
@@ -231,7 +235,7 @@ services:
     volumes:
       - ./delivery/build/libs/service-delivery.jar:/app/service-delivery.jar
     depends_on:
-      - delivery-db
+#      - delivery-db
       - order-service
       - product-service
       - hub-service
