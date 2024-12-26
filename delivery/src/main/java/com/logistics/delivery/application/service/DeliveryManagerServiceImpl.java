@@ -129,7 +129,7 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
 
         // 허브 ID가 startHubId와 일치하는 담당자를 먼저 필터링 (현재 허브에 위차한 배송 담당자 먼저 확인)
         Optional<DeliveryManagerResponse> matchingHubManagers = unassignedManagers.stream()
-                .filter(manager -> manager.hubId().equals(startHubId))
+//                .filter(manager -> manager.hubId().equals(startHubId))
                 .min(Comparator.comparing(DeliveryManagerResponse::sequence)); // sequence 기준으로 최소값 찾기
 
         DeliveryManagerResponse managerToAssign = matchingHubManagers.orElseGet(
@@ -140,8 +140,8 @@ public class DeliveryManagerServiceImpl implements DeliveryManagerService {
         routes.forEach(route -> {
             route.assignManager(managerToAssign.id());
 
-            log.info("Assigned manager {} to route from {} to {}",
-                    managerToAssign.id(), route.getStartHubId(), route.getEndHubId());
+            log.info("route delivery id {} Assigned manager {} to route from {} to {}",
+                    route.getDeliveryId(),managerToAssign.id(), route.getStartHubId(), route.getEndHubId());
 
             // 배송 담당자의 hubId를 출발지 허브로 업데이트
             deliveryManagerClient.updateHubForManager(managerToAssign.id(), new DeliveryManagerUpdateRequest(route.getStartHubId()));
