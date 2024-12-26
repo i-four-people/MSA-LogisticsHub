@@ -97,13 +97,13 @@ public class DeliveryManagerController {
     }
 
     // Delivery 호출 Api
-    @GetMapping("/api/delivery-managers/available-manager")
+    @GetMapping("/available-manager/list")
     public List<DeliveryManagerResponse> findAvailableManagers(
             @RequestParam(defaultValue = "HUB_PIC") DeliveryManagerType type) {
         return deliveryManagerService.findAvailableManagers(type);
     }
 
-    @PutMapping("/api/delivery-managers/{deliveryManagerId}/hub")
+    @PutMapping("/{deliveryManagerId}/hub")
    public void updateHubForManager(@PathVariable("deliveryManagerId") Long deliveryManagerId,
                              @RequestBody DeliveryManagerUpdateRequest request) {
         deliveryManagerService.updateHubForManager(deliveryManagerId, request);

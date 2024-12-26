@@ -7,6 +7,11 @@ import java.util.UUID;
 public record DeliveryCreateConsume(
         EventType eventType,
         UUID deliveryId,
-        UUID orderId
+        UUID orderId,
+        UUID originHubId,
+        UUID destinationHubId,
+
+        Long userId,
+        String role
 ) {
 }

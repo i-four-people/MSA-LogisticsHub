@@ -112,7 +112,7 @@ public class Order extends AuditingFields {
      * @param deliveryId 배송 ID
      */
     public void updateDelivery(UUID deliveryId) {
-
+        this.deliveryId = deliveryId;
     }
 
     /**

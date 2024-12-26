@@ -47,7 +47,7 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
                 .from(order)
                 .where(filterOrders(searchParameter)
                         .and(order.isDelete.isFalse()))
-                .fetch().getFirst();
+                .fetch().get(0);
     }
 
     private BooleanBuilder filterOrders(SearchParameter searchParameter) {
@@ -82,7 +82,7 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
                 .from(order)
                 .where(filterOrdersByCompanyIds(searchParameter, companyIds)
                         .and(order.isDelete.isFalse()))
-                .fetch().getFirst();
+                .fetch().get(0);
     }
 
     private BooleanBuilder filterOrdersByCompanyIds(SearchParameter searchParameter, List<UUID> companyIds) {

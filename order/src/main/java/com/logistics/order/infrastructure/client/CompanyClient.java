@@ -19,6 +19,6 @@ public interface CompanyClient {
     ResponseEntity<ApiResponse<CompanyResponse>> findCompanyById(@PathVariable("companyId") UUID companyId);
 
     @PostMapping("/api/companies/batch")
-    ResponseEntity<ApiResponse<List<CompanyResponse>>> findCompaniesByIds(@RequestBody List<UUID> ids);
+    List<CompanyResponse> findCompaniesByIds(@RequestBody List<UUID> ids);
 
 }

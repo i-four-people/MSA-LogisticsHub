@@ -21,6 +21,13 @@ spring:
     username: ${SPRING_DATASOURCE_LOCAL_USERNAME}
     password: ${SPRING_DATASOURCE_LOCAL_PASSWORD}
     url: ${SPRING_DATASOURCE_LOCAL_URL}
+  rabbitmq:
+    host: localhost
+    port: 5672
+    stream:
+      username: guest
+      password: guest
+      virtual-host: /
 eureka:
   client:
     service-url:
@@ -37,6 +44,13 @@ spring:
     username: ${SPRING_DATASOURCE_PROD_USERNAME}
     password: ${SPRING_DATASOURCE_PROD_PASSWORD}
     url: ${SPRING_DATASOURCE_PROD_URL}
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    stream:
+      username: guest
+      password: guest
+      virtual-host: /
 eureka:
   client:
     service-url:

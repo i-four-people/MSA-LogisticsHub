@@ -25,4 +25,6 @@ public interface HubRepository {
     Optional<Hub> findByAreaInAndIsDeletedFalse(List<UUID> areaList, double lat, double lng);
 
     List<HubResponseDto> findByIdInAndIsDeletedFalse(List<UUID> idList);
+
+    List<Hub> findByIsDeletedFalse();
 }

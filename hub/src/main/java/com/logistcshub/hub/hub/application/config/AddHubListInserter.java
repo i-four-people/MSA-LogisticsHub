@@ -44,19 +44,19 @@ public class AddHubListInserter {
         Long userId = 1L;
         String role = "MASTER";
 
-//        for(AddHubRequestDto hub : hubs) {
-//            try {
-//                hubService.addHub(userId, role, hub);
-//            } catch (RestApiException e) {
-//                log.info("exception : {} : {}", hub.name(), e.getErrorCode().getDescription());
-//            }
-//            try {
-//                Thread.sleep(500); // 500 milliseconds
-//            } catch (InterruptedException e) {
-//                Thread.currentThread().interrupt(); // 인터럽트 상태 복구
-//                System.err.println("Thread was interrupted during sleep.");
-//            }
-//        }
+        for(AddHubRequestDto hub : hubs) {
+            try {
+                hubService.addHub(userId, role, hub);
+            } catch (RestApiException e) {
+                log.info("exception : {} : {}", hub.name(), e.getErrorCode().getDescription());
+            }
+            try {
+                Thread.sleep(500); // 500 milliseconds
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // 인터럽트 상태 복구
+                System.err.println("Thread was interrupted during sleep.");
+            }
+        }
 
     }
 }
